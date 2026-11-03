@@ -116,7 +116,7 @@ export function shell(pageKey, title) {
   <header class="lab-head"><div class="in">
     <img src="eda-logo.png" alt="Emerging Developer Academy">
     <div class="tt"><p class="kick">${BRAND} · Fall 2026</p><h1>${LAB}</h1></div>
-    <a class="back" href="../">← Back to the Cohort Hub</a>
+    <a class="back" href="../#casestudy">← Back to the Case Study</a>
   </div></header>
   <nav class="tnav" aria-label="Learning Lab tools"><div class="in">
     ${PAGES.map((x) => `<a href="${x.href}" class="${x.key === pageKey ? 'cur' : ''}" ${x.key === pageKey ? 'aria-current="page"' : ''}>${x.n ? `<span class="n">${x.n}</span>` : ''}${x.label}</a>`).join('')}
