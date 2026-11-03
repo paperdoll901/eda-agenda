@@ -259,3 +259,27 @@ body{font-size:16px;line-height:1.5}
 .facbox input{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid #9a9db3;border-radius:8px}
 .facerr{color:#9F1F63;font-weight:700;margin-top:8px!important}
 .facbtns{display:flex;gap:8px;margin-top:14px}.facbtns .btn{flex:1;justify-content:center}
+/* overflow fixes (real-font widths) */
+.kpi{min-width:0;overflow:hidden}
+.kpi .v{font-size:clamp(18px,1.9vw,22px);overflow-wrap:anywhere;line-height:1.2}
+.kpi.hero{grid-column:1/-1}
+.kpi.hero .v{font-size:clamp(24px,3vw,30px)}
+.kpis{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.bar{grid-template-columns:minmax(90px,140px) minmax(40px,1fr) auto}
+.bar .a{min-width:78px}
+.item{grid-template-columns:minmax(160px,2.4fr) 150px minmax(190px,2fr) 110px 100px 64px}
+@media (max-width:1060px){
+  .item{grid-template-columns:1fr 1fr}
+  .item .nm,.item .calc,.item .nt{grid-column:1/-1}
+  .itemhead{display:none}
+  .item .val{text-align:left}
+  .item .acts{justify-content:flex-end}
+}
+.tbl td.n,.tbl th.n{white-space:nowrap}
+body.fac .kpi .v{font-size:clamp(20px,2.2vw,26px)}
+body.fac .kpi.hero .v{font-size:clamp(28px,3.4vw,36px)}
+.tbl th.n{white-space:normal}
+.tbl td.tx{white-space:normal;text-align:right}
+.swipe{display:none;font-size:13px;font-weight:700;color:var(--navy);margin:4px 0 0;text-align:right}
+.tblwrap.over + .swipe{display:block}
+@media (max-width:700px){.tbl{font-size:14px}.tbl th,.tbl td{padding:7px 6px}.tbl th{font-size:12px}}

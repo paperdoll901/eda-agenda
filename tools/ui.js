@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793718536';
-import * as E from './engine.js?v=1793718536';
+import * as S from './store.js?v=1793719798';
+import * as E from './engine.js?v=1793719798';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -241,6 +241,8 @@ export function shell(pageKey, title) {
   setTimeout(showAct, 0);
   const labelTables = () => $$('.tblwrap[role=region]').forEach((w, i) => { const h = w.closest('.card')?.querySelector('h3'); w.setAttribute('aria-label', `${(h?.textContent || 'Table').replace(/^(Inputs|Results)\s*/, '').trim()} (table ${i + 1})`); });
   setTimeout(labelTables, 0); setTimeout(labelTables, 800);
+  const markOver = () => $$('.tblwrap').forEach((w) => { const o = w.scrollWidth > w.clientWidth + 2; w.classList.toggle('over', o); if (!w.nextElementSibling || !w.nextElementSibling.classList.contains('swipe')) w.insertAdjacentHTML('afterend', '<p class="swipe" aria-hidden="true">Swipe the table sideways to see every column →</p>'); });
+  setTimeout(markOver, 300); setTimeout(markOver, 1200); window.addEventListener('resize', markOver); document.addEventListener('input', () => setTimeout(markOver, 50));
   setTimeout(() => { const c = $('.tnav a.cur'), n = $('.tnav .in'); if (c && n) n.scrollLeft = c.offsetLeft - (n.clientWidth - c.offsetWidth) / 2; }, 0);
   return { main: $('#main'), project: p, refreshActivity: showAct };
 }
