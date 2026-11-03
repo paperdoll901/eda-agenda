@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793744959';
-import * as E from './engine.js?v=1793744959';
-import * as U from './ui.js?v=1793744959';
+import * as S from './store.js?v=1793745986';
+import * as E from './engine.js?v=1793745986';
+import * as U from './ui.js?v=1793745986';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -14,6 +14,8 @@ const BASIS = [
 const PCT_OF = [['hard', '% of hard costs'], ['hardsite', '% of hard + site costs'], ['sale', '% of gross sales']];
 const LINK_TEXT = {
   interest: 'Calculated from the construction loan (Capital Stack tool)',
+  interestBuild: 'Loan interest for the construction months (Capital Stack tool)',
+  interestHold: 'Loan interest for the months on the market (Capital Stack tool)',
   loanFees: 'Calculated from loan fees (Capital Stack tool)',
   commission: 'Calculated from the commission % and sales price',
   sellerClosing: 'Calculated from the seller paid closing % and sales price',

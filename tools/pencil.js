@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793744959';
-import * as E from './engine.js?v=1793744959';
-import * as U from './ui.js?v=1793744959';
+import * as S from './store.js?v=1793745986';
+import * as E from './engine.js?v=1793745986';
+import * as U from './ui.js?v=1793745986';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -55,6 +55,7 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
   <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl sc" id="sc"></table></div>
 </div>
 <div class="grid even">
+  <div class="card results"><h3><span class="tag out">Results</span> Disposition outcomes: how long the home takes to sell</h3><div id="dispo"></div></div>
   <div class="card results"><h3><span class="tag out">Results</span> Sensitivity: sales price, cost and profit</h3><div id="sens"></div></div>
   <div class="card results"><h3><span class="tag out">Results</span> Margin sensitivity</h3><div id="msens" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
@@ -114,7 +115,22 @@ function renderScenarioTable(R) {
 }
 const resultLabel = (s) => ({ incomplete: 'Incomplete', loss: '✕ Loss', breakeven: '! Break-even', belowTarget: '! Below target', meetsTarget: '✓ Meets target' }[s]);
 
+function dispo() {
+  const plan = E.num(p.timeline.saleMonths);
+  const rows = [...new Set([0, 3, 6, plan, 12])].filter((m) => m >= 0).sort((x, y) => x - y).map((m) => {
+    const q = E.pencilTest(p, { delayMonths: m - plan });
+    const i = E.interestFor(E.applyScenario(p, { delayMonths: m - plan }));
+    return { m, hold: i.hold, total: i.total, profit: q.profit, margin: q.margin, plan: m === plan };
+  });
+  const base = rows.find((r) => r.plan);
+  U.$('#dispo').innerHTML = `<p class="note" style="margin-top:0">Construction takes ${E.num(p.timeline.buildMonths)} months. After that, every month the home is on the market adds about ${fmt$(E.interestFor(p).monthlyAtFull)} of loan interest. The base case uses the ${plan}-month marketing period${p.kind === 'case' ? ' the broker expects (casebook p. 19)' : ''}.</p>
+  <table class="tbl"><thead><tr><th>Home sells</th><th class="n">Interest after completion</th><th class="n">Return</th><th class="n">vs. base</th></tr></thead><tbody>
+  ${rows.map((r) => `<tr${r.plan ? ' class="tot"' : ''}><td>${r.m === 0 ? 'At completion' : `${r.m} months later`}${r.plan ? '<br><span class="note">base case</span>' : ''}</td><td class="n">${fmt$(r.hold)}</td><td class="n">${fmt$(r.profit)}<br><span class="note">${fmtPct(r.margin)}</span></td><td class="n">${r.plan ? '·' : (r.profit - base.profit >= 0 ? '+' : '−') + fmt$(Math.abs(r.profit - base.profit))}</td></tr>`).join('')}
+  </tbody></table>
+  <p class="note">Only loan interest is shown. A home on the market also costs taxes, insurance, utilities and upkeep each month, so a slow sale costs more than this table shows.</p>`;
+}
 function update() {
+  dispo();
   const r = E.pencilTest(p);
   const sc = p.pencilScenarios;
   const scn = (s) => ({ salePrice: E.isNum(s.salePrice) ? E.num(s.salePrice) : undefined, costIncreasePct: E.num(p.budget.costIncreasePct) + E.num(s.costIncreasePct), delayMonths: E.num(s.delayMonths), rateDeltaPct: E.num(s.rateDeltaPct), includeIncentive: s.includeIncentive ? true : E.includedIncentives(p) > 0 });

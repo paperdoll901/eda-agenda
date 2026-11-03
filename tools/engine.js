@@ -124,9 +124,13 @@ export function interestFor(p) {
   const f = p.finance || {};
   const r = constructionInterestRaw(p, f);
   // a case can round interest the way its casebook presents it (e.g. $11,680 shown as ~$12,000)
+  // split interest into the construction period and the marketing (sale) period
+  const buildExact = r.schedule.filter((m) => m.phase === 'Construction').reduce((t, m) => t + m.interest, 0);
+  const holdExact = r.total - buildExact;
   const to = num(f.interestRoundTo);
-  const total = to > 0 ? Math.round(r.total / to) * to : r.total;
-  return { ...r, exact: r.total, rounding: total - r.total, total };
+  const rd = (v) => (to > 0 ? Math.round(v / to) * to : v);
+  const build = rd(buildExact), hold = rd(holdExact), total = build + hold;
+  return { ...r, exact: r.total, rounding: total - r.total, total, build, hold, buildExact, holdExact };
 }
 function constructionInterestRaw(p, f) {
   return constructionInterest({
@@ -155,7 +159,8 @@ export function budgetTotals(p, opts = {}) {
   const inc = pct(opts.costIncreasePct ?? p.budget?.costIncreasePct ?? 0);
   const months = totalMonths(p);
   const gross = grossSales(p);
-  const interest = interestFor(p).total;
+  const interestParts = interestFor(p);
+  const interest = interestParts.total;
   const fees = loanFees(p);
   const sellPct = pct(p.sale?.commissionPct) + pct(p.sale?.sellerClosingPct);
 
@@ -186,6 +191,8 @@ export function budgetTotals(p, opts = {}) {
     } else if (it.basis === 'linked') {
       let v = 0;
       if (it.link === 'interest') v = interest;
+      else if (it.link === 'interestBuild') v = interestParts.build;
+      else if (it.link === 'interestHold') v = interestParts.hold;
       else if (it.link === 'loanFees') v = fees;
       else if (it.link === 'commission') { v = gross * pct(p.sale?.commissionPct); const to = num(p.sale?.sellingRoundTo); if (to > 0) v = Math.round(v / to) * to; }
       else if (it.link === 'sellerClosing') v = gross * pct(p.sale?.sellerClosingPct);

@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793744959';
-import * as E from './engine.js?v=1793744959';
+import * as S from './store.js?v=1793745986';
+import * as E from './engine.js?v=1793745986';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -456,7 +456,7 @@ export function caseNotes(p) {
 export function gapWhy(p, c) {
   if (!(c.gapCommitted > 0.5) || !p.budget || !p.budget.exhibitTotal) return null;
   const items = c.budget.items.filter((i) => !i.atClosing && (i.value || 0) > 0);
-  const fin = items.filter((i) => i.basis === 'linked' && (i.link === 'interest' || i.link === 'loanFees'));
+  const fin = items.filter((i) => i.basis === 'linked' && (['interest', 'interestBuild', 'interestHold', 'loanFees'].includes(i.link)));
   const finTot = fin.reduce((t, i) => t + i.value, 0);
   const dev = c.uses - finTot;
   if (Math.abs(dev - c.committed) > 1 || Math.abs(finTot - c.gapCommitted) > 1) return null;
@@ -467,7 +467,8 @@ export function gapWhy(p, c) {
     <tr class="tot"><td>= Total uses before the sale</td><td class="n">${f(c.uses)}</td></tr>
     <tr><td>− Committed sources (loan + developer equity)</td><td class="n">${f(c.committed)}</td></tr>
     <tr class="tot"><td>= Financing gap</td><td class="n">${f(c.gapCommitted)}</td></tr>`;
-  const parts = fin.map((i) => `${i.link === 'interest' ? 'construction interest' : 'loan fees'} (${f(i.value)})`).join(' and ');
+  const partsA = fin.map((i) => `${i.link === 'loanFees' ? 'loan fees' : i.link === 'interestBuild' ? 'interest during construction' : i.link === 'interestHold' ? 'interest while marketing' : 'construction interest'} (${f(i.value)})`);
+  const parts = partsA.length > 1 ? partsA.slice(0, -1).join(', ') + ' and ' + partsA[partsA.length - 1] : partsA.join('');
   const text = `The ${f(c.loan)} loan and ${f(c.committed - c.loan)} equity cover the ${f(dev)} development budget. ${parts.charAt(0).toUpperCase() + parts.slice(1)} still need a source: ${f(finTot)} in all.`;
   return { rows, text };
 }
@@ -500,15 +501,15 @@ function caseMathRows(p, keys) {
   const all = {
     price: ['Sale price', f(r.price), `Working price from the CMA estimate of $213,958 (Exhibit C), rounded.`, 'p. 9'],
     budget: ['Development budget', f(dev), `Exhibit D line items ${f(exD)}${dev - exD ? ` + ${f(dev - exD)} to the casebook's ${f(dev)} total` : ''}.`, 'pp. 15, 19'],
-    interest: ['Construction interest', f(intr.total), `${f(E.num(fx.loanAmount))} × ${E.num(fx.ratePct)}% ÷ 12 = ${f(monthly)} a month × ${months} months (${E.num(p.timeline.buildMonths)} to build + ${E.num(p.timeline.saleMonths)} to sell) = ${f(intr.exact)}${Math.abs(intr.rounding) > 0.5 ? `, rounded to the nearest $1,000 as in the casebook: ${f(intr.total)}` : ''}.`, 'p. 20'],
+    interest: ['Loan interest', f(intr.total), `${f(E.num(fx.loanAmount))} × ${E.num(fx.ratePct)}% ÷ 12 = ${f(monthly)} a month. <b>During construction</b>: ${E.num(p.timeline.buildMonths)} months = ${f(intr.buildExact)}${Math.abs(intr.build - intr.buildExact) > 0.5 ? `, about ${f(intr.build)}` : ''}. <b>While marketing the home</b>: ${E.num(p.timeline.saleMonths)} months = ${f(intr.holdExact)}${Math.abs(intr.hold - intr.holdExact) > 0.5 ? `, about ${f(intr.hold)}` : ''}. The casebook rounds each to the nearest $1,000.`, 'p. 20'],
     fees: ['Loan fees', f(fees), `${f(E.num(fx.applicationFee))} application + ${f(E.num(fx.originationFee))} origination.`, 'p. 20'],
     selling: ['Selling costs', f(sell), `${E.num(p.sale.commissionPct) + E.num(p.sale.sellerClosingPct)}% × ${f(r.price)} = ${f(exactSell)}${Math.abs(sell - exactSell) > 0.5 ? `, rounded to the nearest $1,000 as in the casebook: ${f(sell)}` : ''}. Paid from the sale at closing.`, 'pp. 17, 21'],
-    tdc: ['Total modeled costs', f(b.tdc), `${f(dev)} budget + ${f(intr.total)} interest + ${f(fees)} loan fees + ${f(sell)} selling costs.`, 'p. 22'],
+    tdc: ['Total modeled costs', f(b.tdc), `${f(dev)} budget + ${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees + ${f(sell)} selling costs.`, 'p. 22'],
     net: ['Net sales revenue', f(r.net), `${f(r.price)} sale − ${f(sell)} selling costs.`, 'p. 21'],
-    profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.total)} interest − ${f(fees)} loan fees${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
+    profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.build)} construction interest − ${f(intr.hold)} marketing interest − ${f(fees)} loan fees${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
     loan: ['Construction loan', f(c.loan), `About 90% of the ${f(dev)} eligible project cost (${f(dev * 0.9)}), rounded.`, 'p. 19'],
     equity: ['Developer equity', f(eq), `${f(dev)} budget − ${f(c.loan)} loan.`, 'p. 19'],
-    gap: ['Cash still needed for interest and fees', f(c.gapCommitted), `${f(intr.total)} interest + ${f(fees)} loan fees. The loan and equity cover only the ${f(dev)} budget, so Gabe pays these during construction.`, 'pp. 19–21'],
+    gap: ['Cash still needed for interest and fees', f(c.gapCommitted), `${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees. The loan and equity cover only the ${f(dev)} budget, so Gabe pays these during construction.`, 'pp. 19–21'],
     cash: ['Gabe\'s total cash in the deal', f(c.requiredEquity), `${f(eq)} equity + ${f(c.gapCommitted)} interest and fees.`, 'pp. 19–21'],
     closing: ['Cash left at closing', f(r.net - c.loan), `${f(r.net)} net − ${f(c.loan)} loan payoff. It returns Gabe's ${f(c.requiredEquity)} cash plus the ${f(r.profit)} return; it is not all profit.`, 'p. 30'],
   };

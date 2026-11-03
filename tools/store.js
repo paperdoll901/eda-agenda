@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 5; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 6; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -151,7 +151,8 @@ export function josephPlace() {
       L('E', 'Project management & supervision', { amount: 3500, note: X('1.10') }),
       // F. Financing & holding
       L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook p. 20: $1,000 application fee + $1,000 origination fee = $2,000. Not in Exhibit D.' }),
-      L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook p. 20: $146,000 × 8% ÷ 12 = $973 a month × 12 months (3 to build + 9 to sell) = $11,680. The casebook rounds interest to the nearest $1,000: about $12,000. Not in Exhibit D.' }),
+      L('F', 'Interest during construction (3 months)', { basis: 'linked', link: 'interestBuild', note: 'Casebook p. 20: $146,000 × 8% ÷ 12 = $973 a month × 3 months to build = $2,920, about $3,000. Not in Exhibit D.' }),
+      L('F', 'Interest while marketing the home (9 months)', { basis: 'linked', link: 'interestHold', note: 'Casebook p. 20: the broker expects up to 9 months to sell. $973 a month × 9 = $8,760, about $9,000. Selling sooner lowers this. Not in Exhibit D.' }),
       L('F', 'Job site security', { amount: 650, note: X('1.09') }),
       // G. Contingency
       L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
