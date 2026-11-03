@@ -510,4 +510,4 @@ export function validateProject(p, limits = {}) {
 /* ------------------------------------------------------------------ */
 
 export const fmt$ = (v, d = 0) => (v === null || v === undefined || !Number.isFinite(v) ? 'Not yet calculated' : (v < 0 ? '−$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }));
-export const fmtPct = (v, d = 1) => (v === null || v === undefined || !Number.isFinite(v) ? 'Not yet calculated' : (v * 100).toFixed(d) + '%');
+export const fmtPct = (v, d = 1) => (v === null || v === undefined || !Number.isFinite(v) ? 'Not yet calculated' : (v < 0 && Math.abs(v * 100).toFixed(d) !== (0).toFixed(d) ? '−' : '') + Math.abs(v * 100).toFixed(d) + '%');
