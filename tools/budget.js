@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793723153';
-import * as E from './engine.js?v=1793723153';
-import * as U from './ui.js?v=1793723153';
+import * as S from './store.js?v=1793724017';
+import * as E from './engine.js?v=1793724017';
+import * as U from './ui.js?v=1793724017';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -34,10 +34,11 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
         ${U.field('timeline.buildMonths', 'Construction months', { kind: 'num', min: 0, step: 1 })}
         ${U.field('timeline.saleMonths', 'Marketing & sale months', { kind: 'num', min: 0, step: 1, tip: 'holding' })}
         ${U.field('sale.price', 'Sales price per unit', { hint: 'Used for %-of-sale lines' })}
-        ${U.field('sale.commissionPct', 'Sales commission %', { kind: 'pct' })}
-        ${U.field('sale.sellerClosingPct', 'Seller closing cost %', { kind: 'pct' })}
+        ${U.field('sale.commissionPct', 'Sales commission %', { kind: 'pct', hint: 'Brokerage, or all selling costs combined' })}
+        ${U.field('sale.sellerClosingPct', 'Seller closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
       </div>
       ${p.sqftNote ? `<p class="src">${esc(p.sqftNote)}</p>` : ''}
+      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; the casebook P&amp;L rounds it to $13,000). Seller closing cost is 0% so it is not counted twice.</p>` : ''}
       ${p.sale.priceNote ? `<p class="src">${esc(p.sale.priceNote)}</p>` : ''}
     </div>
     <div class="card inputs"><h3><span class="tag in">Inputs</span> Revised budget: model a cost increase</h3>
