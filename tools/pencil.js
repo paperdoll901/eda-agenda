@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793724408';
-import * as E from './engine.js?v=1793724408';
-import * as U from './ui.js?v=1793724408';
+import * as S from './store.js?v=1793725294';
+import * as E from './engine.js?v=1793725294';
+import * as U from './ui.js?v=1793725294';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -35,10 +35,10 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
         ${U.field('timeline.saleMonths', 'Marketing & sale months', { kind: 'num', min: 0, step: 1 })}
         ${U.field('sale.price', 'Base sales price per unit')}
         ${U.field('sale.commissionPct', 'Sales commission %', { kind: 'pct', hint: 'Brokerage, or all selling costs combined' })}
-        ${U.field('sale.sellerClosingPct', 'Seller closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
+        ${U.field('sale.sellerClosingPct', 'Seller paid closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
         ${U.field('sale.targetMarginPct', 'Minimum target profit margin', { kind: 'pct', tip: 'margin' })}
       </div>
-      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; the casebook P&amp;L rounds it to $13,000). Seller closing cost is 0% so it is not counted twice.</p>` : ''}
+      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller paid closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; the casebook P&amp;L rounds it to $13,000). Seller paid closing cost is 0% so it is not counted twice. Enter a % there only to test closing costs beyond the casebook's 6%.</p>` : ''}
       <div class="fields" style="margin-top:10px">
         ${U.field('budget.costIncreasePct', 'Hard-cost increase (what-if)', { kind: 'pct' })}
         ${U.field('finance.ratePct', 'Construction loan rate', { kind: 'pct' })}

@@ -50,7 +50,7 @@ export function templateItems() {
     L('H', 'Developer fee', { isDeveloperFee: true }),
     L('H', 'Marketing expenses'),
     L('H', 'Sales commissions', { basis: 'linked', link: 'commission', atClosing: true }),
-    L('H', 'Seller closing costs', { basis: 'linked', link: 'sellerClosing', atClosing: true }),
+    L('H', 'Seller paid closing costs', { basis: 'linked', link: 'sellerClosing', atClosing: true }),
     L('H', 'Other disposition expenses', { atClosing: true }),
   ];
 }
@@ -138,7 +138,8 @@ export function josephPlace() {
       L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
       // H. Developer fee & disposition
       L('H', 'Developer fee & program costs', { amount: 650, isDeveloperFee: true, note: X('LD.06 Development Cost') }),
-      L('H', 'Selling costs: brokerage + seller closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook: 6% of the projected sale price for combined disposition costs. Not in Exhibit D.' }),
+      L('H', 'Selling costs: brokerage + seller paid closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook: 6% of the projected sale price for combined disposition costs. Not in Exhibit D.' }),
+      L('H', 'Seller paid closing costs (only if beyond the 6%)', { basis: 'linked', link: 'sellerClosing', atClosing: true, note: 'Set by the seller paid closing cost %. The casebook\'s 6% already includes typical seller paid closing costs, so this is 0% unless you are testing more.' }),
     ],
   };
   p.sale = { price: 215000, commissionPct: 6, sellerClosingPct: 0, targetMarginPct: 10, priceNote: 'Working projected sale price, rounded from the $213,958 CMA estimate.' };
@@ -200,6 +201,13 @@ export function state() {
   memory = read() || { projects: {}, activeId: 'joseph-place', activity: null };
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
+  Object.values(memory.projects).forEach((q) => {
+    const items = q.budget && q.budget.items;
+    if (!items || items.some((i) => i.basis === 'linked' && i.link === 'sellerClosing')) return;
+    const at = items.findIndex((i) => i.basis === 'linked' && i.link === 'commission');
+    const line = L('H', q.kind === 'case' ? 'Seller paid closing costs (only if beyond the 6%)' : 'Seller paid closing costs', { basis: 'linked', link: 'sellerClosing', atClosing: true, note: q.kind === 'case' ? 'Set by the seller paid closing cost %. The casebook\'s 6% already includes typical seller paid closing costs, so this is 0% unless you are testing more.' : '' });
+    items.splice(at >= 0 ? at + 1 : items.length, 0, line);
+  });
   if (!memory.projects[memory.activeId]) memory.activeId = 'joseph-place';
   return memory;
 }

@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793724408';
-import * as E from './engine.js?v=1793724408';
+import * as S from './store.js?v=1793725294';
+import * as E from './engine.js?v=1793725294';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -50,7 +50,7 @@ export const GLOSSARY = {
   appraisalGap: ['Appraisal Gap', 'The difference when the appraised value comes in below the contract price. The lender lends on the lower value, so someone must cover the difference.'],
   dpa: ['Down Payment Assistance', 'Help for the buyer, such as a grant or forgivable loan, applied to the buyer\'s down payment or closing costs. It helps the buyer close. It does not pay the developer\'s construction costs.'],
   incentive: ['Development Incentive', 'Money or value provided to the project or developer (for example, a CRA incentive). It is different from homebuyer assistance and is not counted as committed until it is approved.'],
-  netsales: ['Net Sales Revenue', 'Gross sales revenue minus the selling costs paid at closing (commissions, seller closing costs, other disposition costs).'],
+  netsales: ['Net Sales Revenue', 'Gross sales revenue minus the selling costs paid at closing (commissions, seller paid closing costs, other disposition costs).'],
   interest: ['Construction Interest', 'Interest owed on the construction loan while the home is built and marketed. On a draw loan it is charged on the amount drawn so far; some loans charge interest on the full amount from closing.'],
   holding: ['Holding Costs', 'Costs of owning the property while it is built and sold: interest, taxes, insurance, utilities and security. Every extra month adds to them.'],
   sources: ['Sources & Uses', 'Uses are what the money pays for. Sources are where the money comes from. A complete financing plan has committed sources equal to uses.'],

@@ -143,6 +143,8 @@ export function grossSales(p) {
  */
 export function budgetTotals(p, opts = {}) {
   const items = (p.budget?.items || []).map((it) => ({ ...it }));
+  // a seller paid closing % must always reach the budget, even if the project has no line for it
+  if (pct(p.sale?.sellerClosingPct) > 0 && !items.some((i) => i.basis === 'linked' && i.link === 'sellerClosing')) items.push({ id: 'auto-seller-closing', cat: 'H', name: 'Seller paid closing costs', basis: 'linked', link: 'sellerClosing', atClosing: true, note: 'Added from the seller paid closing cost %' });
   const inc = pct(opts.costIncreasePct ?? p.budget?.costIncreasePct ?? 0);
   const months = totalMonths(p);
   const gross = grossSales(p);
