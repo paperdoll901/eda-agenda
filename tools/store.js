@@ -91,7 +91,6 @@ export function josephPlace() {
   p.developer = 'Gabriel D. Franceschi, Ferrybrook Holdings, Inc. (EDA 2025 alumnus)';
   p.units = 1;
   p.sqft = 1500;
-  p.sqftNote = 'Exhibit D uses about 1,500 heated sq. ft. Preliminary materials describe about 1,500 heated sq. ft.; a later CMA uses 1,403 sq. ft. The casebook says these must be reconciled before final underwriting.';
   p.timeline = { buildMonths: 3, saleMonths: 9 };
   const X = (ref) => `Exhibit D ${ref}`;
   p.budget = {
@@ -202,6 +201,7 @@ export function state() {
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   Object.values(memory.projects).forEach((q) => {
+    if (q.kind === 'case' && /reconciled before final underwriting/.test(q.sqftNote || '')) delete q.sqftNote;
     (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /^Not included in Gabe/.test(x.note || '')) x.note = x.note.replace(/^Not included in Gabe's budget \(Exhibit D\)\./, 'A possible CRA Essential Housing incentive.'); });
     const items = q.budget && q.budget.items;
     if (!items || items.some((i) => i.basis === 'linked' && i.link === 'sellerClosing')) return;
