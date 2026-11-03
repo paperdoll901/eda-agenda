@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793726123';
-import * as E from './engine.js?v=1793726123';
-import * as U from './ui.js?v=1793726123';
+import * as S from './store.js?v=1793727216';
+import * as E from './engine.js?v=1793727216';
+import * as U from './ui.js?v=1793727216';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -38,7 +38,7 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
         ${U.field('sale.sellerClosingPct', 'Seller paid closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
         ${U.field('sale.targetMarginPct', 'Minimum target profit margin', { kind: 'pct', tip: 'margin' })}
       </div>
-      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller paid closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; the casebook P&amp;L rounds it to $13,000). Seller paid closing cost is 0% so it is not counted twice. Enter a % there only to test closing costs beyond the casebook's 6%.</p>` : ''}
+      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller paid closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; about $13,000 in the casebook). Seller paid closing cost is 0% so it is not counted twice. Enter a % there only to test closing costs beyond the casebook's 6%.</p>` : ''}
       <div class="fields" style="margin-top:10px">
         ${U.field('budget.costIncreasePct', 'Hard-cost increase (what-if)', { kind: 'pct' })}
         ${U.field('finance.ratePct', 'Construction loan rate', { kind: 'pct' })}
@@ -59,7 +59,7 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
   <div class="card results"><h3><span class="tag out">Results</span> Margin sensitivity</h3><div id="msens" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
 ${U.learnTry(2, 'Joseph Place pencil test', `<ol>
-<li>With Joseph Place loaded, read the base case at the <b>$215,000</b> working sale price. Compare the result to the casebook's <b>$26,000 preliminary developer return</b>. (The casebook rounds interest to $12,000 and selling costs to $13,000.)</li>
+<li>With Joseph Place loaded, read the base case at the <b>$215,000</b> working sale price. Compare the result to the casebook's <b>$26,000 preliminary developer return</b>. (The casebook shows rounded figures; the Lab shows exact ones.)</li>
 <li>In the comparison table, Scenario A is <b>$190,000</b> and Scenario B is <b>$180,000</b>. At which price does the project stop meeting a 10% target margin? Does either price lose money?</li>
 <li>Add a <b>10% hard-cost increase</b> to Scenario A. What happens to profit and the break-even price?</li>
 <li>Add a <b>3-month delay</b> to Scenario B. How much does each extra month cost in interest?</li>

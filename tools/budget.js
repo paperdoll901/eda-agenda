@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793726123';
-import * as E from './engine.js?v=1793726123';
-import * as U from './ui.js?v=1793726123';
+import * as S from './store.js?v=1793727216';
+import * as E from './engine.js?v=1793727216';
+import * as U from './ui.js?v=1793727216';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -38,7 +38,7 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
         ${U.field('sale.sellerClosingPct', 'Seller paid closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
       </div>
       ${p.sqftNote ? `<p class="src">${esc(p.sqftNote)}</p>` : ''}
-      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller paid closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; the casebook P&amp;L rounds it to $13,000). Seller paid closing cost is 0% so it is not counted twice. Enter a % there only to test closing costs beyond the casebook's 6%.</p>` : ''}
+      ${p.budget.exhibitTotal && E.num(p.sale.sellerClosingPct) === 0 ? `<p class="src">Casebook: one combined ${E.num(p.sale.commissionPct)}% of the sale price covers brokerage <i>and</i> seller paid closing costs (${fmt$(E.num(p.sale.price) * E.num(p.sale.commissionPct) / 100)} at ${fmt$(E.num(p.sale.price))}; about $13,000 in the casebook). Seller paid closing cost is 0% so it is not counted twice. Enter a % there only to test closing costs beyond the casebook's 6%.</p>` : ''}
       ${p.sale.priceNote ? `<p class="src">${esc(p.sale.priceNote)}</p>` : ''}
     </div>
     <div class="card inputs"><h3><span class="tag in">Inputs</span> Revised budget: model a cost increase</h3>
@@ -58,7 +58,7 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
 <div class="card results"><h3><span class="tag out">Results</span> Baseline vs. revised budget</h3><div id="cmp" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.learnTry(1, 'Joseph Place development budget', `<p>The Joseph Place budget is <b>Exhibit D</b>, Ferrybrook Holdings' construction budget, with every line placed in a Learning Lab category. Each line shows its Exhibit D reference.</p><ol>
 <li>Open each category. Notice that the builder's "General Project Requirements" (Exhibit D section 1) is split across <b>predevelopment</b> (design review, permits), <b>sitework</b> (utility connection fees), <b>soft costs</b> (insurance, project management) and <b>holding costs</b> (job security). Why does a developer separate them?</li>
-<li>Exhibit D totals about <b>$161,900</b>. The casebook rounds it to $162,000. Interest (~$11,680), loan fees ($2,000) and selling costs (6%) are <i>not</i> in Exhibit D. What is the full Total Development Cost?</li>
+<li>Exhibit D totals about <b>$162,000</b>. Interest (~$11,680), loan fees ($2,000) and selling costs (6%) are <i>not</i> in Exhibit D. What is the full Total Development Cost?</li>
 <li>Exhibit D leaves out two costs the casebook says Gabe must confirm: acquisition closing costs (title, legal) and holding costs during the 9-month sale period (taxes, insurance, utilities). Add them: in <b>Land Acquisition</b> click <b>+ Add a line</b> and enter an estimate; in <b>Financing &amp; Holding</b> add a line, choose <b>Per month × project months</b>, and enter a monthly estimate. How much do they reduce profit in the Pencil Test?</li>
 <li>The $5,000 builder contingency is about 3.8% of hard costs. Is that enough? Enter a 10% hard-cost increase in the revised budget and compare.</li>
 <li>Exhibit D reports $107 per sq. ft. for construction. The Lab shows hard costs per sq. ft. lower, and total cost per sq. ft. higher. Why are they different?</li></ol>`)}
@@ -153,7 +153,7 @@ function update() {
       <tr><td>Includes developer fee</td><td class="n">${fmt$(b.developerFee)}</td></tr>
     </tbody></table>
     ${unitemized > 0 ? U.status('warn', `${fmt$(unitemized)} of the budget is not yet itemized. Assign it to categories so missing costs can be found.`) : ''}
-    ${p.budget.exhibitTotal ? (() => { const isD = (i) => (i.note || '').startsWith('Exhibit D'); const ex = b.items.filter(isD).reduce((t, i) => t + (i.value || 0), 0); const out = b.items.filter((i) => !isD(i) && (i.value || 0) > 0); const ok = Math.abs(ex + out.reduce((t, i) => t + i.value, 0) - b.tdc) < 1; return `<div class="status ${ok ? 'good' : 'warn'} recon" role="status"><div style="flex:1;min-width:0"><b>How this budget ties to the case</b><table class="tbl" style="margin:8px 0 4px"><tbody><tr><td>Exhibit D construction budget (line items)</td><td class="n">${fmt$(ex)}</td></tr>${out.map((i) => `<tr><td>+ ${esc(i.name)} ${(i.note || '').startsWith('Casebook') ? '<span class="note">(casebook)</span>' : ''}</td><td class="n">${fmt$(i.value)}</td></tr>`).join('')}<tr class="tot"><td>= Total Development Cost</td><td class="n">${fmt$(b.tdc)}</td></tr></tbody></table>${ok ? '' : 'Some lines were added or changed, so this no longer ties to the case. Reset to Joseph Place to compare.'}<div class="fac-only" style="display:none">Facilitator note: Exhibit D prints ${fmt$(p.budget.exhibitTotal)} because its own subtotals round up by a few dollars; the casebook rounds the same budget to $162,000. The Lab uses the line items as written.</div></div></div>`; })() : ''}
+    ${p.budget.exhibitTotal ? (() => { const isD = (i) => (i.note || '').startsWith('Exhibit D'); const ex = b.items.filter(isD).reduce((t, i) => t + (i.value || 0), 0); const out = b.items.filter((i) => !isD(i) && (i.value || 0) > 0); const ok = Math.abs(ex + out.reduce((t, i) => t + i.value, 0) - b.tdc) < 1; return `<div class="status info recon" role="status"><div style="flex:1;min-width:0"><b>How the Total Development Cost is built</b><table class="tbl" style="margin:8px 0 4px"><tbody><tr><td>Exhibit D construction budget (line items)</td><td class="n">${fmt$(ex)}</td></tr>${out.map((i) => `<tr><td>+ ${esc(i.name)} ${(i.note || '').startsWith('Casebook') ? '<span class="note">(casebook)</span>' : ''}</td><td class="n">${fmt$(i.value)}</td></tr>`).join('')}<tr class="tot"><td>= Total Development Cost</td><td class="n">${fmt$(b.tdc)}</td></tr></tbody></table><div class="fac-only" style="display:none">Facilitator note: Exhibit D prints ${fmt$(p.budget.exhibitTotal)} because its own subtotals round up by a few dollars; the casebook rounds the same budget to $162,000. The Lab uses the line items as written.</div></div></div>`; })() : ''}
     ${(() => { const z = b.items.filter((i) => i.basis !== 'linked' && !(i.value > 0)); return z.length ? U.status('warn', `<b>${z.length} line${z.length > 1 ? 's are' : ' is'} $0:</b> ${z.map((i) => esc(i.name)).join('; ')}. Estimate each, or confirm it is truly zero.`) : ''; })()}
     ${zero.length ? U.status('warn', `These categories are $0: <b>${zero.join(', ')}</b>. Confirm each is truly zero or already included elsewhere.`) : ''}
     ${issues.map((v) => U.status(v.level === 'error' ? 'bad' : 'warn', esc(v.text))).join('')}

@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793726123';
-import * as E from './engine.js?v=1793726123';
-import * as U from './ui.js?v=1793726123';
+import * as S from './store.js?v=1793727216';
+import * as E from './engine.js?v=1793727216';
+import * as U from './ui.js?v=1793727216';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -60,7 +60,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 <div class="card results"><h3><span class="tag out">Results</span> Construction draw & interest schedule</h3><div id="drawEdit"></div><div id="draws"></div></div>
 <div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
-<li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D, rounded). The lender's 90% loan-to-cost cap sets the loan size.</li>
+<li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D). The lender's 90% loan-to-cost cap sets the loan size.</li>
 <li>Look at the financing gap. Interest and loan fees (about $13,680) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>

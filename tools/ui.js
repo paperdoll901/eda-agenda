@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793726123';
-import * as E from './engine.js?v=1793726123';
+import * as S from './store.js?v=1793727216';
+import * as E from './engine.js?v=1793727216';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -456,11 +456,11 @@ export function gapWhy(p, c) {
   const round = c.committed - exD;
   if (Math.abs(exD + extraTot - c.uses) > 1 || Math.abs(extraTot - round - c.gapCommitted) > 1) return null;
   const f = (v) => '$' + Math.round(v).toLocaleString('en-US');
-  const rows = `<tr><td>Committed sources (loan + developer equity)</td><td class="n">${f(c.committed)}</td></tr>
-    <tr><td>Exhibit D construction budget they were sized to cover</td><td class="n">${f(exD)}</td></tr>
-    <tr><td>Left over because the casebook rounds the budget to ${f(c.committed)}</td><td class="n">${f(round)}</td></tr>
-    ${extra.map((i) => `<tr><td>${String(i.name).replace(/</g, '&lt;')} <span class="note">(not in the $${Math.round(c.committed / 1000)}k budget)</span></td><td class="n">${f(i.value)}</td></tr>`).join('')}
-    <tr class="tot"><td>Gap = financing costs − rounding</td><td class="n">${f(c.gapCommitted)}</td></tr>`;
-  const text = `The casebook sizes the loan and equity (${f(c.committed)}) to the construction budget only. The gap is the cost of the money itself: ${extra.map((i) => `${String(i.name).toLowerCase()} ${f(i.value)}`).join(' and ')}, which no committed source pays for yet (less the ${f(round)} the casebook rounds up).`;
+  const rows = `<tr><td>Construction budget (Exhibit D)</td><td class="n">${f(exD)}</td></tr>
+    ${extra.map((i) => `<tr><td>+ ${String(i.name).replace(/</g, '&lt;')}</td><td class="n">${f(i.value)}</td></tr>`).join('')}
+    <tr class="tot"><td>= Total uses before the sale</td><td class="n">${f(c.uses)}</td></tr>
+    <tr><td>− Committed sources (loan + developer equity)</td><td class="n">${f(c.committed)}</td></tr>
+    <tr class="tot"><td>= Financing gap</td><td class="n">${f(c.gapCommitted)}</td></tr>`;
+  const text = `The loan and equity (${f(c.committed)}) were sized to the construction budget. The cost of the money itself, ${extra.map((i) => `${String(i.name).toLowerCase()} ${f(i.value)}`).join(' and ')}, is not paid for by any committed source yet.`;
   return { rows, text };
 }

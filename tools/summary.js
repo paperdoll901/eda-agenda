@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793726123';
-import * as U from './ui.js?v=1793726123';
+import * as E from './engine.js?v=1793727216';
+import * as U from './ui.js?v=1793727216';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -55,12 +55,12 @@ ${sec(5, 'Capital Stack', `<div style="max-width:700px">${U.stackChart(c.uses, c
   <table class="tbl"><tbody>${tr('Construction loan', `${fmt$(c.loan)} at ${E.num(p.finance.ratePct)}%`)}${tr('Loan-to-cost', fmtPct(c.ltc))}${tr('Loan-to-value', c.ltv === null ? 'Not yet calculated (no appraised value)' : fmtPct(c.ltv))}${tr('Construction interest', `${fmt$(c.interest.total)} (${{ full: 'full balance from closing', draws: 'draw-based', average: 'simplified average balance' }[c.interest.method]})`)}${tr('Developer equity required', fmt$(c.requiredEquity))}${tr('Developer equity committed', fmt$(c.devEquityCommitted))}</tbody></table>`)}
 ${sec(6, 'Financing Gap', (() => {
   const gap = c.gapCommitted; const pend = c.proposed + c.conditional; const off = c.offIncentives || [];
-  const rows = tr('Total uses (construction period)', fmt$(c.uses)) + tr('Less committed sources', '−' + fmt$(c.committed)) + tr(gap > 0.5 ? 'Gap with committed sources only' : 'Surplus with committed sources', fmt$(Math.abs(gap)), 'tot')
+  const why = U.gapWhy(p, c);
+  const rows = (why ? '' : tr('Total uses (construction period)', fmt$(c.uses)) + tr('Less committed sources', '−' + fmt$(c.committed))) + tr(gap > 0.5 ? 'Gap with committed sources only' : 'Surplus with committed sources', fmt$(Math.abs(gap)), 'tot')
     + (pend > 0.5 ? tr('Less pending sources included in this scenario', '−' + fmt$(pend)) : '')
     + off.map((x) => tr(`Less ${esc(x.name)} <span class="note">(${esc(x.status)}, not yet counted)</span>`, '−' + fmt$(x.amount))).join('')
     + (pend > 0.5 || off.length ? tr(c.gapIfIncentives > 0.5 ? 'Gap if everything pending is awarded' : 'Surplus if everything pending is awarded', fmt$(Math.abs(c.gapIfIncentives)), 'tot') : '');
   const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
-  const why = U.gapWhy(p, c);
   const eqNow = c.devEquityCommitted;
   const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
     : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can cover it with ${fmt$(gap)} more equity or an interest reserve in the loan. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded, it covers the gap with ${fmt$(-c.gapIfIncentives)} to spare, so Gabe's cash could drop from ${fmt$(eqNow)} to ${fmt$(c.equityIfIncentives)}.`

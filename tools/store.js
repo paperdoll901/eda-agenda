@@ -163,7 +163,7 @@ export function josephPlace() {
   };
   p.sources = [
     { id: 'jp-eq', type: 'developerEquity', name: 'Developer cash equity (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'Casebook: $162,000 budget = $146,000 loan + $16,000 developer equity.' },
-    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'Not included in Gabe\'s budget (Exhibit D). Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
+    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
   p.buyer = {
     ...blankBuyer(),
@@ -202,6 +202,7 @@ export function state() {
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   Object.values(memory.projects).forEach((q) => {
+    (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /^Not included in Gabe/.test(x.note || '')) x.note = x.note.replace(/^Not included in Gabe's budget \(Exhibit D\)\./, 'A possible CRA Essential Housing incentive.'); });
     const items = q.budget && q.budget.items;
     if (!items || items.some((i) => i.basis === 'linked' && i.link === 'sellerClosing')) return;
     const at = items.findIndex((i) => i.basis === 'linked' && i.link === 'commission');
