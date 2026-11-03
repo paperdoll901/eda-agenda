@@ -513,3 +513,60 @@ export function validateProject(p, limits = {}) {
 
 export const fmt$ = (v, d = 0) => (v === null || v === undefined || !Number.isFinite(v) ? 'Not yet calculated' : (v < 0 ? '−$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }));
 export const fmtPct = (v, d = 1) => (v === null || v === undefined || !Number.isFinite(v) ? 'Not yet calculated' : (v < 0 && Math.abs(v * 100).toFixed(d) !== (0).toFixed(d) ? '−' : '') + Math.abs(v * 100).toFixed(d) + '%');
+
+/* ------------------------------------------------------------------ */
+/* Market comps (sale price support)                                    */
+/* ------------------------------------------------------------------ */
+/**
+ * Each comp's price per sq. ft. (rounded to whole dollars, as a CMA reports it)
+ * is applied to the subject's living area, then bed / bath / age / other
+ * adjustments are added. Active and pending list prices can be discounted by a
+ * list-to-sale ratio. The supported value is the average of the indications.
+ */
+export const COMP_STATUS = { closed: 'Closed sale', pending: 'Pending', active: 'Active listing' };
+export function marketComps(p) {
+  const m = p.market || {};
+  const subj = num(m.subjectSqft) || num(p.sqft);
+  const lts = isNum(m.listToSalePct) && num(m.listToSalePct) > 0 ? pct(m.listToSalePct) : 1;
+  const diff = (a, b) => (isNum(a) && isNum(b) ? num(a) - num(b) : 0);
+  const comps = (m.comps || []).map((c) => {
+    const price = num(c.price), sqft = num(c.sqft);
+    const valid = price > 0 && sqft > 0;
+    const base = c.status === 'closed' ? price : price * lts;
+    const ppsf = valid ? Math.round(base / sqft) : null;
+    const rawPpsf = valid ? Math.round(price / sqft) : null;
+    const bedAdj = diff(m.subjectBeds, c.beds) * num(m.adjPerBed);
+    const bathAdj = diff(m.subjectBaths, c.baths) * num(m.adjPerBath);
+    const yearAdj = diff(m.subjectYear, c.year) * num(m.adjPerYear);
+    const otherAdj = num(c.otherAdj);
+    const adjTotal = bedAdj + bathAdj + yearAdj + otherAdj;
+    const sizeValue = valid && subj > 0 ? ppsf * subj : null;
+    const indicated = sizeValue === null ? null : sizeValue + adjTotal;
+    const used = valid && subj > 0 && c.include !== false;
+    return { ...c, price, sqft, valid, used, base, ppsf, rawPpsf, bedAdj, bathAdj, yearAdj, otherAdj, adjTotal, sizeValue, indicated };
+  });
+  const used = comps.filter((c) => c.used);
+  const vals = used.map((c) => c.indicated).sort((a, b) => a - b);
+  const avg = (a) => (a.length ? a.reduce((t, v) => t + v, 0) / a.length : null);
+  const value = avg(vals);
+  const median = vals.length ? (vals.length % 2 ? vals[(vals.length - 1) / 2] : (vals[vals.length / 2 - 1] + vals[vals.length / 2]) / 2) : null;
+  const closed = used.filter((c) => c.status === 'closed');
+  const closedValue = avg(closed.map((c) => c.indicated));
+  const avgPpsf = avg(used.map((c) => c.ppsf));
+  const low = vals.length ? vals[0] : null, high = vals.length ? vals[vals.length - 1] : null;
+  const price = num(p.sale?.price);
+  let status;
+  if (!vals.length || subj <= 0) status = 'incomplete';
+  else if (!(price > 0)) status = 'noPrice';
+  else if (price > high + 0.5) status = 'aboveRange';
+  else if (closedValue !== null && price > closedValue * 1.02) status = 'aboveClosed';
+  else if (price > value * 1.02) status = 'aboveAverage';
+  else status = 'supported';
+  return {
+    subjectSqft: subj, listToSale: lts, comps, used: used.length, closedCount: closed.length,
+    value, median, low, high, closedValue, avgPpsf, price,
+    gapToValue: value === null ? null : price - value,
+    gapToClosed: closedValue === null ? null : price - closedValue,
+    areaMedian: isNum(m.areaMedian) ? num(m.areaMedian) : null, status,
+  };
+}

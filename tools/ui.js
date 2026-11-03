@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793727422';
-import * as E from './engine.js?v=1793727422';
+import * as S from './store.js?v=1793728302';
+import * as E from './engine.js?v=1793728302';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -15,6 +15,7 @@ export const LAB = 'Development Learning Lab™';
 
 export const PAGES = [
   { key: 'home', href: './', label: 'Lab Home' },
+  { key: 'comps', href: 'comps.html', label: 'Market Comps' },
   { key: 'budget', href: 'budget.html', label: 'Budget Builder', n: 1 },
   { key: 'pencil', href: 'pencil.html', label: 'Pencil Test', n: 2 },
   { key: 'capital', href: 'capital.html', label: 'Capital Stack', n: 3 },
@@ -22,7 +23,7 @@ export const PAGES = [
   { key: 'summary', href: 'summary.html', label: 'Feasibility Summary' },
 ];
 
-export const GUIDE_ANCHOR = { home: '#start', budget: '#lab1', pencil: '#lab2', capital: '#lab3', homebuyer: '#lab4', summary: '#lab5' };
+export const GUIDE_ANCHOR = { home: '#start', comps: '#labM', budget: '#lab1', pencil: '#lab2', capital: '#lab3', homebuyer: '#lab4', summary: '#lab5' };
 
 export const ACTIVITIES = [
   null,
@@ -30,9 +31,13 @@ export const ACTIVITIES = [
   { title: 'Exercise 2: Pencil Test', page: 'pencil.html' },
   { title: 'Exercise 3: Capital Stack', page: 'capital.html' },
   { title: 'Exercise 4: Homebuyer Affordability', page: 'homebuyer.html' },
+  { title: 'Market Comps: price support', page: 'comps.html' },
 ];
 
 export const GLOSSARY = {
+  comps: ['Comparable Sales (Comps)', 'Recent sales and listings of similar homes nearby. Closed sales show what buyers actually paid; active and pending list prices show what sellers are asking.'],
+  ppsf: ['Price per Square Foot', 'A comp\'s price divided by its living area. Applied to the subject\'s living area, it turns each comp into a value estimate for the subject home.'],
+  adjust: ['Adjustments', 'Dollar changes that make a comp more like the subject: for example, subtracting value for an extra bedroom the subject does not have.'],
   tdc: ['Total Development Cost (TDC)', 'Every cost to deliver and sell the project: land, predevelopment, sitework, hard and soft costs, financing and holding costs, contingency, developer fee and disposition (selling) costs. Loan principal is not a cost.'],
   hard: ['Hard Costs', 'The physical construction of the home: foundation, framing, systems, finishes and the general contractor\'s overhead and profit.'],
   soft: ['Soft Costs', 'Costs that are not physical construction: design, engineering, permits, insurance, legal, accounting and project management.'],

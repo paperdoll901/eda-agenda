@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793727422';
-import * as U from './ui.js?v=1793727422';
+import * as E from './engine.js?v=1793728302';
+import * as U from './ui.js?v=1793728302';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -9,6 +9,7 @@ const r = E.pencilTest(p);
 const c = E.capitalStack(p);
 const price = p.buyer.linkPrice ? E.num(p.sale.price) : E.num(p.buyer.price);
 const h = E.affordabilitySummary(p.buyer, { price });
+const mk = E.marketComps(p);
 const hNo = E.affordabilitySummary(p.buyer, { price, withAssistance: false });
 const sc = p.pencilScenarios || {};
 const scn = (s) => ({ salePrice: E.isNum(s.salePrice) ? E.num(s.salePrice) : undefined, costIncreasePct: E.num(p.budget.costIncreasePct) + E.num(s.costIncreasePct), delayMonths: E.num(s.delayMonths), rateDeltaPct: E.num(s.rateDeltaPct), includeIncentive: s.includeIncentive ? true : E.includedIncentives(p) > 0 });
@@ -30,6 +31,8 @@ if (E.num(p.buyer.income) > 0 && !(h.meetsFront && h.meetsBack)) risks.push('The
 if (h.cashGap > 0.5) risks.push(`The illustrative buyer is short ${fmt$(h.cashGap)} of cash to close.`);
 if (p.buyer.includeAssistance && h.assistanceApplied > 0 && p.buyer.assistanceStatus !== 'approved') risks.push('Homebuyer assistance is assumed but not approved.');
 if (p.sqftNote) risks.push(p.sqftNote);
+if (mk.status === 'aboveRange') risks.push(`The sales price is above every comparable sale (highest ${fmt$(mk.high)}).`);
+if (mk.status === 'aboveClosed') risks.push(`The sales price is ${fmt$(mk.gapToClosed)} above what closed sales support (${fmt$(mk.closedValue)}). Possible appraisal gap.`);
 E.validateProject(p).forEach((v) => risks.push(v.text));
 
 const sec = (n, t, html) => `<div class="card" style="break-inside:avoid"><h3><span class="k" style="background:var(--navy);color:#fff;border-radius:6px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:13px">${n}</span> ${t}</h3>${html}</div>`;
@@ -72,6 +75,9 @@ ${sec(7, 'Homebuyer Affordability', `<table class="tbl"><thead><tr><th><span cla
   ${[['Purchase price', (x) => fmt$(x.price)], ['Down payment', (x) => fmt$(x.down)], ['Loan amount', (x) => fmt$(x.loan)], ['Monthly housing payment', (x) => fmt$(x.housing)], ['Front-end DTI', (x) => fmtPct(x.frontDti)], ['Back-end DTI', (x) => fmtPct(x.backDti)], ['Cash to close', (x) => fmt$(x.cashToClose)], ['Cash shortfall', (x) => fmt$(x.cashGap)], ['Purchasing power', (x) => fmt$(x.maxPrice)], ['Payment affordability gap', (x) => (x.paymentGap === null ? 'Not yet calculated' : fmt$(x.paymentGap))]].map(([l, f]) => `<tr><td>${l}</td><td class="n">${f(hNo)}</td><td class="n">${f(h)}</td></tr>`).join('')}
   </tbody></table><p class="note">Illustrative buyer: ${fmt$(E.num(p.buyer.income))} income, ${fmt$(E.num(p.buyer.monthlyDebt))}/mo debts, ${E.num(p.buyer.downPct)}% down at ${E.num(p.buyer.ratePct)}%, ${E.MORTGAGE_PRODUCTS[p.buyer.product]?.name || ''} assumptions. Assistance status: ${esc(p.buyer.assistanceStatus)}. Not a preapproval.</p>`)}
 ${sec(8, 'Financial Risks and Outstanding Assumptions', risks.length ? `<ul>${risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p>No outstanding items were flagged. Confirm all figures with your lender and professional team.</p>')}
+${mk.value !== null ? sec(9, 'Market Support for the Sales Price', `<table class="tbl"><thead><tr><th>Comp</th><th>Status</th><th class="n">Price</th><th class="n">$ / sq. ft.</th><th class="n">Value for subject</th></tr></thead><tbody>${mk.comps.filter((x) => x.used).map((x) => `<tr><td>${esc(x.address || 'Comp')}</td><td>${E.COMP_STATUS[x.status]}</td><td class="n">${fmt$(x.price)}</td><td class="n">${fmt$(x.ppsf)}</td><td class="n">${fmt$(x.indicated)}</td></tr>`).join('')}</tbody></table>
+  <table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${tr('Supported value (average of comps)', fmt$(mk.value), 'tot')}${mk.closedValue !== null ? tr('Closed sales support', fmt$(mk.closedValue)) : ''}${tr('Range of comps', `${fmt$(mk.low)} to ${fmt$(mk.high)}`)}${tr('Sales price used in this summary', fmt$(mk.price))}</tbody></table>
+  <p class="note">Subject living area ${mk.subjectSqft.toLocaleString('en-US')} sq. ft. Each comp's price per sq. ft. is applied to the subject, plus any adjustments. Not an appraisal.</p>`) : ''}
 ${Object.values(p.reflections || {}).some((x) => x && String(x).trim()) ? `<div class="card"><h3>My reflections</h3>${Object.entries(p.reflections).filter(([, v]) => v && String(v).trim()).map(([k, v]) => `<p><b>${esc({ budget: 'Budget', pencil: 'Pencil Test', capital: 'Capital Stack', homebuyer: 'Homebuyer' }[k.split('-')[0]] || k)} Q${+k.split('-')[1] + 1}:</b> ${esc(v)}</p>`).join('')}</div>` : ''}
 <p class="disclaim">Prepared with the ${U.LAB}, ${U.BRAND}, hosted by the <span class="nw">Alliance for Housing Progress</span>. Property taxes, insurance, interest rates, loan terms, mortgage insurance and assistance eligibility require independent verification. Browser-saved projects are not backed up by EDA.</p>`;
 

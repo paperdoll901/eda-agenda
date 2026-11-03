@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793727422';
-import * as E from './engine.js?v=1793727422';
-import * as U from './ui.js?v=1793727422';
+import * as S from './store.js?v=1793728302';
+import * as E from './engine.js?v=1793728302';
+import * as U from './ui.js?v=1793728302';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -33,7 +33,7 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
         ${U.field('sqft', 'Total building sq. ft.', { kind: 'num', min: 0 })}
         ${U.field('timeline.buildMonths', 'Construction months', { kind: 'num', min: 0, step: 1 })}
         ${U.field('timeline.saleMonths', 'Marketing & sale months', { kind: 'num', min: 0, step: 1 })}
-        ${U.field('sale.price', 'Base sales price per unit')}
+        ${U.field('sale.price', 'Base sales price per unit', { hint: '<a href="comps.html">Check it against Market Comps</a>' })}
         ${U.field('sale.commissionPct', 'Sales commission %', { kind: 'pct', hint: 'Brokerage, or all selling costs combined' })}
         ${U.field('sale.sellerClosingPct', 'Seller paid closing cost %', { kind: 'pct', hint: 'Only if not already in the % above' })}
         ${U.field('sale.targetMarginPct', 'Minimum target profit margin', { kind: 'pct', tip: 'margin' })}

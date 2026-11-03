@@ -306,3 +306,16 @@ body.fac .kpi.hero .v{font-size:clamp(24px,min(3.2vw,11cqi),36px)}
 @media (max-width:700px){table.tbl:has(thead th:nth-child(3)){display:block;overflow-x:auto;max-width:100%}}
 .tblwrap{position:relative}.sr-only{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:-1px!important;padding:0!important;border:0!important}
 @media (max-width:700px){table.tbl:has(thead th:nth-child(3)) td:first-child,table.tbl:has(thead th:nth-child(3)) th:first-child{min-width:130px}}
+/* Market Comps */
+.comp{border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:8px;padding:10px 12px;margin:0 0 10px;background:#fff}
+.comp.off{opacity:.6;border-left-color:var(--gray)}
+.comph{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.comph .cn{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800}
+.comph .caddr{flex:1;min-width:0;font-weight:700}
+.comph .cinc{display:flex;align-items:center;gap:6px;font-weight:600;white-space:nowrap}
+.comph .cinc input{width:20px;height:20px}
+.fields.cf{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.fields.cf .f.wide{grid-column:1/-1}
+.cout{margin:8px 0 0;font-size:15px;color:var(--ink);background:var(--tint,#f5f7fb);border-radius:6px;padding:8px 10px}
+.usebtns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.comph .caddr{font-size:16px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px}

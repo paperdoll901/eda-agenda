@@ -272,3 +272,34 @@ test('revised estimates compare against baseline', () => {
   const c = E.budgetComparison(p);
   close(c.change, 24500);
 });
+
+test('market comps reproduce the Joseph Place CMA', () => {
+  const p = josephPlace();
+  const r = E.marketComps(p);
+  assert.equal(Math.round(r.value), 213958);
+  assert.equal(Math.round(r.low), 150121);
+  assert.equal(Math.round(r.high), 258152);
+  assert.equal(Math.round(r.closedValue), 202032);
+  assert.equal(r.status, 'aboveClosed');
+  assert.equal(Math.round(r.gapToClosed), 12968);
+});
+test('market comps: list-to-sale ratio and exclusions', () => {
+  const p = josephPlace();
+  p.market.listToSalePct = 94.1;
+  assert.equal(Math.round(E.marketComps(p).value), 202967);
+  p.market.listToSalePct = 100;
+  p.market.comps[4].include = false;
+  assert.equal(Math.round(E.marketComps(p).value), 205119);
+  p.sale.price = 202000;
+  assert.equal(E.marketComps(p).status, 'supported');
+  p.sale.price = 300000;
+  assert.equal(E.marketComps(p).status, 'aboveRange');
+});
+test('market comps: bed and bath adjustments', () => {
+  const p = josephPlace();
+  p.market.adjPerBed = 5000; p.market.adjPerBath = 4000;
+  const r = E.marketComps(p);
+  assert.equal(r.comps[1].adjTotal, -5000);
+  assert.equal(r.comps[2].adjTotal, -2000);
+  assert.equal(Math.round(r.value), 211624);
+});

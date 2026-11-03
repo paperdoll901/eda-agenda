@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793727422';
-import * as U from './ui.js?v=1793727422';
+import * as E from './engine.js?v=1793728302';
+import * as U from './ui.js?v=1793728302';
 
 const { main, project: p } = U.shell('home', 'Lab Home');
 const { fmt$, fmtPct, esc } = U;
@@ -21,6 +21,7 @@ main.innerHTML = `
   </div>
   <p class="note">Switch projects, reset Joseph Place, or start your own project from the bar at the top. Your work is saved only in this browser.</p>
 </div>
+<a class="card mstep" href="comps.html" style="display:block;margin-top:18px;border-left:6px solid var(--green);text-decoration:none;color:inherit"><span class="no" style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:var(--dg)">Start with the market</span><h3 style="margin:4px 0 6px">Market Comps &amp; Sale Price Support</h3><p style="margin:0 0 6px">Enter comparable sales and listings, adjust them to the subject home, and see what sale price the market supports before you build the budget.</p><span class="go" style="font-weight:700;color:var(--navy)">Open Market Comps →</span></a>
 <h3 style="margin:22px 0 10px">Work through the four tools in order</h3>
 <div class="steps">
   <a class="step" href="budget.html"><span class="no">Tool 1 · Exercise 1</span><h3>Development Budget Builder</h3><p>Assemble the full budget, from land to closing, and find the Total Development Cost and cost per square foot.</p><span class="go">Open the Budget Builder →</span></a>
@@ -33,5 +34,5 @@ main.innerHTML = `
 <p style="margin:0">Budget → Pencil Test → Capital Stack → Homebuyer Affordability. You enter each number once. The budget's total cost feeds the pencil test and the sources & uses; the loan terms set construction interest in the budget; the developer's sales price becomes the buyer's purchase price.</p>
 <ul class="note"><li>Loan principal is a source of funds, never a cost. Loan interest and fees are costs.</li><li>Developer equity is a source of funds, not an extra cost.</li><li>Selling costs are counted once: in the budget, deducted from the sale at closing.</li><li>Development incentives and homebuyer assistance are separate and never interchangeable.</li><li>Nothing proposed or conditional is counted as committed financing.</li></ul></div>
 <h3 style="margin:22px 0 10px">Key terms</h3>
-<div class="gloss">${['tdc', 'hard', 'soft', 'contingency', 'equity', 'stack', 'ltc', 'ltv', 'gap', 'margin', 'roc', 'dti', 'appraisalGap', 'dpa'].map((k) => `<div><b>${esc(U.GLOSSARY[k][0])}</b>${esc(U.GLOSSARY[k][1])}</div>`).join('')}</div>
+<div class="gloss">${['comps', 'ppsf', 'tdc', 'hard', 'soft', 'contingency', 'equity', 'stack', 'ltc', 'ltv', 'gap', 'margin', 'roc', 'dti', 'appraisalGap', 'dpa'].map((k) => `<div><b>${esc(U.GLOSSARY[k][0])}</b>${esc(U.GLOSSARY[k][1])}</div>`).join('')}</div>
 <p class="disclaim">The ${U.LAB} is original instructional material of the ${U.BRAND}. Tools produce estimates from user-entered assumptions. They are not loan approvals, appraisals, underwriting, or homebuyer eligibility decisions.</p>`;

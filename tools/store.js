@@ -55,6 +55,25 @@ export function templateItems() {
   ];
 }
 
+export function blankMarket() {
+  return { subjectSqft: null, subjectBeds: null, subjectBaths: null, subjectYear: null, areaMedian: null, listToSalePct: 100, adjPerBed: 0, adjPerBath: 0, adjPerYear: 0, source: '',
+    comps: [1, 2, 3].map(() => ({ id: newId('c'), address: '', status: 'closed', date: '', price: null, sqft: null, beds: null, baths: null, year: null, otherAdj: 0, note: '', include: true })) };
+}
+export function josephMarket() {
+  const C = (address, status, date, price, sqft, beds, baths, year, note) => ({ id: newId('c'), address, status, date, price, sqft, beds, baths, year, otherAdj: 0, note, include: true });
+  return {
+    subjectSqft: 1403, subjectBeds: 3, subjectBaths: 2, subjectYear: 2026, areaMedian: 167000, listToSalePct: 100, adjPerBed: 0, adjPerBath: 0, adjPerYear: 0,
+    source: 'Exhibit C, Joseph Place CMA (RPR, Nov. 1, 2026): six agent-selected comps. Subject living area 1,403 sq. ft., 3 bed / 2 bath. ZIP 38107 median sold price $167,000; sold-to-list price 94.1%; median 63 days on market.',
+    comps: [
+      C('915 Faxon Ave', 'active', 'Listed 8/6/2026', 234900, 1400, 3, 2, 2026, '0.54 mi. SW; new construction; 87 days on market'),
+      C('1068 Faxon Ave', 'active', 'Listed 7/25/2026', 235900, 1527, 4, 2, 2026, '0.48 mi. S; new construction; 99 days on market'),
+      C('855 N Watkins St', 'closed', 'Closed 8/3/2026', 230000, 1596, 3, 2.5, 2024, '0.74 mi. E; the only closed sale'),
+      C('941 Leon Pl', 'active', 'Listed 9/21/2026', 205000, 1300, 3, 2, 2026, '0.13 mi. W; closest comp; 41 days on market'),
+      C('616 N Claybrook St', 'active', 'Listed 8/5/2026', 289000, 1569, 4, 2.5, 2026, '0.69 mi. SE; proposed construction; 88 days on market'),
+      C('1488 Lyndale Ave', 'pending', 'Pending 8/28/2026', 189000, 1772, 3, 2, 2024, '0.92 mi. E; under contract in 3 days'),
+    ],
+  };
+}
 export function blankProject(name = 'My Project') {
   return {
     id: newId('p'), kind: 'own', name, location: '', type: 'Single-family residential', units: 1, sqft: 0,
@@ -68,6 +87,7 @@ export function blankProject(name = 'My Project') {
     },
     sources: [],
     buyer: blankBuyer(),
+    market: blankMarket(),
     pencilScenarios: { a: { label: 'Scenario A', salePrice: null, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false }, b: { label: 'Scenario B', salePrice: null, costIncreasePct: 10, delayMonths: 2, rateDeltaPct: 0, includeIncentive: false } },
     reflections: {},
     notes: [],
@@ -172,6 +192,7 @@ export function josephPlace() {
     incomeNote: 'ZIP 38107 median household income cited in the casebook, used as an illustrative buyer.',
     monthlyDebt: 300, cashForDown: 4000, cashForClosing: 3000,
   };
+  p.market = josephMarket();
   p.pencilScenarios = {
     a: { label: 'Lower price: $190,000', salePrice: 190000, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false },
     b: { label: 'Lower price: $180,000', salePrice: 180000, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false },
@@ -201,6 +222,7 @@ export function state() {
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   Object.values(memory.projects).forEach((q) => {
+    if (!q.market) q.market = q.kind === 'case' ? josephMarket() : blankMarket();
     if (q.kind === 'case' && /reconciled before final underwriting/.test(q.sqftNote || '')) delete q.sqftNote;
     (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /^Not included in Gabe/.test(x.note || '')) x.note = x.note.replace(/^Not included in Gabe's budget \(Exhibit D\)\./, 'A possible CRA Essential Housing incentive.'); });
     const items = q.budget && q.budget.items;
@@ -234,7 +256,7 @@ export function deleteProject(id) {
 export function importProject(obj) {
   if (!obj || !obj.budget || !obj.sale) throw new Error('This file is not an EDA Learning Lab project file.');
   const base = blankProject(obj.name);
-  const p = { ...base, ...obj, budget: { ...base.budget, ...obj.budget }, sale: { ...base.sale, ...obj.sale }, finance: { ...base.finance, ...obj.finance }, buyer: { ...base.buyer, ...obj.buyer }, timeline: { ...base.timeline, ...obj.timeline } };
+  const p = { ...base, ...obj, budget: { ...base.budget, ...obj.budget }, sale: { ...base.sale, ...obj.sale }, finance: { ...base.finance, ...obj.finance }, buyer: { ...base.buyer, ...obj.buyer }, market: obj.market || base.market, timeline: { ...base.timeline, ...obj.timeline } };
   p.id = newId('p'); p.kind = 'own';
   state().projects[p.id] = p; state().activeId = p.id; persist(); return p;
 }
