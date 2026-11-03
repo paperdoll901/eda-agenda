@@ -158,7 +158,7 @@ export function shell(pageKey, title) {
       </div></details>
     <span class="sp"></span>
     <span class="saved" id="savedMsg" aria-live="polite"></span>
-    ${isUnlocked() ? '<div class="mode" role="group" aria-label="View mode"><button type="button" data-mode="participant">Participant</button><button type="button" data-mode="facilitator">Facilitator</button></div><button class="btn ghost sm" type="button" id="facLock" title="Lock facilitator mode on this device">🔒 Lock</button>' : ''}
+    ${isUnlocked() ? '<div class="mode" role="group" aria-label="View mode"><button type="button" data-mode="participant">Participant</button><button type="button" data-mode="facilitator">Facilitator</button></div><button class="btn ghost sm" type="button" id="facLock" title="Lock facilitator mode on this device">🔒 Lock</button>' : '<button class="btn alt sm" type="button" id="facLogin" title="Facilitators: enter the facilitator password">🔑 Facilitator login</button>'}
   </div></section>
   <section class="activity" aria-live="polite" aria-label="Classroom activity"><div class="box">
     <span>📍 <b>Current classroom activity:</b> <span id="actTitle"></span></span>
@@ -188,6 +188,7 @@ export function shell(pageKey, title) {
   if (qs.has('facilitator') && !isUnlocked()) { unlockFlow().then((ok) => { const q = new URLSearchParams(location.search); q.delete('facilitator'); location.replace(location.pathname + (q.toString() ? '?' + q : '') + location.hash); }); }
   const mode = getMode(); applyMode(mode);
   $$('.mode button[data-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  const fl = $('#facLogin'); if (fl) fl.addEventListener('click', () => unlockFlow().then((ok) => { if (ok) location.reload(); }));
   const lk = $('#facLock'); if (lk) lk.addEventListener('click', () => { if (confirm('Lock facilitator mode on this device? You will need the facilitator password to turn it back on.')) { lockFacilitator(); location.reload(); } });
   const showAct = () => {
     const a = S.state().activity;
