@@ -87,15 +87,35 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePop()
 /* Mode and classroom activity                                          */
 /* ------------------------------------------------------------------ */
 const qs = new URLSearchParams(location.search);
-function getMode() {
-  const m = qs.get('mode');
-  if (m === 'facilitator' || m === 'participant') { try { localStorage.setItem('eda-lab-mode', m); } catch (e) {} return m; }
-  try { return localStorage.getItem('eda-lab-mode') || 'participant'; } catch (e) { return 'participant'; }
+/* Facilitator mode is unlocked per device with a facilitator password.
+   Only a SHA-256 hash is stored here. This keeps participants out of the
+   presentation controls; it is not a security boundary (no data is hidden). */
+const FAC_HASH = '39a6db9e3a3deff21761d6ddc468cec674c0decf57e12c49fe068ac77512ac7e';
+const FAC_KEY = 'eda-lab-fac';
+const isUnlocked = () => { try { return localStorage.getItem(FAC_KEY) === FAC_HASH; } catch (e) { return false; } };
+async function hashPw(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('eda-lab:' + pw));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-function setMode(m) { try { localStorage.setItem('eda-lab-mode', m); } catch (e) {} applyMode(m); }
+async function unlockFlow() {
+  const pw = prompt('Facilitator password:');
+  if (pw === null) return false;
+  if ((await hashPw(pw.trim())) === FAC_HASH) {
+    try { localStorage.setItem(FAC_KEY, FAC_HASH); localStorage.setItem('eda-lab-mode', 'facilitator'); } catch (e) {}
+    return true;
+  }
+  alert('That password did not work. Facilitator mode stays off.');
+  return false;
+}
+function lockFacilitator() { try { localStorage.removeItem(FAC_KEY); localStorage.setItem('eda-lab-mode', 'participant'); } catch (e) {} }
+function getMode() {
+  if (!isUnlocked()) return 'participant';
+  try { return localStorage.getItem('eda-lab-mode') || 'facilitator'; } catch (e) { return 'participant'; }
+}
+function setMode(m) { if (m === 'facilitator' && !isUnlocked()) return; try { localStorage.setItem('eda-lab-mode', m); } catch (e) {} applyMode(m); }
 function applyMode(m) {
   document.body.classList.toggle('fac', m === 'facilitator');
-  $$('.mode button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+  $$('.mode button[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
 }
 function getActivity() {
   const a = qs.get('activity');
@@ -136,7 +156,7 @@ export function shell(pageKey, title) {
       </div></details>
     <span class="sp"></span>
     <span class="saved" id="savedMsg" aria-live="polite"></span>
-    <div class="mode" role="group" aria-label="View mode"><button type="button" data-mode="participant">Participant</button><button type="button" data-mode="facilitator">Facilitator</button></div>
+    ${isUnlocked() ? '<div class="mode" role="group" aria-label="View mode"><button type="button" data-mode="participant">Participant</button><button type="button" data-mode="facilitator">Facilitator</button></div><button class="btn ghost sm" type="button" id="facLock" title="Lock facilitator mode on this device">🔒 Lock</button>' : ''}
   </div></section>
   <section class="activity" aria-live="polite" aria-label="Classroom activity"><div class="box">
     <span>📍 <b>Current classroom activity:</b> <span id="actTitle"></span></span>
@@ -162,8 +182,10 @@ export function shell(pageKey, title) {
   });
   $('#delProject').addEventListener('click', () => { if (confirm(`Delete "${p.name}" from this browser?`)) { S.deleteProject(p.id); location.reload(); } });
 
+  if (qs.has('facilitator') && !isUnlocked()) { unlockFlow().then((ok) => { const q = new URLSearchParams(location.search); q.delete('facilitator'); location.replace(location.pathname + (q.toString() ? '?' + q : '') + location.hash); }); }
   const mode = getMode(); applyMode(mode);
-  $$('.mode button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  $$('.mode button[data-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  const lk = $('#facLock'); if (lk) lk.addEventListener('click', () => { if (confirm('Lock facilitator mode on this device? You will need the facilitator password to turn it back on.')) { lockFacilitator(); location.reload(); } });
   const showAct = () => {
     const a = S.state().activity;
     document.body.classList.toggle('has-activity', !!a || document.body.classList.contains('fac'));
@@ -176,7 +198,7 @@ export function shell(pageKey, title) {
   getActivity();
   $('#actSel').addEventListener('change', (e) => { S.state().activity = Number(e.target.value) || null; S.persist(); showAct(); });
   $('#toggleLearn').addEventListener('click', (e) => { const h = document.body.classList.toggle('hide-learn'); e.target.textContent = h ? 'Show explanations' : 'Hide explanations'; });
-  $$('.mode button').forEach((b) => b.addEventListener('click', showAct));
+  $$('.mode button[data-mode]').forEach((b) => b.addEventListener('click', showAct));
   setTimeout(showAct, 0);
   const labelTables = () => $$('.tblwrap[role=region]').forEach((w, i) => { const h = w.closest('.card')?.querySelector('h3'); w.setAttribute('aria-label', `${(h?.textContent || 'Table').replace(/^(Inputs|Results)\s*/, '').trim()} (table ${i + 1})`); });
   setTimeout(labelTables, 0); setTimeout(labelTables, 800);
