@@ -60,7 +60,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 <div class="card results"><h3><span class="tag out">Results</span> Construction draw & interest schedule</h3><div id="drawEdit"></div><div id="draws"></div></div>
 <div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
-<li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget. The lender's 90% loan-to-cost cap sets the loan size.</li>
+<li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D, rounded). The lender's 90% loan-to-cost cap sets the loan size.</li>
 <li>Look at the financing gap. Interest and loan fees (about $13,680) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
 <li>In the scenario table, compare <b>No incentive</b> with <b>$15,000 CRA incentive included</b>. How does the incentive change the gap and the equity Gabe must bring? Why is it still conditional?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
