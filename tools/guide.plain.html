@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facilitator Guide | Development Learning Lab™ | Emerging Developer Academy™</title>
+<link rel="icon" href="eda-logo.png">
+<link rel="stylesheet" href="lab.css">
+<style>
+.g-wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px}
+@media (max-width:900px){.g-wrap{grid-template-columns:1fr}.toc{position:static!important;max-height:none!important}}
+.toc{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}
+.toc h2{font-size:15px;margin:0 0 8px}
+.toc ol{margin:0;padding-left:18px;font-size:14.5px;line-height:1.5}
+.toc li{margin:3px 0}.toc a{text-decoration:none}.toc a:hover{text-decoration:underline}
+.toc .grp{font-family:Montserrat,sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dg);margin:12px 0 4px;list-style:none;margin-left:-18px}
+.g-sec{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px;scroll-margin-top:12px}
+.g-sec h2{font-size:22px;margin:0 0 4px}
+.g-sec h3{font-size:17px;margin:18px 0 6px}
+.g-sec p,.g-sec li{font-size:16px;line-height:1.55}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:var(--gray);margin:4px 0 10px}
+.meta b{color:var(--ink)}
+.say{background:#eef0fa;border-left:6px solid var(--navy);border-radius:6px;padding:10px 14px;margin:8px 0;font-size:16px}
+.say::before{content:'Say';display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:2px}
+.ask{background:var(--tint);border-left:6px solid var(--dg);border-radius:6px;padding:10px 14px;margin:8px 0}
+.ask::before{content:'Ask the room';display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dg);margin-bottom:2px}
+.ask dl{margin:0}.ask dt{font-weight:700;margin-top:6px}.ask dd{margin:2px 0 0 0;color:#2f3046}
+.ask dd::before{content:'Listen for: ';font-weight:700;color:var(--dg)}
+.do{background:#fff6e0;border-left:6px solid #c98a00;border-radius:6px;padding:10px 14px;margin:8px 0}
+.do::before{content:'On screen';display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#7a5200;margin-bottom:2px}
+.watch{background:#fbeaf2;border-left:6px solid var(--mag);border-radius:6px;padding:10px 14px;margin:8px 0}
+.watch::before{content:'Watch for';display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mag);margin-bottom:2px}
+.why{border:1.5px dashed var(--navy);border-radius:6px;padding:10px 14px;margin:8px 0}
+.why::before{content:'Why this matters';display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:2px}
+.next{font-size:15px;color:var(--gray);border-top:1px solid var(--line);padding-top:8px;margin-top:12px}
+.next b{color:var(--ink)}
+.g-sec table{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+.g-sec th,.g-sec td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+.g-sec th{background:#fafbfe;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.g-sec td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;background:var(--navy);color:#fff;border-radius:999px;font-size:12.5px;font-weight:700;padding:2px 9px;margin-right:4px}
+.pill.g{background:var(--dg)}.pill.m{background:var(--mag)}
+.toplinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+@media print{.toc,.toplinks,.lab-head .back{display:none!important}.g-wrap{display:block}.g-sec{break-inside:avoid-page}}
+</style>
+</head>
+<body>
+<header class="lab-head"><div class="in">
+  <img src="eda-logo.png" alt="Emerging Developer Academy">
+  <div class="tt"><p class="kick">Emerging Developer Academy™ · Facilitators only</p><h1>Facilitator Guide · 1010 Joseph Place</h1></div>
+  <a class="back" href="./">← Learning Lab</a>
+</div></header>
+
+<div class="g-wrap">
+<nav class="toc" aria-label="Guide contents">
+<h2>Contents</h2>
+<ol>
+<li class="grp">Start here</li>
+<li><a href="#start">How to use this guide</a></li>
+<li><a href="#mode">Facilitator mode: setup &amp; controls</a></li>
+<li><a href="#arc">Teaching arc for the week</a></li>
+<li class="grp">Casebook scripts</li>
+<li><a href="#cb-intro">Overview &amp; meet Gabe (pp. 1–4)</a></li>
+<li><a href="#cb-opportunity">The Opportunity (pp. 5–6)</a></li>
+<li><a href="#cb-market">The Market (pp. 7–9)</a></li>
+<li><a href="#cb-site">The Site (pp. 10–12)</a></li>
+<li><a href="#cb-team">The Development Team (pp. 13–14)</a></li>
+<li><a href="#cb-budget">The Development Budget (pp. 15–17)</a></li>
+<li><a href="#cb-financing">Financing &amp; Go / No-Go (pp. 18–22)</a></li>
+<li><a href="#cb-construction">Construction &amp; Project Mgmt (pp. 23–27)</a></li>
+<li><a href="#cb-disposition">Buyer &amp; Disposition (pp. 28–31)</a></li>
+<li><a href="#exhibits">Using Exhibits A–H</a></li>
+<li class="grp">Lab scripts</li>
+<li><a href="#lab1">Lab 1 · Budget Builder</a></li>
+<li><a href="#lab2">Lab 2 · Pencil Test</a></li>
+<li><a href="#lab3">Lab 3 · Capital Stack</a></li>
+<li><a href="#lab4">Lab 4 · Homebuyer Affordability</a></li>
+<li><a href="#lab5">Feasibility Summary &amp; pitch</a></li>
+<li class="grp">Reference</li>
+<li><a href="#playbook">Live "what if" playbook</a></li>
+<li><a href="#answers">Answer key: all numbers</a></li>
+<li><a href="#trouble">Troubleshooting</a></li>
+</ol>
+</nav>
+
+<main id="main">
+
+<section class="g-sec" id="start">
+<h2>How to use this guide</h2>
+<p>This guide lets any facilitator teach the 1010 Joseph Place case and run the four Learning Lab tools without preparation beyond reading the section for their session. Every section follows the same pattern:</p>
+<ul>
+<li><b>Why this matters</b>: the learning goal and the reason it sits here in the week.</li>
+<li><b>On screen</b>: exactly what to open and click, in order.</li>
+<li><b>Say</b>: a script you can read aloud or put in your own words.</li>
+<li><b>Ask the room</b>: discussion questions, each with what to listen for.</li>
+<li><b>Watch for</b>: the misconceptions participants most often bring.</li>
+<li><b>Transition</b>: how to hand off to the next section.</li>
+</ul>
+<p>All numbers come from the Learning Lab using the casebook and Exhibit D. If a participant's screen shows something different, they have changed an input. Use <b>Reset to Joseph Place</b> to return to the case.</p>
+<div class="why">The casebook tells Gabe's story. The tools let participants test it. Alternate between them: read a decision in the casebook, then change one number in a tool and watch what it does to the next decision. That loop, "one decision changes the next," is the core idea of the whole case (casebook p. 2).</div>
+<div class="toplinks"><a class="btn sm" href="#mode">Set up facilitator mode</a><a class="btn alt sm" href="#arc">See the week at a glance</a><a class="btn alt sm" href="#answers">Jump to the answer key</a><button class="btn alt sm" type="button" onclick="window.print()">Print this guide</button></div>
+</section>
+
+<section class="g-sec" id="mode">
+<h2>Facilitator mode: setup &amp; controls</h2>
+<h3>Before every session (2 minutes)</h3>
+<ol>
+<li>On the presenting laptop, open the Learning Lab with <b>?facilitator</b> at the end of the address (for example <code>…/tools/?facilitator</code>) and enter the facilitator password. The device stays unlocked.</li>
+<li>Click <b>Facilitator</b> in the top bar. Numbers get larger and the magenta <b>Current classroom activity</b> bar appears.</li>
+<li>Click <b>Reset to Joseph Place</b> so you start from the casebook figures, not the last facilitator's demo.</li>
+<li>Choose the exercise in <b>Set activity</b> (Exercise 1–4). Its "Try It Yourself" box is highlighted.</li>
+<li>Zoom the browser to 125–150% (Ctrl/Cmd and +) if the room is large.</li>
+</ol>
+<h3>Controls you will use</h3>
+<table>
+<thead><tr><th>Control</th><th>Use it when</th></tr></thead>
+<tbody>
+<tr><td><b>Participant / Facilitator</b></td><td>Switch to Participant to show exactly what participants see on their own devices.</td></tr>
+<tr><td><b>Set activity</b></td><td>At the start of each lab, so the right exercise is highlighted on the projector.</td></tr>
+<tr><td><b>Hide explanations</b></td><td>During a live demo, so the room focuses on the numbers. Show them again for the debrief.</td></tr>
+<tr><td><b>Reset to Joseph Place</b></td><td>Before each session and after any demo. Only resets the Joseph Place case; participants' own projects are never affected.</td></tr>
+<tr><td><b>Start My Own Project</b></td><td>When a team wants to model their own deal after the case. Opens a blank project.</td></tr>
+<tr><td><b>Facilitator script</b> button</td><td>On each tool in Facilitator mode. Opens that tool's section of this guide.</td></tr>
+<tr><td><b>🔒 Lock</b></td><td>Before handing the device to someone else. Turns facilitator mode off on that device.</td></tr>
+</tbody></table>
+<h3>Getting everyone to the same place</h3>
+<p>Your projector and participants' devices are not linked. The activity bar shows on your screen only. To send everyone to the same exercise, put this link in the chat or on a slide: <code>…/tools/budget.html?activity=1</code> (use <code>pencil.html?activity=2</code>, <code>capital.html?activity=3</code>, <code>homebuyer.html?activity=4</code>). In the hub, the <b>Case Study</b> tab opens every tool.</p>
+<div class="watch">Participants' work saves only in their own browser. If someone switches phones or clears their browser, their changes are gone. Ask teams to use one laptop per team and to use <b>Download project file</b> before the end of the day.</div>
+</section>
+
+<section class="g-sec" id="arc">
+<h2>Teaching arc for the week</h2>
+<p>Gabe's project moves through six stages. Each session picks up where the last one stopped.</p>
+<table>
+<thead><tr><th>When</th><th>Session</th><th>Casebook</th><th>Exhibits</th><th>Tool</th></tr></thead>
+<tbody>
+<tr><td>Day 1 · 1:50</td><td>Case Study: 1010 Joseph Place (Gabe Franceschi)</td><td>pp. 1–4</td><td>None</td><td>Lab Home snapshot</td></tr>
+<tr><td>Day 2 · 8:30</td><td>Case Study</td><td>pp. 5–9 Opportunity, Market</td><td>C</td><td>None (reading)</td></tr>
+<tr><td>Day 2 · 9:00</td><td>Case Study</td><td>pp. 10–14 Site, Team</td><td>A, B</td><td>None (reading)</td></tr>
+<tr><td>Day 2 · 11:35</td><td>Development Budget, Cost Categories &amp; the Pencil Test</td><td>pp. 15–17</td><td>D</td><td>Budget Builder → Pencil Test (demo)</td></tr>
+<tr><td>Day 2 · 12:15</td><td>Case Study Application Lab</td><td>pp. 15–17</td><td>D</td><td><a href="#lab1">Lab 1</a> + <a href="#lab2">Lab 2</a></td></tr>
+<tr><td>Day 2 · 1:35</td><td>Financing &amp; Building the Capital Stack (Brody Wamble)</td><td>pp. 18–20</td><td>E, F</td><td>Capital Stack (demo)</td></tr>
+<tr><td>Day 2 · 2:20</td><td>Case Study Application Lab (Brody Wamble)</td><td>pp. 21–22</td><td>E, F, G</td><td><a href="#lab3">Lab 3</a></td></tr>
+<tr><td>Day 3 · 1:05</td><td>Homebuyer Subsidies + Resources (YRD)</td><td>pp. 28–29</td><td>C</td><td><a href="#lab4">Lab 4</a></td></tr>
+<tr><td>Day 3 · 3:15</td><td>Case Study Application Lab</td><td>pp. 23–31</td><td>H</td><td>Capital Stack draws + <a href="#lab5">Feasibility Summary</a></td></tr>
+<tr><td>Day 5 · 9:35–11:30</td><td>The Showcase / Creating Your Pitch</td><td>Whole case</td><td>All</td><td>Feasibility Summary for teams' own projects</td></tr>
+</tbody></table>
+<div class="why">The order is deliberate: participants first learn what Gabe knows (market, site, team), then what it costs, then whether it pencils, then how to pay for it, then whether a buyer can afford it, then how the money moves at closing. Resist jumping to the financing before the budget is understood; every financing number depends on it.</div>
+</section>
+
+<!-- ============ CASEBOOK ============ -->
+
+<section class="g-sec" id="cb-intro">
+<h2>Overview &amp; meet Gabe</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 1–4</span><span><b>When:</b> Day 1 · 1:50–2:10 (with Gabe)</span><span><b>Time:</b> 20 min</span></div>
+<div class="why">Participants need a person and a question before they get numbers. Gabe is an EDA 2025 alum, so the case shows a path participants can follow. The framing question, "Can this lot become a home that works for the buyer, the developer and the neighborhood?", is the test every later number answers.</div>
+<div class="do">Show casebook p. 2 (Overview) and p. 4 (six-stage roadmap). At the end, open the <b>Lab Home</b> in Facilitator mode to show the Joseph Place snapshot.</div>
+<div class="say">"This week we follow one real project from dirt to disposition. Gabe Franceschi, an alum of last year's Academy, found a vacant lot at 1010 Joseph Place through the CRA's Essential Housing program. Every session this week is one decision Gabe had to make. And here is the point of the case: each decision changes the next one."</div>
+<div class="say">"The casebook says some outcomes are teaching assumptions. They do not mean the loan closed or the house sold. We are learning the method, not grading Gabe."</div>
+<div class="ask"><dl>
+<dt>What would you need to know before you bought this lot?</dt><dd>Who would buy the house, what it costs to build, whether the lot can support it, who is on the team, where the money comes from.</dd>
+<dt>Why might Gabe have chosen a CRA lot?</dt><dd>Low land cost and possible developer incentives (casebook p. 6).</dd>
+</dl></div>
+<div class="watch">Participants often think the developer and the builder are the same person. Name the difference now; it returns on p. 14.</div>
+<p class="next"><b>Transition:</b> "Tomorrow morning we start where Gabe started: the opportunity and the market."</p>
+</section>
+
+<section class="g-sec" id="cb-opportunity">
+<h2>The Opportunity</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 5–6</span><span><b>When:</b> Day 2 · 8:30</span><span><b>Time:</b> 10 min</span></div>
+<div class="why">An inexpensive lot is not the same as a good opportunity. This section teaches participants to separate a promising parcel from a feasible project.</div>
+<div class="do">Casebook p. 6, Project Overview. Point to the two square-footage numbers: about 1,500 heated sq. ft. in preliminary materials and 1,403 sq. ft. in the CMA.</div>
+<div class="say">"Lot 17 of the Joseph Place Subdivision: about 9,001 square feet, 50 feet wide, 180 feet deep. Gabe wants to build a new single-family home of about 1,500 heated square feet. But notice: one document says 1,500 and the CMA says 1,403. Gabe has to reconcile those before final underwriting. Why does a hundred square feet matter?"</div>
+<div class="ask"><dl>
+<dt>Why does the square-footage difference matter?</dt><dd>Price per square foot, appraisal, construction cost per square foot and the buyer's expectations all depend on it. A lender will notice.</dd>
+<dt>What makes this more than "an inexpensive parcel"?</dt><dd>Gabe still has to learn what the land supports, what buyers pay and how much capital he needs (p. 6).</dd>
+</dl></div>
+<p class="next"><b>Transition:</b> "Before we design anything, is there a buyer?"</p>
+</section>
+
+<section class="g-sec" id="cb-market">
+<h2>The Market</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 7–9</span><span><b>When:</b> Day 2 · 8:30–8:55</span><span><b>Exhibit:</b> C (CMA)</span><span><b>Time:</b> 15 min</span></div>
+<div class="why">The sales price drives every calculation this week. Participants must understand that a working sale price is a judgment built from evidence, not a guarantee, and that different numbers answer different questions.</div>
+<div class="do">Casebook p. 8 (seven market factors), then p. 9 (From Market Evidence to a Price). Open <b>Exhibit C</b> from the Case Study tab.</div>
+<div class="say">"Look at the four numbers on page 9. $167,000 is the ZIP-wide median. $205,000 is an asking price, not a sale. $213,958 is the CMA's opinion for this specific property. $230,000 is a real closed sale in August. Gabe uses $215,000 as his working price, rounded from the CMA. Which of these would a lender trust most?"</div>
+<div class="ask"><dl>
+<dt>Which number is strongest evidence of value, and why?</dt><dd>The closed sale ($230,000 at 855 N Watkins): someone actually paid it. Asking prices are hopes; the median mixes old and new homes.</dd>
+<dt>The median household income in 38107 is about $40,792. What does that tell you?</dt><dd>Many neighborhood buyers may not afford $215,000 without help. We test this on Day 3.</dd>
+<dt>Memphis has a goal of 10,000 homes by 2030. Does that set this home's value?</dt><dd>No. It explains the need, not the price (p. 8).</dd>
+</dl></div>
+<div class="watch">"The CMA says $213,958, so the house is worth that." A CMA is an opinion; the appraisal at sale is what the buyer's lender uses. Plant the idea of an appraisal gap now.</div>
+<p class="next"><b>Transition:</b> "We think there is a buyer at around $215,000. Can the lot actually hold the house?"</p>
+</section>
+
+<section class="g-sec" id="cb-site">
+<h2>The Site</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 10–12</span><span><b>When:</b> Day 2 · 9:00</span><span><b>Exhibits:</b> A (survey), B (plans)</span><span><b>Time:</b> 20 min</span></div>
+<div class="why">Documents tell a developer what to investigate, not that the site is approved. This builds the habit of verifying before spending.</div>
+<div class="do">Casebook p. 11 (photo, survey, site plan) and p. 12 (Site Feasibility Matrix). Open <b>Exhibit A</b> and <b>Exhibit B</b> side by side.</div>
+<div class="say">"A photo starts the conversation. It cannot tell you where the property line is, whether there is a sewer tap, or whether the house fits the setbacks. The survey tells us Lot 17 is about 9,001 square feet. The zoning is R-6: residential, 6,000-square-foot minimum lot. That does not by itself mean Gabe's house meets every rule. Let's walk the matrix on page 12, row by row."</div>
+<div class="ask"><dl>
+<dt>Pick one row of the matrix. What could go wrong if Gabe skips verification?</dt><dd>Boundaries: building over a line. Utilities: surprise tap fees or no capacity (MLGW covers this at 9:55). Drainage: grading costs. Approvals: the bank-set plan is not a permit.</dd>
+<dt>Exhibit D shows $6,500 for utility connection fees. Where would that come from?</dt><dd>Verifying utilities (p. 12) and MLGW requirements. It is the biggest single site cost.</dd>
+</dl></div>
+<div class="watch">Treating "bank set" plans as approved plans. A bank set is for the lender's review; permits and inspections are still required.</div>
+<p class="next"><b>Transition:</b> "Gabe cannot verify all of this alone. Who is on the team?"</p>
+</section>
+
+<section class="g-sec" id="cb-team">
+<h2>The Development Team</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 13–14</span><span><b>When:</b> Day 2 · 9:00–9:45</span><span><b>Time:</b> 15 min</span></div>
+<div class="why">Each team member owns a risk. Connecting roles to budget lines prepares participants to read Exhibit D and to build their own team (Daryl Lewis's Worksheet 4).</div>
+<div class="do">Casebook p. 14, "Who Does What on Joseph Place?"</div>
+<div class="say">"Nine roles, from surveyor to REALTIST®. The key line is at the bottom: a builder delivers the construction; Gabe, as developer, is responsible for the opportunity, the financing, the team, the risks and the sale. Every one of these people shows up as a line in the budget we open next."</div>
+<div class="ask"><dl>
+<dt>Match three roles to a cost.</dt><dd>Surveyor and architect: $600 design and survey (Exhibit D 1.01). General contractor: builder's fee $9,000. Lender: loan fees $2,000. Broker: 6% selling costs.</dd>
+<dt>Which role protects the schedule, and why does that protect profit?</dt><dd>The construction / project manager. Every month of delay costs about $973 in interest.</dd>
+</dl></div>
+<p class="next"><b>Transition:</b> "Now let's put a price on all of it."</p>
+</section>
+
+<section class="g-sec" id="cb-budget">
+<h2>The Development Budget</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 15–17</span><span><b>When:</b> Day 2 · 11:35 (teach), 12:15 (lab)</span><span><b>Exhibit:</b> D</span><span><b>Time:</b> 40 min teach</span></div>
+<div class="why">The single most common emerging-developer mistake is treating the builder's estimate as the project budget. Page 17 shows why: $215,000 − $162,000 = $53,000 looks like profit, but selling costs, financing and unbudgeted costs come out before anything is left.</div>
+<div class="do">Casebook p. 16 (cost groups), p. 17 (First Financial Picture). Then open <b>Budget Builder</b> with explanations hidden. Open the Hard Construction Costs category.</div>
+<div class="say">"Gabe's first picture is three numbers: a $215,000 sale, a $162,000 budget, and a $53,000 spread. The casebook says plainly: that is not profit. Let's see why. This is Exhibit D, Gabe's actual budget, inside the Budget Builder. Every line shows its Exhibit D reference. The builder's budget totals about $161,900. The casebook rounds it to $162,000."</div>
+<div class="say">"Now look at the top. Total Development Cost is <b>$188,517</b>. That's $26,580 more than Exhibit D. Where did it come from? Interest of $11,680, loan fees of $2,000, and selling costs of $12,900. None of those are in the builder's budget. They are the developer's costs."</div>
+<div class="ask"><dl>
+<dt>The casebook says closing costs may appear three times. When?</dt><dd>Buying the land, closing the construction loan, and selling the house (p. 17). Each is separate and must not be double counted.</dd>
+<dt>Which costs are missing from Exhibit D?</dt><dd>Acquisition closing costs, holding costs during the 9-month sale period (taxes, insurance, utilities), interest, loan fees and selling costs. The first two show as $0 lines in the tool.</dd>
+<dt>Why did the Lab move "utility connection fees" from General Requirements to Site Development?</dt><dd>Because the developer manages costs by what they pay for, not by how the builder groups them. It makes missing costs easier to spot.</dd>
+</dl></div>
+<div class="watch">Subtracting the construction loan as a cost. The $146,000 loan is a <i>source</i> of money. Only its interest and fees are costs (p. 21 warns: do not subtract the loan principal twice).</div>
+<p class="next"><b>Transition:</b> "We know what it costs. Does the sale cover it? That's the pencil test." Then run <a href="#lab1">Lab 1</a> and <a href="#lab2">Lab 2</a>.</p>
+</section>
+
+<section class="g-sec" id="cb-financing">
+<h2>Financing the Development &amp; the Go / No-Go decision</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 18–22</span><span><b>When:</b> Day 2 · 1:35 (teach), 2:20 (lab)</span><span><b>Exhibits:</b> E, F, G</span><span><b>Time:</b> 45 min teach</span></div>
+<div class="why">Participants learn that a financing decision changes cash flow and that time costs money. The Go / No-Go page models a disciplined decision: promising is not the same as ready.</div>
+<div class="do">Casebook p. 19 (THF loan: $146,000, 8%, interest-only), p. 20 (interest math), p. 21 (P&amp;L), p. 22 (Go / No-Go). Open <b>Exhibit E</b> (THF lending program) and <b>Exhibit F</b> (loan application). Then the <b>Capital Stack</b> tool.</div>
+<div class="say">"Gabe chose The Housing Fund. $146,000, 8% interest-only. The full loan closes up front and sits in escrow; Gabe draws as work is verified. But for this case, interest is charged on the full balance from day one. That's $146,000 times 8% divided by 12: about $973 a month. Three months to build. Nine months to sell, because that's what Gabe's broker expects. Twelve months is about $11,680."</div>
+<div class="say">"How did Gabe get to $146,000? The lender will lend up to 90% of eligible cost. $162,000 times 90% is about $146,000. Gabe brings the other $16,000. That's the capital stack."</div>
+<div class="say">"Page 21 brings it together: $202,000 net sales, minus $162,000, minus $12,000 interest, minus $2,000 fees, equals a <b>$26,000 preliminary return</b>. The tool shows <b>$26,483</b> because it uses unrounded numbers. And Gabe's decision on page 22? Conditional go."</div>
+<div class="ask"><dl>
+<dt>What has to be true before Gabe closes the loan?</dt><dd>Full closing and holding costs confirmed, lender terms confirmed, market value supported, approvals in hand (p. 22).</dd>
+<dt>The house is built in month 3. Why is Gabe still paying interest in month 12?</dt><dd>The loan is repaid from the sale. Until the house sells, the loan is outstanding.</dd>
+<dt>What would one more month on the market cost?</dt><dd>About $973 in interest, before taxes, insurance and upkeep (p. 20).</dd>
+<dt>Look at Exhibit F. Which questions on the application connect to what we've learned?</dt><dd>Site control, purchase price, appraised value at completion, current zoning, square footage, proposed use: every earlier section.</dd>
+</dl></div>
+<div class="watch">"Interest-only means it's cheap." Interest-only lowers the monthly payment, but the full principal is still due at sale, and here interest accrues on the full balance from closing.</div>
+<p class="next"><b>Transition:</b> "Let's find out who pays the costs that are outside the $162,000." Then run <a href="#lab3">Lab 3</a>.</p>
+</section>
+
+<section class="g-sec" id="cb-construction">
+<h2>Construction &amp; Project Management</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 23–27</span><span><b>When:</b> Day 3 · 3:15 lab (also supports Day 3 · 11:35 Construction &amp; Project Management)</span><span><b>Exhibit:</b> H (draw guide)</span><span><b>Time:</b> 20 min</span></div>
+<div class="why">Management connects the work to the money. Participants see that a missed inspection is a financial event: work pauses, the schedule slips, the draw is delayed, holding costs rise (p. 24).</div>
+<div class="do">Casebook p. 24 (who makes the plan work), p. 25–26 (Schedule of Values, $143,000 vertical contract), p. 27 (milestones). Open <b>Exhibit H</b>. Then in the <b>Capital Stack</b>, set "How interest is charged" to <b>On the amount drawn</b> and scroll to the draw schedule.</div>
+<div class="say">"The vertical construction contract is $143,000, paid in six draws: 15%, 25%, 20%, 15%, 20%, 5%. That's a separate document from the $162,000 budget; it covers only the work the builder bills. Before the $35,750 framing draw is approved, the work has to be complete, inspected, documented, and meet the lender's conditions."</div>
+<div class="say">"Watch what happens to interest if the lender charged only on what's been drawn. With the case terms, the full balance from closing, interest is $11,680. Charged on the draws, it's <b>$10,870</b>, about $810 less. Same loan, different terms."</div>
+<div class="ask"><dl>
+<dt>Exhibit H says draws are reimbursement-based. What does that mean for Gabe's cash?</dt><dd>Gabe or his builder pays for work first and is reimbursed after verification. He needs cash or credit to bridge each draw.</dd>
+<dt>What is retainage and why does a lender hold it?</dt><dd>A percentage (often 5%) held until completion and closeout, to make sure the job is finished.</dd>
+<dt>A change order adds $3,000 to finishes and two weeks. What does it really cost?</dt><dd>$3,000 plus about half a month of interest (~$490) plus any holding costs, and possibly a later draw.</dd>
+</dl></div>
+<p class="next"><b>Transition:</b> "A finished house is not yet a finished development. Now we sell it."</p>
+</section>
+
+<section class="g-sec" id="cb-disposition">
+<h2>The Buyer &amp; Disposition</h2>
+<div class="meta"><span><b>Casebook:</b> pp. 28–31</span><span><b>When:</b> Day 3 · 1:05 (buyer), 3:15 (closing)</span><span><b>Exhibit:</b> C</span><span><b>Time:</b> 25 min</span></div>
+<div class="why">Two lessons. First, the buyer has to be ready, not just the house (financing, assistance, appraisal). Second, the cash Gabe receives at closing is not the same as profit.</div>
+<div class="do">Casebook p. 29 (Buyer-Readiness), p. 30 (Listing to Closing), p. 31 (Money at Closing). Then open <a href="#lab4">Lab 4</a> for the buyer, and the <b>Pencil Test</b> results table for the closing math.</div>
+<div class="say">"At closing: $215,000 sale, minus $13,000 selling costs, equals $202,000. Gabe pays the lender $146,000 and walks away with about $56,000 in cash. Is that his profit?"</div>
+<div class="say">"No. That $56,000 includes the $16,000 Gabe put in, and he still owes the interest and fees. The development return is $202,000 minus $162,000 minus $12,000 minus $2,000: about $26,000. In the tool, $26,483."</div>
+<div class="ask"><dl>
+<dt>Why isn't the $56,000 cash at closing the profit?</dt><dd>It includes the return of Gabe's own $16,000 equity, and interest and fees have not been subtracted (p. 31).</dd>
+<dt>Name three things that could delay closing and what each costs.</dt><dd>Low appraisal, inspection issue, title problem, buyer financing delay. Each month is about $973 of interest plus holding costs.</dd>
+<dt>Who coordinates homebuyer assistance?</dt><dd>The buyer and partners (p. 29). Eligibility, funds, lender participation and timing must all be confirmed. It is not the developer's money.</dd>
+</dl></div>
+<p class="next"><b>Transition:</b> "Let's put the whole project on one page." Then run <a href="#lab5">the Feasibility Summary</a>.</p>
+</section>
+
+<section class="g-sec" id="exhibits">
+<h2>Using Exhibits A–H</h2>
+<p>All exhibits open from the hub's <b>Case Study</b> tab. Assign one exhibit per team when time is short, then have each team report one finding.</p>
+<table>
+<thead><tr><th>Exhibit</th><th>Use it with</th><th>Question to assign</th></tr></thead>
+<tbody>
+<tr><td><b>A</b> Property Boundary Survey</td><td>The Site (p. 11–12)</td><td>Find the lot area, frontage and depth. Do they match p. 6?</td></tr>
+<tr><td><b>B</b> Proposed Building &amp; Bank-Set Plans</td><td>The Site, the Budget</td><td>Where is the driveway? How does that connect to the $7,671 driveway line?</td></tr>
+<tr><td><b>C</b> Comparative Market Analysis</td><td>The Market, the Buyer</td><td>Which comparables are closed sales? What square footage does the CMA use?</td></tr>
+<tr><td><b>D</b> Full Construction Budget</td><td>Budget, Lab 1</td><td>Find three lines that are $0. Should any of them have a cost?</td></tr>
+<tr><td><b>E</b> THF Lending Program Reference</td><td>Financing, Lab 3</td><td>What kinds of projects does THF finance, and who is the contact?</td></tr>
+<tr><td><b>F</b> THF Loan Application</td><td>Financing, Lab 3</td><td>Fill in the first page for Joseph Place using casebook numbers. What is still unknown?</td></tr>
+<tr><td><b>G</b> Single-Family P&amp;L Reference Form</td><td>Financing p. 21</td><td>Rebuild the $26,000 preliminary return on the form. (In the full casebook.)</td></tr>
+<tr><td><b>H</b> Construction Draw Guide</td><td>Construction, Day 3</td><td>What has to happen before Draw 2 is released?</td></tr>
+</tbody></table>
+<div class="watch">Exhibit D's own totals differ by a few dollars: its line items add to $161,937, its category subtotals to $161,938, and it prints $161,939. This is rounding in the source, not an error in the Lab. Use it as a lesson: always add up the lines yourself.</div>
+</section>
+
+<!-- ============ LABS ============ -->
+
+<section class="g-sec" id="lab1">
+<h2>Lab 1 · Development Budget Builder</h2>
+<div class="meta"><span><span class="pill">Exercise 1</span></span><span><b>When:</b> Day 2 · 12:15–1:00 (shared with Lab 2)</span><span><b>Tool:</b> <a href="budget.html">budget.html</a> · participants: <code>budget.html?activity=1</code></span><span><b>Time:</b> 25 min</span></div>
+<div class="why">Participants learn to read a builder's budget the way a developer and lender will: by category, with nothing missing and nothing counted twice. They leave knowing the difference between construction cost and Total Development Cost.</div>
+<h3>Setup (2 min)</h3>
+<ol><li>Reset to Joseph Place. Set activity to <b>Exercise 1</b>.</li><li>Put the participant link on screen. Teams of 3–4, one laptop per team.</li></ol>
+<h3>Demo (8 min)</h3>
+<div class="do">
+1. Point to the summary: <b>TDC $188,517</b>, cost per sq. ft. <b>$126</b>, hard cost per sq. ft. <b>$87</b>.<br>
+2. Open category <b>D</b>. Read two lines with their Exhibit D references (Foundation &amp; slab $18,098; Framing $26,733).<br>
+3. Point to the <b>Exhibit D check</b> box: $161,937 from Exhibit D lines.<br>
+4. Point to the <b>2 lines are $0</b> warning: acquisition closing costs, and holding costs while marketing.</div>
+<div class="say">"Every Exhibit D line is here, sorted the way a developer thinks. The orange warning is the most important thing on this screen: two costs the builder's budget does not include. Your first job is to estimate them."</div>
+<h3>Team work (12 min)</h3>
+<ol>
+<li><b>Estimate the missing costs.</b> Suggest teams try $1,500 for title, legal and acquisition closing, and $400 a month for taxes, insurance and utilities. <i>Result:</i> TDC rises <b>$6,300</b>; in the Pencil Test, profit falls from $26,483 to <b>$20,183</b> (9.4% margin, below the 10% target).</li>
+<li><b>Test the contingency.</b> The $5,000 builder contingency is <b>3.8%</b> of hard costs. Add a line in category G: Percentage, 5% of hard costs. <i>Result:</i> +$6,546 contingency; profit <b>$19,938</b>.</li>
+<li><b>Revised budget.</b> Enter a 10% hard-cost increase in the revised budget box and read the Baseline vs. Revised table. <i>Result:</i> hard costs +$13,091.</li>
+</ol>
+<div class="ask"><dl>
+<dt>Exhibit D says $107 per square foot. The Lab says $87 hard and $126 total. Who is right?</dt><dd>Both. Exhibit D divides its whole construction budget (including site, soft costs and builder fees) by 1,500. The Lab separates hard costs from site and soft costs, and its total includes interest, fees and selling costs. Always ask what a "per square foot" number includes.</dd>
+<dt>Why did adding $6,300 of costs drop the margin below target?</dt><dd>Every unbudgeted dollar comes straight out of profit. A 12.3% margin has little room.</dd>
+<dt>Is 3.8% contingency enough on a new build?</dt><dd>Open question. Many lenders and developers expect 5–10% on new construction. Gabe's thin margin makes a bigger contingency hard to afford, which is itself a risk.</dd>
+</dl></div>
+<div class="watch">Teams that put the construction loan in the budget. If TDC jumps by about $146,000, someone typed the loan in as a cost. Remove it; the loan is a source in Lab 3.</div>
+<p class="next"><b>Wrap (2 min):</b> "Write your answer to reflection question 1 now; it saves into your Feasibility Summary." Then move to <a href="#lab2">Lab 2</a>. Leave teams' estimates in place; they flow into the Pencil Test.</p>
+</section>
+
+<section class="g-sec" id="lab2">
+<h2>Lab 2 · Pencil Test</h2>
+<div class="meta"><span><span class="pill">Exercise 2</span></span><span><b>When:</b> Day 2 · 11:35 demo and 12:15 lab</span><span><b>Tool:</b> <a href="pencil.html">pencil.html</a> · participants: <code>pencil.html?activity=2</code></span><span><b>Time:</b> 20 min</span></div>
+<div class="why">The pencil test answers "Does the expected sale cover all costs and leave an acceptable return?" before real money is committed. Participants learn break-even, target margin and sensitivity, and that a positive result is not the same as a bankable or approved deal.</div>
+<h3>Demo (8 min)</h3>
+<div class="do">
+1. Reset to Joseph Place. Hide explanations.<br>
+2. Read the results table top to bottom: gross $215,000 → selling costs −$12,900 → net $202,100 → other costs −$175,617 → <b>profit $26,483</b>.<br>
+3. Read the KPIs: margin <b>12.3%</b>, return on cost <b>14.0%</b>, break-even <b>$186,827</b>, price for a 10% margin <b>$209,068</b>, return on equity <b>165.5%</b>.<br>
+4. Scroll to the scenario table. Scenario A ($190,000): <b>$2,983</b>. Scenario B ($180,000): <b>−$6,417</b>.<br>
+5. Show the sensitivity chart and point to where each line crosses $0.</div>
+<div class="say">"The casebook said about $26,000. The tool says $26,483 because the casebook rounds interest to $12,000 and selling costs to $13,000. Same answer. Now the important number: break-even is $186,827. Gabe's working price is only 13% above it. Drop the price to $190,000 and profit almost disappears. At $180,000, Gabe loses money."</div>
+<div class="say">"Return on equity says 165%. Be careful with that. It's profit divided by Gabe's $16,000, over about a year. It is a simplified figure, not an annualized return or an investor IRR, and it ignores the risk Gabe carried."</div>
+<h3>Team work (10 min)</h3>
+<ol>
+<li>In Scenario A, add a 10% hard-cost increase. <i>Result:</i> $190,000 with +10% costs = <b>−$10,108</b>.</li>
+<li>In Scenario B, add a 3-month delay. <i>Result:</i> $180,000 with 3 more months = <b>−$9,337</b>. On the base case, each month of delay costs about <b>$973</b> (base with 1-month delay: $25,510).</li>
+<li>Read the cost-overrun exposure: profit reaches $0 if hard costs rise about <b>20.2%</b>.</li>
+<li>Check <b>Include the $20,000 incentive</b>. <i>Result:</i> $215,000 → <b>$46,483</b> (21.6%); $190,000 → <b>$22,983</b>; $180,000 → <b>$13,583</b>. Uncheck it when done.</li>
+</ol>
+<div class="ask"><dl>
+<dt>At what price does Gabe stop meeting a 10% target margin?</dt><dd>Below about $209,068. At $190,000 the margin is 1.6%.</dd>
+<dt>What happens to profit when construction costs rise 10%?</dt><dd>It falls by about $13,091, to $13,392 (6.2%), below target.</dd>
+<dt>Does the CRA incentive make the project "safe"?</dt><dd>It widens the cushion a lot, but it is conditional until awarded in writing. Never count it before then.</dd>
+<dt>The project pencils. Is it approved?</dt><dd>No. Pencils means feasible on paper. The lender, the appraisal and the market still have to agree.</dd>
+</dl></div>
+<div class="watch">Participants adding selling costs a second time. The tool deducts them once from gross sales. If a team's profit is about $12,900 lower than expected, they entered selling costs again in the budget.</div>
+<p class="next"><b>Wrap:</b> "Gabe's decision on page 22 was Conditional Go. After what you just tested, would you agree?"</p>
+</section>
+
+<section class="g-sec" id="lab3">
+<h2>Lab 3 · Capital Stack &amp; Financing</h2>
+<div class="meta"><span><span class="pill">Exercise 3</span></span><span><b>When:</b> Day 2 · 1:35 demo, 2:20–3:05 lab (Brody Wamble)</span><span><b>Tool:</b> <a href="capital.html">capital.html</a> · participants: <code>capital.html?activity=3</code></span><span><b>Time:</b> 35 min</span></div>
+<div class="why">Participants learn where the money comes from, what is truly committed, how lender limits size the loan, and why the gap between the "budget" and the full cost matters. Two distinctions are non-negotiable: the buyer's mortgage does not pay for construction, and a development incentive is not homebuyer assistance.</div>
+<h3>Demo (10 min)</h3>
+<div class="do">
+1. Reset to Joseph Place. Set activity to Exercise 3.<br>
+2. Summary: total uses <b>$175,617</b>, committed sources <b>$162,000</b> ($146,000 loan + $16,000 equity), <b>funding gap $13,617</b>, loan-to-cost <b>83.1%</b>, developer equity required <b>$29,617</b>.<br>
+3. Show the capital stack chart (hatched layer = gap) and the Sources &amp; Uses table.<br>
+4. Show the draw schedule: 12 months at $973.</div>
+<div class="say">"Gabe's $162,000 is covered: $146,000 from THF and $16,000 of his own. But the project actually needs $175,617 before the house sells, because interest and loan fees aren't in the $162,000. That $13,617 gap is real money Gabe has to find. He needs $29,617 of his own equity, not $16,000."</div>
+<div class="say">"Notice what's not in uses: the $12,900 selling costs. Those come out of the buyer's money at closing. And the buyer's mortgage itself? It pays Gabe at the closing table and repays this loan. It never pays for a single 2×4."</div>
+<h3>Team work (20 min)</h3>
+<ol>
+<li><b>Incentive.</b> In the funding scenario table, compare <i>No incentive</i> and <i>Incentive included</i>. Then check <b>Include in base case</b> under Other funding sources. <i>Result:</i> committed gap stays <b>$13,617</b> (still conditional); if approved, gap closes (−$6,383, a surplus) and equity drops to <b>$9,617</b>. Change its status to <b>committed</b> to see it count.</li>
+<li><b>Draw-based interest.</b> Change "How interest is charged" to <i>On the amount drawn</i>. <i>Result:</i> interest <b>$10,870</b>, gap <b>$12,807</b>, profit <b>$27,293</b>. Simplified average: $10,220.</li>
+<li><b>Tighter lender.</b> Set the loan-to-cost limit to 80% and read the warning. <i>Result:</i> the maximum loan falls to about <b>$140,000</b>; equity required rises about <b>$5,400</b> (to ~$35,000).</li>
+<li><b>Higher rate.</b> In the scenario table, "+2 pts rate." <i>Result:</i> interest $14,600, gap $16,537, profit $23,563.</li>
+</ol>
+<div class="ask"><dl>
+<dt>Why does the tool show loan-to-cost of 83.1% when the casebook says 90%?</dt><dd>The casebook applies 90% to the $162,000 eligible budget. The tool divides by total uses, including interest and fees. Lenders define "eligible cost" in the term sheet; always ask.</dd>
+<dt>How much more equity does Gabe need if the lender cuts loan-to-cost to 80%?</dt><dd>About $5,400 more.</dd>
+<dt>The incentive closes the gap. Why can't Gabe count it yet?</dt><dd>It's conditional. Lenders count only committed sources. Ask: who approves it, when, and is it paid before or after construction?</dd>
+<dt>Could down payment assistance close Gabe's gap?</dt><dd>No. It belongs to the buyer and is applied at the buyer's closing. It does not fund construction.</dd>
+</dl></div>
+<div class="watch">"Higher equity raises profit." It does not; profit stays $26,483. Extra equity lowers the gap and the return on equity.</div>
+<p class="next"><b>Wrap:</b> Brody's 3:15 DEVx panel picks up from here: "What does each lender on the panel count as eligible cost and as committed equity?"</p>
+</section>
+
+<section class="g-sec" id="lab4">
+<h2>Lab 4 · Homebuyer Affordability</h2>
+<div class="meta"><span><span class="pill">Exercise 4</span></span><span><b>When:</b> Day 3 · 1:05–2:15 (with YRD and homebuyer program partners)</span><span><b>Tool:</b> <a href="homebuyer.html">homebuyer.html</a> · participants: <code>homebuyer.html?activity=4</code></span><span><b>Time:</b> 30 min</span></div>
+<div class="why">A project works only if a real buyer can buy the home. Participants learn the two separate affordability tests, monthly payment and cash to close, and what assistance can and cannot fix. This is an instructional estimate, not a preapproval.</div>
+<h3>Demo (10 min)</h3>
+<div class="do">
+1. Reset to Joseph Place. The buyer price is linked to $215,000. Illustrative buyer: $40,792 income (38107 median), $300/mo debts, $7,000 cash, 3% down, 6.5% rate.<br>
+2. Read: payment <b>$1,824</b>/mo; front-end DTI <b>53.7%</b>; back-end <b>62.5%</b> (targets 31% / 43%); cash to close <b>$12,900</b>, short <b>$5,900</b>; purchasing power <b>$116,091</b>; payment gap <b>$98,909</b>.<br>
+3. Show "With vs. without assistance" and the purchasing power chart.</div>
+<div class="say">"Here is the hard truth of the case. The median household in Gabe's ZIP code earns about $40,800. At $215,000, the payment would be more than half their income. Both tests fail: the payment is too high, and they're $5,900 short of cash."</div>
+<div class="say">"Now watch what assistance does. Add $10,000 of down payment assistance and $5,000 of closing cost help. Cash to close drops to $1,450. Problem solved? Look at the payment. Still $1,824. Down payment help fixes a cash problem. It does not fix a payment problem."</div>
+<h3>Team work (15 min)</h3>
+<ol>
+<li>Add DPA $10,000 and closing cost assistance $5,000. <i>Result:</i> cash to close <b>$1,450</b>, no shortfall; payment unchanged.</li>
+<li>Instead, try $20,000 of <b>principal reduction</b>. <i>Result:</i> payment falls to <b>$1,689</b>; purchasing power rises to <b>$133,399</b>; still far from $215,000.</li>
+<li>Find the income needed: change income until both DTIs pass. <i>Answer:</i> about <b>$70,600</b>. At $60,000 the back-end DTI passes (42.5%) but front-end fails (36.5%). At $75,000 both pass.</li>
+<li>Move the rate slider to 7.5%. <i>Result:</i> payment $1,964; purchasing power falls about <b>$9,000</b> to $107,128.</li>
+<li>Uncheck the linked price and try $190,000. <i>Result:</i> payment $1,629; still not affordable at the median income.</li>
+</ol>
+<div class="ask"><dl>
+<dt>Does assistance fix a payment problem, a cash problem, or both?</dt><dd>DPA and closing cost help fix cash. Only principal reduction (or a lower price, lower rate or higher income) lowers the payment.</dd>
+<dt>Who is Gabe's realistic buyer at $215,000?</dt><dd>A household around $70,000 or more, or a lower-income buyer with substantial subsidy. That is a market and policy question, not just a math one.</dd>
+<dt>If the target buyer can't afford the home, what can the developer change?</dt><dd>Price, size, design and finishes, financing partners, or pursuing deeper subsidy. Each change goes back to the budget and pencil test.</dd>
+</dl></div>
+<div class="watch">Participants treating assistance as approved because they typed an amount. Point to the status field and the caution message. Program rules, income limits and lender participation must all be confirmed.</div>
+<p class="next"><b>Wrap:</b> Hand to the homebuyer program partners (Pinnacle, Uplift): "Which of these gaps can your programs close, and for whom?"</p>
+</section>
+
+<section class="g-sec" id="lab5">
+<h2>Feasibility Summary &amp; pitch</h2>
+<div class="meta"><span><b>When:</b> Day 3 · 3:15 lab; Day 5 Showcase and pitch prep</span><span><b>Tool:</b> <a href="summary.html">summary.html</a></span><span><b>Time:</b> 20 min</span></div>
+<div class="why">The summary turns four tools into one document a lender, partner or pitch panel can read. Its last section lists every open risk, which teaches participants to present uncertainty honestly instead of hiding it.</div>
+<div class="do">Open the Feasibility Summary for Joseph Place. Walk the eight sections. Spend most time on section 8, Financial Risks and Outstanding Assumptions.</div>
+<div class="say">"This is what Gabe would bring to a lender: overview, budget, profitability, sources and uses, capital stack, the gap, the buyer, and the risks. Notice section 8. It lists the $13,617 gap, the conditional incentive, the missing appraisal, the buyer who can't qualify, and the square-footage question. A strong pitch names these and says how you'll handle each."</div>
+<h3>Team work</h3>
+<ol>
+<li>Pick the two most serious risks in section 8 and write how Gabe should address each.</li>
+<li>Teams with their own project: <b>Start My Own Project</b>, enter their numbers in all four tools, and print the summary (Print → Save as PDF) for the Day 5 pitch.</li>
+<li>Remind teams to <b>Download project file</b> so they can reopen it later.</li>
+</ol>
+<div class="ask"><dl>
+<dt>Which risk would worry a lender most?</dt><dd>Usually the funding gap and buyer affordability: who pays the $13,617, and who buys the house.</dd>
+<dt>What would move Gabe from Conditional Go to Go?</dt><dd>Confirmed costs, a committed incentive or more equity, lender terms in writing, an appraisal, permits, and a realistic buyer pathway.</dd>
+</dl></div>
+</section>
+
+<!-- ============ REFERENCE ============ -->
+
+<section class="g-sec" id="playbook">
+<h2>Live "what if" playbook</h2>
+<p>Quick demos for when the room asks a question. Start from Reset to Joseph Place each time.</p>
+<table>
+<thead><tr><th>The room asks</th><th>Do this</th><th>Show this result</th></tr></thead>
+<tbody>
+<tr><td>"What if it sells for less?"</td><td>Pencil Test, Scenario A = $190,000</td><td class="n">$2,983 profit (1.6%)</td></tr>
+<tr><td>"What's the lowest price that works?"</td><td>Pencil Test, read break-even</td><td class="n">$186,827</td></tr>
+<tr><td>"What if costs go up 10%?"</td><td>Pencil Test, hard-cost increase 10</td><td class="n">$13,392 (6.2%)</td></tr>
+<tr><td>"What if it takes 3 more months to sell?"</td><td>Pencil Test, Scenario delay 3</td><td class="n">$23,563</td></tr>
+<tr><td>"What if rates go up 2 points?"</td><td>Pencil Test or Capital Stack, rate +2</td><td class="n">Interest $14,600; profit $23,563</td></tr>
+<tr><td>"What does the CRA incentive do?"</td><td>Pencil Test, check Include the $20,000 incentive</td><td class="n">$46,483 (21.6%)</td></tr>
+<tr><td>"How much cash does Gabe really need?"</td><td>Capital Stack, read equity required</td><td class="n">$29,617 (not $16,000)</td></tr>
+<tr><td>"What if the lender only charged interest on draws?"</td><td>Capital Stack, interest method = draws</td><td class="n">$10,870 (saves $810)</td></tr>
+<tr><td>"What if the lender only does 80%?"</td><td>Capital Stack, LTC limit 80</td><td class="n">Max loan ~$140,000; +~$5,400 equity</td></tr>
+<tr><td>"Can a teacher afford this?"</td><td>Homebuyer, set income</td><td class="n">Needs ~$70,600 at $215,000</td></tr>
+<tr><td>"Does down payment help fix it?"</td><td>Homebuyer, DPA $10,000 + CCA $5,000</td><td class="n">Cash $1,450; payment still $1,824</td></tr>
+</tbody></table>
+</section>
+
+<section class="g-sec" id="answers">
+<h2>Answer key: all numbers</h2>
+<p>From the Learning Lab with the Joseph Place case (casebook + Exhibit D), unrounded. Casebook rounded figures in parentheses.</p>
+<h3>Budget</h3>
+<table><tbody>
+<tr><td>A Land</td><td class="n">$500</td></tr><tr><td>B Predevelopment</td><td class="n">$3,422</td></tr><tr><td>C Site development</td><td class="n">$16,555</td></tr><tr><td>D Hard construction</td><td class="n">$130,910</td></tr><tr><td>E Soft costs</td><td class="n">$4,250</td></tr><tr><td>F Financing &amp; holding (interest $11,680 + fees $2,000 + security $650)</td><td class="n">$14,330</td></tr><tr><td>G Contingency</td><td class="n">$5,000</td></tr><tr><td>H Developer fee $650 + selling costs $12,900</td><td class="n">$13,550</td></tr>
+<tr><td><b>Exhibit D lines</b> (casebook $162,000)</td><td class="n"><b>$161,937</b></td></tr><tr><td><b>Total Development Cost</b></td><td class="n"><b>$188,517</b></td></tr><tr><td>Cost per sq. ft. / hard cost per sq. ft. (1,500 sq. ft.)</td><td class="n">$126 / $87</td></tr>
+</tbody></table>
+<h3>Pencil Test</h3>
+<table><thead><tr><th>Scenario</th><th class="n">Profit</th><th class="n">Margin</th><th>Result</th></tr></thead><tbody>
+<tr><td>Base, $215,000 (casebook ≈ $26,000)</td><td class="n">$26,483</td><td class="n">12.3%</td><td>Meets 10% target</td></tr>
+<tr><td>$190,000</td><td class="n">$2,983</td><td class="n">1.6%</td><td>Below target</td></tr>
+<tr><td>$180,000</td><td class="n">−$6,417</td><td class="n">−3.6%</td><td>Loss</td></tr>
+<tr><td>Hard costs +10%</td><td class="n">$13,392</td><td class="n">6.2%</td><td>Below target</td></tr>
+<tr><td>$190,000 + hard costs +10%</td><td class="n">−$10,108</td><td class="n">−5.3%</td><td>Loss</td></tr>
+<tr><td>1-month delay / 3-month delay</td><td class="n">$25,510 / $23,563</td><td class="n">11.9% / 11.0%</td><td>Meets target</td></tr>
+<tr><td>$180,000 + 3-month delay</td><td class="n">−$9,337</td><td class="n">−5.2%</td><td>Loss</td></tr>
+<tr><td>Rate +2 points</td><td class="n">$23,563</td><td class="n">11.0%</td><td>Meets target</td></tr>
+<tr><td>+ $20,000 CRA incentive at $215k / $190k / $180k</td><td class="n">$46,483 / $22,983 / $13,583</td><td class="n">21.6% / 12.1% / 7.5%</td><td>Conditional</td></tr>
+<tr><td>Missing costs added ($1,500 closing + $400/mo holding)</td><td class="n">$20,183</td><td class="n">9.4%</td><td>Below target</td></tr>
+<tr><td>Extra 5% contingency</td><td class="n">$19,938</td><td class="n">9.3%</td><td>Below target</td></tr>
+</tbody></table>
+<p>Break-even $186,827 (with incentive $165,550). Price for 10% margin $209,068. Return on cost 14.0%. Return on equity 165.5% (simplified). Profit reaches $0 at a 20.2% hard-cost overrun. Each $5,000 of price ≈ $4,700 of profit.</p>
+<h3>Capital Stack</h3>
+<table><thead><tr><th>Scenario</th><th class="n">Uses</th><th class="n">Gap (committed)</th><th class="n">Equity required</th></tr></thead><tbody>
+<tr><td>Base</td><td class="n">$175,617</td><td class="n">$13,617</td><td class="n">$29,617</td></tr>
+<tr><td>Incentive included (conditional) / if approved</td><td class="n">$175,617</td><td class="n">$13,617 / $0</td><td class="n">$29,617 / $9,617</td></tr>
+<tr><td>Interest on draws</td><td class="n">$174,807</td><td class="n">$12,807</td><td class="n">$28,807</td></tr>
+<tr><td>Rate +2 points</td><td class="n">$178,537</td><td class="n">$16,537</td><td class="n">$32,537</td></tr>
+<tr><td>+$10,000 developer equity</td><td class="n">$175,617</td><td class="n">$3,617</td><td class="n">$29,617</td></tr>
+<tr><td>80% loan-to-cost limit (max loan ≈ $140,100)</td><td class="n">≈ $175,150</td><td class="n">n/a</td><td class="n">≈ $35,030</td></tr>
+</tbody></table>
+<p>Loan-to-cost 83.1% on total uses (casebook: 90% of $162,000). Monthly interest at the full balance $973; 12 months $11,680. Draw-based interest $10,870; simplified average $10,220.</p>
+<h3>Homebuyer (illustrative buyer: $40,792 income, $300/mo debt, $7,000 cash, 3% down, 6.5%)</h3>
+<table><thead><tr><th>Case</th><th class="n">Payment</th><th class="n">Front / back DTI</th><th class="n">Cash to close</th><th class="n">Purchasing power</th></tr></thead><tbody>
+<tr><td>$215,000</td><td class="n">$1,824</td><td class="n">53.7% / 62.5%</td><td class="n">$12,900 (short $5,900)</td><td class="n">$116,091</td></tr>
+<tr><td>$190,000</td><td class="n">$1,629</td><td class="n">47.9% / 56.8%</td><td class="n">$11,400</td><td class="n">$116,091</td></tr>
+<tr><td>+ DPA $10,000 + CCA $5,000</td><td class="n">$1,824</td><td class="n">53.7% / 62.5%</td><td class="n">$1,450</td><td class="n">$116,091</td></tr>
+<tr><td>+ $20,000 principal reduction</td><td class="n">$1,689</td><td class="n">49.7% / 58.5%</td><td class="n">$12,900</td><td class="n">$133,399</td></tr>
+<tr><td>Rate 7.5% / 5.5%</td><td class="n">$1,964 / $1,690</td><td class="n">57.8% / 49.7% front</td><td class="n">$12,900</td><td class="n">$107,128 / $126,198</td></tr>
+<tr><td>Income $60,000 / $75,000</td><td class="n">$1,824</td><td class="n">36.5% / 42.5%; 29.2% / 34.0%</td><td class="n">$12,900</td><td class="n">$179,828 / $229,602</td></tr>
+</tbody></table>
+<p>Income needed to meet both 31% / 43% targets at $215,000: about $70,600. Payment breakdown at $215,000: principal &amp; interest $1,318, taxes $269, insurance $150, mortgage insurance $87.</p>
+</section>
+
+<section class="g-sec" id="trouble">
+<h2>Troubleshooting</h2>
+<table><tbody>
+<tr><td><b>My numbers don't match this guide.</b></td><td>Someone changed an input. Click <b>Reset to Joseph Place</b>. Also check that the CRA incentive is unchecked.</td></tr>
+<tr><td><b>A participant's screen doesn't match mine.</b></td><td>Their changes save in their browser. Have them reset, or use a fresh link with <code>?activity=N</code>.</td></tr>
+<tr><td><b>Profit is about $146,000 lower than expected.</b></td><td>The construction loan was typed into the budget as a cost. Delete that line.</td></tr>
+<tr><td><b>Profit is about $12,900 lower than expected.</b></td><td>Selling costs were entered twice. Remove the extra line.</td></tr>
+<tr><td><b>Facilitator switch is missing.</b></td><td>This device isn't unlocked. Add <code>?facilitator</code> to the address and enter the password.</td></tr>
+<tr><td><b>A participant lost their work.</b></td><td>Saved work lives only in that browser. If they downloaded a project file, use More ▾ → Open project file.</td></tr>
+<tr><td><b>The page looks out of date.</b></td><td>Pull down to refresh, or open the link in a private or incognito window.</td></tr>
+<tr><td><b>An exhibit asks for access.</b></td><td>The Drive folder's sharing changed. Ask the EDA team to set it to "Anyone with the link · Viewer."</td></tr>
+</tbody></table>
+<p class="note">Questions: <a href="mailto:eda@allianceforhousingprogress.org">eda@allianceforhousingprogress.org</a> · <span class="nw">Alliance for Housing Progress</span></p>
+</section>
+
+</main>
+</div>
+<footer class="lab-foot">Emerging Developer Academy™ · Development Learning Lab™ Facilitator Guide · <span class="nw">Alliance for Housing Progress</span><br>For facilitators. Figures are instructional estimates from the casebook and Exhibit D.</footer>
+</body>
+</html>
