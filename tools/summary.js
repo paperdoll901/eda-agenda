@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793720443';
-import * as U from './ui.js?v=1793720443';
+import * as E from './engine.js?v=1793721821';
+import * as U from './ui.js?v=1793721821';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -22,7 +22,7 @@ b.zeroCats.forEach((k) => risks.push(`No costs entered for ${E.CATEGORIES.find((
 if (r.status === 'loss') risks.push('The project shows a projected loss at the base sales price.');
 if (r.status === 'belowTarget' || r.status === 'breakeven') risks.push(`Projected profit margin (${fmtPct(r.margin)}) is below the ${E.num(p.sale.targetMarginPct)}% minimum target.`);
 if (r.overrunToZero !== null) risks.push(`A hard-cost overrun of about ${r.overrunToZero.toFixed(1)}% would eliminate projected profit.`);
-if (c.gapCommitted > 0.5) risks.push(`Financing gap of ${fmt$(c.gapCommitted)}: committed sources do not yet cover total uses.`);
+if (c.gapCommitted > 0.5) risks.push(`Financing gap of ${fmt$(c.gapCommitted)}: committed sources do not yet cover total uses.${c.gapIfIncentives <= 0.5 && c.offIncentiveTotal > 0 ? ' It closes if the pending incentive is awarded.' : ''}`);
 c.warnings.filter((w) => w.level === 'risk').forEach((w) => risks.push(w.text));
 (p.sources || []).filter((s) => s.status !== 'committed').forEach((s) => risks.push(`${s.name} (${fmt$(E.num(s.amount))}) is ${s.status}, not committed.`));
 if (!E.isNum(p.finance.collateralValue)) risks.push('No appraised (collateral) value entered, so loan-to-value has not been tested.');
@@ -53,7 +53,18 @@ ${sec(4, 'Sources & Uses', `<div class="grid even" style="gap:12px"><table class
   <p class="note">Selling costs (${fmt$(c.sellingCostsAtClosing)}) are paid from sale proceeds at closing and are not construction-period uses.</p>`)}
 ${sec(5, 'Capital Stack', `<div style="max-width:700px">${U.stackChart(c.uses, c.counted.filter((x) => x.amount > 0).map((x) => ({ label: x.name, short: x.name.length > 30 ? x.name.slice(0, 28) + '…' : x.name, value: x.amount })).concat(c.gapCommitted - c.proposed - c.conditional > 0.5 ? [{ label: 'Unfunded gap', short: 'Unfunded gap', value: c.gapCommitted - c.proposed - c.conditional, pattern: true }] : []), { label: 'Capital stack' })}</div>
   <table class="tbl"><tbody>${tr('Construction loan', `${fmt$(c.loan)} at ${E.num(p.finance.ratePct)}%`)}${tr('Loan-to-cost', fmtPct(c.ltc))}${tr('Loan-to-value', c.ltv === null ? 'Not yet calculated (no appraised value)' : fmtPct(c.ltv))}${tr('Construction interest', `${fmt$(c.interest.total)} (${{ full: 'full balance from closing', draws: 'draw-based', average: 'simplified average balance' }[c.interest.method]})`)}${tr('Developer equity required', fmt$(c.requiredEquity))}${tr('Developer equity committed', fmt$(c.devEquityCommitted))}</tbody></table>`)}
-${sec(6, 'Financing Gap', `${U.status(c.gapCommitted > 0.5 ? 'bad' : 'good', c.gapCommitted > 0.5 ? `Committed sources fall short of total uses by <b>${fmt$(c.gapCommitted)}</b>.${c.proposed + c.conditional > 0.5 ? ` If the pending sources in this scenario are approved, the remaining gap is ${fmt$(Math.max(0, c.gapAll))}.` : ''}` : 'Committed sources cover total uses.')}${c.offIncentiveTotal > 0 ? U.status('info', `${c.offIncentives.map((x) => `${esc(x.name)} (${fmt$(x.amount)})`).join('; ')} is not included in this scenario. If awarded, the gap ${c.gapIfIncentives <= 0.5 ? 'closes' : `falls to ${fmt$(c.gapIfIncentives)}`} and developer equity required drops to ${fmt$(c.equityIfIncentives)}.`) : ''}`)}
+${sec(6, 'Financing Gap', (() => {
+  const gap = c.gapCommitted; const pend = c.proposed + c.conditional; const off = c.offIncentives || [];
+  const rows = tr('Total uses (construction period)', fmt$(c.uses)) + tr('Less committed sources', '−' + fmt$(c.committed)) + tr(gap > 0.5 ? 'Gap with committed sources only' : 'Surplus with committed sources', fmt$(Math.abs(gap)), 'tot')
+    + (pend > 0.5 ? tr('Less pending sources included in this scenario', '−' + fmt$(pend)) : '')
+    + off.map((x) => tr(`Less ${esc(x.name)} <span class="note">(${esc(x.status)}, not yet counted)</span>`, '−' + fmt$(x.amount))).join('')
+    + (pend > 0.5 || off.length ? tr(c.gapIfIncentives > 0.5 ? 'Gap if everything pending is awarded' : 'Surplus if everything pending is awarded', fmt$(Math.abs(c.gapIfIncentives)), 'tot') : '');
+  const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
+  const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
+    : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer equity required if awarded: ${fmt$(c.equityIfIncentives)}.`
+    : `Committed sources are ${fmt$(gap)} short, and ${fmt$(c.gapIfIncentives)} would remain unfunded even if everything pending is awarded.`;
+  return U.status(lvl, msg) + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
+})())}
 ${sec(7, 'Homebuyer Affordability', `<table class="tbl"><thead><tr><th><span class="sr-only">Actions</span></th><th class="n">Without assistance</th><th class="n">With assistance</th></tr></thead><tbody>
   ${[['Purchase price', (x) => fmt$(x.price)], ['Down payment', (x) => fmt$(x.down)], ['Loan amount', (x) => fmt$(x.loan)], ['Monthly housing payment', (x) => fmt$(x.housing)], ['Front-end DTI', (x) => fmtPct(x.frontDti)], ['Back-end DTI', (x) => fmtPct(x.backDti)], ['Cash to close', (x) => fmt$(x.cashToClose)], ['Cash shortfall', (x) => fmt$(x.cashGap)], ['Purchasing power', (x) => fmt$(x.maxPrice)], ['Payment affordability gap', (x) => (x.paymentGap === null ? 'Not yet calculated' : fmt$(x.paymentGap))]].map(([l, f]) => `<tr><td>${l}</td><td class="n">${f(hNo)}</td><td class="n">${f(h)}</td></tr>`).join('')}
   </tbody></table><p class="note">Illustrative buyer: ${fmt$(E.num(p.buyer.income))} income, ${fmt$(E.num(p.buyer.monthlyDebt))}/mo debts, ${E.num(p.buyer.downPct)}% down at ${E.num(p.buyer.ratePct)}%, ${E.MORTGAGE_PRODUCTS[p.buyer.product]?.name || ''} assumptions. Assistance status: ${esc(p.buyer.assistanceStatus)}. Not a preapproval.</p>`)}

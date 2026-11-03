@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793720443';
-import * as E from './engine.js?v=1793720443';
-import * as U from './ui.js?v=1793720443';
+import * as S from './store.js?v=1793721821';
+import * as E from './engine.js?v=1793721821';
+import * as U from './ui.js?v=1793721821';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -91,7 +91,7 @@ const binder = U.bind(main, p, (path) => { if (path === 'finance.interestMethod'
 function update() {
   const c = E.capitalStack(p);
   const b = c.budget;
-  const gapLevel = c.gapCommitted > 0.5 ? 'bad' : c.gapAll < -0.5 ? 'info' : 'good';
+  const gapLevel = c.gapCommitted > 0.5 ? (c.gapIfIncentives <= 0.5 ? 'warn' : 'bad') : c.gapAll < -0.5 ? 'info' : 'good';
   U.$('#res').innerHTML = `
   <div class="kpis">
     ${U.kpi('Funding gap (committed sources)', fmt$(Math.max(0, c.gapCommitted)), c.gapCommitted > 0.5 ? 'Still needs a source' : 'Committed sources cover uses', `hero ${c.gapCommitted > 0.5 ? 'neg' : 'pos'}`, 'gap')}
