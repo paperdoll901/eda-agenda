@@ -54,7 +54,7 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
       <p class="note" style="margin-top:-4px">Open a category to add, edit, duplicate or remove lines. Enter a <b>revised estimate</b> on any line to compare it with the baseline. Lines marked "linked" update from other tools so they are entered only once.</p>
       <div id="cats"></div>
     </div>
-<div class="card results"><h3><span class="tag out">Results</span> Baseline vs. revised budget</h3><div id="cmp" class="tblwrap"></div></div>
+<div class="card results"><h3><span class="tag out">Results</span> Baseline vs. revised budget</h3><div id="cmp" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.learnTry(1, 'Joseph Place development budget', `<ol>
 <li>Load 1010 Joseph Place (use <b>Reset to Joseph Place</b> if you have changed it). Note the <b>$162,000</b> project budget: $143,000 vertical construction plus $19,000 not yet itemized.</li>
 <li>Open Exhibit D (the full construction budget) and move the $19,000 into the right categories: land, predevelopment, sitework and soft costs. Use the duplicate and add buttons.</li>

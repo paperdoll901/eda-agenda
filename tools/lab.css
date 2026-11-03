@@ -189,3 +189,62 @@ body.fac .fac-only{display:flex}
 }
 .printonly{display:none}
 #rateChart{max-width:860px;margin:0 auto}
+
+/* ===== Readability & contrast pass (WCAG 2.2 AA) ===== */
+:root{--dg:#3f6b14;--gray:#4f5168}
+body{font-size:16px;line-height:1.5}
+.lab-head .kick{font-size:13px}
+.lab-head h1{font-size:22px}
+.back{font-size:15px;padding:8px 14px}
+.tnav a{font-size:15px;padding:13px 15px 11px}
+.tnav a .n{width:22px;height:22px;font-size:12.5px}
+.pbar label{font-size:13.5px}
+.pbar select{font-size:15px;padding:8px 10px}
+.btn{font-size:15px;padding:10px 14px;min-height:42px}
+.btn.sm{font-size:14px;padding:8px 12px;min-height:38px}
+.btn.ghost{min-width:38px;min-height:38px;justify-content:center;font-size:16px;color:var(--ink)}
+.mode button{font-size:14px;padding:9px 14px;min-height:38px}
+.saved{font-size:13.5px}
+.pagehead h2{font-size:26px}.pagehead .q{font-size:17px}
+.card>h3{font-size:18px}
+.tag{font-size:12px;padding:3px 7px}
+.tag.out{color:#2f5310;background:#e8f2dc}
+.f>span{font-size:14px;color:var(--ink);font-weight:600}
+.f input,.f select,.f textarea,td input,td select{font-size:16px;padding:9px 10px;border-color:#9a9db3;min-height:42px}
+.f .hint,.note,.src{font-size:14px}
+.src{color:#2f5310}
+.affix:before{top:10px;font-size:16px}
+.tip{width:22px;height:22px;font-size:12.5px;border-width:2px}
+.pop{font-size:14.5px;max-width:320px}
+.kpi .l{font-size:14px;color:var(--ink)}
+.kpi .s{font-size:13.5px}
+.kpi .v{font-size:22px}
+.kpi.hero .l,.kpi.hero .s{color:#e1e2f7}
+.kpi.hero .v{font-size:28px}
+.status{font-size:15.5px}
+.tbl{font-size:15px}
+.tbl th{font-size:13px;color:var(--ink)}
+.tbl td,.tbl th{padding:9px 10px}
+.cat>summary{font-size:16px;padding:12px 14px;min-height:48px}
+.cat>summary .k{width:28px;height:28px;font-size:13.5px}
+.cat>summary .z{font-size:13px;color:#5b3d00}
+.item{font-size:15px}
+.item input,.item select{font-size:15px;padding:7px 8px;border-color:#9a9db3;min-height:38px}
+.item .calc{font-size:14px;color:var(--ink)}
+.item .nt{font-size:13px;color:#2f5310}
+.item .val{font-size:15px}
+.itemhead{font-size:12.5px;color:var(--ink)}
+.bar{font-size:14px}.bar .tr{height:18px}
+.legend{font-size:14px}
+.learn h3{font-size:17px}.learn{font-size:16px}
+.learn h3 .ic{width:30px;height:30px;font-size:15px}
+.learn textarea{font-size:16px}
+.step h3{font-size:19px}.step p{font-size:15.5px}.step .no{font-size:13px}
+.gloss div{font-size:15px}
+.disclaim{font-size:14px}
+.lab-foot{font-size:14px;color:var(--ink)}
+.activity .box{font-size:15px}
+.activity select{font-size:14px;padding:6px 8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:560px){body{font-size:16px}.pagehead h2{font-size:23px}.kpis{grid-template-columns:1fr 1fr}.kpi .v{font-size:20px}.kpi.hero{grid-column:1/-1}}
+.affix input{padding-left:24px!important}.affix.pc input{padding-left:10px!important;padding-right:30px!important}.affix:before{left:10px}.affix.pc:before{left:auto;right:10px}
