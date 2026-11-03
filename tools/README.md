@@ -10,6 +10,7 @@ Four connected financial calculators for the Emerging Developer Academy™ Fall 
 | `capital.html` | 3 · Capital Stack & Financing Simulator |
 | `homebuyer.html` | 4 · Homebuyer Affordability & Subsidy Calculator |
 | `summary.html` | EDA Development Financial Feasibility Summary |
+| `guide.html` | Facilitator Guide (encrypted; opens with the facilitator password) |
 
 ## Architecture
 
@@ -41,3 +42,7 @@ Projects save only in the participant's browser (`localStorage`). There are no a
 ## Modes
 
 Participants see no mode switch. Facilitators open any Lab page with `?facilitator` (for example `tools/?facilitator`), enter the facilitator password once, and that device gets the Participant / Facilitator switch, larger presentation-friendly results, the Current Classroom Activity selector and a show/hide control for explanations. "Lock" turns it off again on that device. Only a hash of the password is in the code. This keeps participants out of the presentation controls; it is not a security boundary, and no data is hidden from participants. `?activity=1`–`4` highlights a classroom exercise.
+
+## Facilitator Guide
+
+`guide.html` is encrypted with StatiCrypt using the facilitator password, so its scripts and answer keys are not readable without it. In facilitator mode each tool shows a "Facilitator script" button that opens its section. The unencrypted source is kept outside this repository; to edit, decrypt with `staticrypt --decrypt` or ask the maintainer.

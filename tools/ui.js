@@ -22,6 +22,8 @@ export const PAGES = [
   { key: 'summary', href: 'summary.html', label: 'Feasibility Summary' },
 ];
 
+export const GUIDE_ANCHOR = { home: '#start', budget: '#lab1', pencil: '#lab2', capital: '#lab3', homebuyer: '#lab4', summary: '#lab5' };
+
 export const ACTIVITIES = [
   null,
   { title: 'Exercise 1: Development Budget', page: 'budget.html' },
@@ -165,6 +167,7 @@ export function shell(pageKey, title) {
       <label for="actSel" style="font-size:13px">Set activity:</label>
       <select id="actSel"><option value="0">None</option>${ACTIVITIES.slice(1).map((a, i) => `<option value="${i + 1}">${a.title}</option>`).join('')}</select>
       <button class="btn sm" id="toggleLearn" type="button" style="background:#fff;color:var(--mag)">Hide explanations</button>
+      <a class="btn sm" href="guide.html${GUIDE_ANCHOR[pageKey] || ''}" style="background:var(--navy);color:#fff">📘 Facilitator script</a>
     </span>
   </div></section>
   <div class="printonly" style="padding:10px 16px"><img src="eda-logo.png" alt="" style="height:40px"><p style="margin:4px 0 0"><b>${BRAND} · ${LAB}</b><br>${esc(title)} · ${esc(p.name)} · Analysis date ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p></div>
