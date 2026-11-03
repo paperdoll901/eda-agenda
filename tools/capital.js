@@ -55,10 +55,10 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 </div>
 <div class="grid even">
   <div class="card results"><h3><span class="tag out">Results</span> Capital stack</h3><div id="stack"></div></div>
-  <div class="card results"><h3><span class="tag out">Results</span> Sources & Uses</h3><div id="su" class="tblwrap"></div></div>
+  <div class="card results"><h3><span class="tag out">Results</span> Sources & Uses</h3><div id="su" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Construction draw & interest schedule</h3><div id="drawEdit"></div><div id="draws"></div></div>
-<div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap"></div></div>
+<div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget. The lender's 90% loan-to-cost cap sets the loan size.</li>
 <li>Look at the financing gap. Interest and loan fees (about $13,680) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
@@ -72,7 +72,7 @@ ${U.nextBar(['pencil.html', 'Pencil Test'], ['homebuyer.html', 'Homebuyer Afford
 
 function renderSources() {
   const el = U.$('#srcs');
-  el.innerHTML = p.sources.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>Source</th><th class="n" style="min-width:110px">Amount</th><th style="min-width:120px">Status</th><th></th></tr></thead><tbody>${p.sources.map((s, i) => `<tr>
+  el.innerHTML = p.sources.length ? `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Source</th><th class="n" style="min-width:110px">Amount</th><th style="min-width:120px">Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${p.sources.map((s, i) => `<tr>
     <td><input type="text" aria-label="Source name" data-bind="sources.${i}.name" data-kind="text"><div class="note">${esc((E.SOURCE_TYPES.find((t) => t.key === s.type) || {}).name || s.type)}${s.type === 'incentive' ? ` · <label><input type="checkbox" data-bind="sources.${i}.includeInScenario" data-kind="bool"> Include in base case</label>` : ''}</div>${s.note ? `<div class="src">${esc(s.note)}</div>` : ''}</td>
     <td><input type="number" step="any" min="0" aria-label="Amount" data-bind="sources.${i}.amount" data-kind="num"></td>
     <td><select aria-label="Status" data-bind="sources.${i}.status" data-kind="select">${STATUS_OPTS.map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select></td>
@@ -126,7 +126,7 @@ function update() {
   // draw schedule
   const ms = c.interest.schedule;
   U.$('#draws').innerHTML = `<p class="note" style="margin-top:-4px">Method: <b>${methodName(c.interest.method)}</b>. ${c.interest.method === 'full' ? 'The full loan is outstanding from closing, as in the Joseph Place case terms.' : c.interest.method === 'average' ? 'A simplified estimate (half the loan outstanding during construction, all of it during the sale period). Use only when no draw schedule is available.' : 'Each draw is outstanding from the month it is drawn. Edit the draw schedule below.'} ${p.finance.drawNote ? esc(p.finance.drawNote) : ''}</p>
-  <div class="tblwrap"><table class="tbl"><thead><tr><th>Month</th><th>Phase</th><th class="n">Draw</th><th class="n">Outstanding balance</th><th class="n">Interest</th></tr></thead><tbody>
+  <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Month</th><th>Phase</th><th class="n">Draw</th><th class="n">Outstanding balance</th><th class="n">Interest</th></tr></thead><tbody>
   ${ms.map((m) => `<tr><td>${m.month}</td><td>${m.phase}</td><td class="n">${m.draw ? fmt$(m.draw) : '·'}</td><td class="n">${fmt$(m.balance)}</td><td class="n">${fmt$(m.interest)}</td></tr>`).join('')}
   <tr class="tot"><td colspan="2">Total</td><td class="n">${fmt$(c.interest.drawn)}</td><td></td><td class="n">${fmt$(c.interest.total)}</td></tr></tbody></table></div>
   ${p.finance.interestMethod === 'draws' && Math.abs(c.interest.drawn - c.loan) > 1 ? U.status('warn', `The draw schedule totals ${fmt$(c.interest.drawn)}, but the loan is ${fmt$(c.loan)}. Adjust the draws so they add up to the loan.`) : ''}
@@ -151,7 +151,7 @@ const methodName = (m) => ({ full: 'Full balance from closing', draws: 'Draw-bas
 const shortName = (x) => ({ constructionLoan: 'Construction loan', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);
 
 function drawEditor() {
-  return `<div class="tblwrap" style="margin-bottom:10px"><table class="tbl" id="drawTbl"><caption>Draw schedule (edit)</caption><thead><tr><th>Description</th><th>Month</th><th class="n">Amount</th><th></th></tr></thead><tbody>
+  return `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table" style="margin-bottom:10px"><table class="tbl" id="drawTbl"><caption>Draw schedule (edit)</caption><thead><tr><th>Description</th><th>Month</th><th class="n">Amount</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>
   ${p.finance.draws.map((d, i) => `<tr><td><input type="text" aria-label="Draw description" data-bind="finance.draws.${i}.label" data-kind="text"></td><td><input type="number" min="1" step="1" style="width:70px" aria-label="Draw month" data-bind="finance.draws.${i}.month" data-kind="num"></td><td><input type="number" min="0" step="any" aria-label="Draw amount" data-bind="finance.draws.${i}.amount" data-kind="num"></td><td><button class="btn ghost sm" type="button" data-ddel="${i}" aria-label="Remove draw">✕</button></td></tr>`).join('')}
   </tbody></table><button class="btn alt sm" type="button" id="addDraw">+ Add draw</button></div>`;
 }

@@ -65,8 +65,8 @@ ${U.learnTeach(`<p>A project only works if a real buyer can purchase the finishe
   <div class="sticky"><div class="card results"><h3><span class="tag out">Results</span> Affordability</h3><div id="res"></div></div></div>
 </div>
 <div class="grid even">
-  <div class="card results"><h3><span class="tag out">Results</span> With vs. without assistance</h3><div id="cmpA" class="tblwrap"></div></div>
-  <div class="card results"><h3><span class="tag out">Results</span> Mortgage scenario comparison</h3><div id="cmpM" class="tblwrap"></div></div>
+  <div class="card results"><h3><span class="tag out">Results</span> With vs. without assistance</h3><div id="cmpA" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
+  <div class="card results"><h3><span class="tag out">Results</span> Mortgage scenario comparison</h3><div id="cmpM" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Interest rates and purchasing power</h3><div id="rateChart"></div></div>
 ${U.learnTry(4, 'Joseph Place homebuyer', `<ol>
@@ -142,7 +142,7 @@ function update() {
     <tr class="tot"><td>= Cash to close</td><td class="n">${fmt$(s.cashToClose)}</td></tr>
   </tbody></table>`;
 
-  U.$('#cmpA').innerHTML = `<table class="tbl"><thead><tr><th></th><th class="n">Without assistance</th><th class="n">With assistance</th></tr></thead><tbody>
+  U.$('#cmpA').innerHTML = `<table class="tbl"><thead><tr><th><span class="sr-only">Actions</span></th><th class="n">Without assistance</th><th class="n">With assistance</th></tr></thead><tbody>
     ${row('Loan amount', fmt$(no.loan), fmt$(yes.loan))}
     ${row('Monthly housing payment', fmt$(no.housing), fmt$(yes.housing))}
     ${row('Front-end DTI', fmtPct(no.frontDti), fmtPct(yes.frontDti))}

@@ -51,11 +51,11 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Side-by-side scenario comparison</h3>
   <p class="note" style="margin-top:-4px">Every value is editable. Leave a sales price blank to use the base price. Changes apply only to that scenario.</p>
-  <div class="tblwrap"><table class="tbl sc" id="sc"></table></div>
+  <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl sc" id="sc"></table></div>
 </div>
 <div class="grid even">
   <div class="card results"><h3><span class="tag out">Results</span> Sensitivity: sales price, cost and profit</h3><div id="sens"></div></div>
-  <div class="card results"><h3><span class="tag out">Results</span> Margin sensitivity</h3><div id="msens" class="tblwrap"></div></div>
+  <div class="card results"><h3><span class="tag out">Results</span> Margin sensitivity</h3><div id="msens" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
 ${U.learnTry(2, 'Joseph Place pencil test', `<ol>
 <li>With Joseph Place loaded, read the base case at the <b>$215,000</b> working sale price. Compare the result to the casebook's <b>$26,000 preliminary developer return</b>. (The casebook rounds interest to $12,000 and selling costs to $13,000.)</li>

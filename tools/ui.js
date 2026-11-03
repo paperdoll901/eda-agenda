@@ -121,7 +121,7 @@ export function shell(pageKey, title) {
   <nav class="tnav" aria-label="Learning Lab tools"><div class="in">
     ${PAGES.map((x) => `<a href="${x.href}" class="${x.key === pageKey ? 'cur' : ''}" ${x.key === pageKey ? 'aria-current="page"' : ''}>${x.n ? `<span class="n">${x.n}</span>` : ''}${x.label}</a>`).join('')}
   </div></nav>
-  <div class="pbar noprint"><div class="in">
+  <section class="pbar noprint" aria-label="Project and view controls"><div class="in">
     <label for="projSel">Project</label>
     <select id="projSel">${opts}</select>
     <button class="btn alt sm" id="resetJP" type="button" title="Restore the original 1010 Joseph Place case figures">Reset to Joseph Place</button>
@@ -137,8 +137,8 @@ export function shell(pageKey, title) {
     <span class="sp"></span>
     <span class="saved" id="savedMsg" aria-live="polite"></span>
     <div class="mode" role="group" aria-label="View mode"><button type="button" data-mode="participant">Participant</button><button type="button" data-mode="facilitator">Facilitator</button></div>
-  </div></div>
-  <div class="activity" aria-live="polite"><div class="box">
+  </div></section>
+  <section class="activity" aria-live="polite" aria-label="Classroom activity"><div class="box">
     <span>📍 <b>Current classroom activity:</b> <span id="actTitle"></span></span>
     <a id="actLink" class="btn sm" style="background:#fff;color:var(--mag)">Go to the activity</a>
     <span class="fac-only" style="gap:6px;align-items:center;margin-left:auto">
@@ -146,7 +146,7 @@ export function shell(pageKey, title) {
       <select id="actSel"><option value="0">None</option>${ACTIVITIES.slice(1).map((a, i) => `<option value="${i + 1}">${a.title}</option>`).join('')}</select>
       <button class="btn sm" id="toggleLearn" type="button" style="background:#fff;color:var(--mag)">Hide explanations</button>
     </span>
-  </div></div>
+  </div></section>
   <div class="printonly" style="padding:10px 16px"><img src="eda-logo.png" alt="" style="height:40px"><p style="margin:4px 0 0"><b>${BRAND} · ${LAB}</b><br>${esc(title)} · ${esc(p.name)} · Analysis date ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p></div>
   <main id="main"></main>
   <footer class="lab-foot">${BRAND} · ${LAB} · <span class="nw">Alliance for Housing Progress</span><br>An instructional tool. Results are estimates based on the assumptions entered and are not a loan approval, appraisal, or eligibility decision.</footer>`);
@@ -178,6 +178,8 @@ export function shell(pageKey, title) {
   $('#toggleLearn').addEventListener('click', (e) => { const h = document.body.classList.toggle('hide-learn'); e.target.textContent = h ? 'Show explanations' : 'Hide explanations'; });
   $$('.mode button').forEach((b) => b.addEventListener('click', showAct));
   setTimeout(showAct, 0);
+  const labelTables = () => $$('.tblwrap[role=region]').forEach((w, i) => { const h = w.closest('.card')?.querySelector('h3'); w.setAttribute('aria-label', `${(h?.textContent || 'Table').replace(/^(Inputs|Results)\s*/, '').trim()} (table ${i + 1})`); });
+  setTimeout(labelTables, 0); setTimeout(labelTables, 800);
   setTimeout(() => { const c = $('.tnav a.cur'), n = $('.tnav .in'); if (c && n) n.scrollLeft = c.offsetLeft - (n.clientWidth - c.offsetWidth) / 2; }, 0);
   return { main: $('#main'), project: p, refreshActivity: showAct };
 }
@@ -268,7 +270,7 @@ export function barList(rows, { total, fmt = fmt$ } = {}) {
 
 /** Line chart. series: [{name, color, dash, points:[{x,y}]}] */
 export function lineChart(series, o = {}) {
-  const W = 640, H = 300, m = { l: 70, r: 16, t: 14, b: 44 };
+  const W = 640, H = 320, m = { l: 78, r: 16, t: 18, b: 50 };
   const xs = series.flatMap((s) => s.points.map((p) => p.x));
   const ys = series.flatMap((s) => s.points.map((p) => p.y)).concat(o.zero ? [0] : []);
   const x0 = Math.min(...xs), x1 = Math.max(...xs);
@@ -281,16 +283,16 @@ export function lineChart(series, o = {}) {
   const yt = ticks(y0, y1, 5), xt = ticks(x0, x1, 5);
   const fx = o.xfmt || ((v) => v), fy = o.yfmt || fmtShort;
   let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label || 'Chart')}">`;
-  yt.forEach((v) => (svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e6e8f0"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#5d5f75">${fy(v)}</text>`));
-  xt.forEach((v) => (svg += `<text x="${X(v)}" y="${H - m.b + 18}" text-anchor="middle" font-size="12" fill="#5d5f75">${fx(v)}</text>`));
-  if (o.zero && y0 < 0 && y1 > 0) svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="#1d1e33" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(0) - 5}" text-anchor="end" font-size="11.5" fill="#1d1e33">$0 profit (break-even)</text>`;
-  (o.vlines || []).forEach((vl) => { if (vl.x >= x0 && vl.x <= x1) svg += `<line x1="${X(vl.x)}" x2="${X(vl.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${vl.color || '#9F1F63'}" stroke-dasharray="4 4"/><text x="${X(vl.x) + 4}" y="${m.t + 12}" font-size="11.5" fill="${vl.color || '#9F1F63'}">${esc(vl.label)}</text>`; });
+  yt.forEach((v) => (svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e6e8f0"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="15" fill="#3a3c52">${fy(v)}</text>`));
+  xt.forEach((v) => (svg += `<text x="${X(v)}" y="${H - m.b + 18}" text-anchor="middle" font-size="15" fill="#3a3c52">${fx(v)}</text>`));
+  if (o.zero && y0 < 0 && y1 > 0) svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="#1d1e33" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(0) - 5}" text-anchor="end" font-size="14" fill="#1d1e33">$0 profit (break-even)</text>`;
+  (o.vlines || []).forEach((vl) => { if (vl.x >= x0 && vl.x <= x1) svg += `<line x1="${X(vl.x)}" x2="${X(vl.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${vl.color || '#9F1F63'}" stroke-dasharray="4 4"/><text x="${X(vl.x) + 4}" y="${m.t + 12}" font-size="14" fill="${vl.color || '#9F1F63'}">${esc(vl.label)}</text>`; });
   series.forEach((s, i) => {
     const c = s.color || color(i);
     svg += `<polyline fill="none" stroke="${c}" stroke-width="3" ${s.dash ? 'stroke-dasharray="7 5"' : ''} points="${s.points.map((p) => `${X(p.x)},${Y(p.y)}`).join(' ')}"/>`;
     s.points.forEach((p) => (svg += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="3.5" fill="${c}"><title>${esc(s.name)}: ${fx(p.x)} → ${fmt$(p.y)}</title></circle>`));
   });
-  if (o.xTitle) svg += `<text x="${(W + m.l) / 2}" y="${H - 6}" text-anchor="middle" font-size="12.5" fill="#1d1e33">${esc(o.xTitle)}</text>`;
+  if (o.xTitle) svg += `<text x="${(W + m.l) / 2}" y="${H - 6}" text-anchor="middle" font-size="15" fill="#1d1e33">${esc(o.xTitle)}</text>`;
   svg += '</svg>';
   const legend = `<div class="legend">${series.map((s, i) => `<span><i style="background:${s.color || color(i)}"></i>${esc(s.name)}${s.dash ? ' (dashed)' : ''}</span>`).join('')}</div>`;
   return svg + legend;
@@ -314,8 +316,8 @@ export function stackChart(uses, layers, o = {}) {
     y -= h;
     const fill = l.pattern ? 'url(#hatch)' : l.color || color(i);
     svg += `<rect x="${gx2}" y="${y}" width="${colW}" height="${h}" fill="${fill}" stroke="#fff" stroke-width="1.5"><title>${esc(l.label)}: ${fmt$(l.value)}</title></rect>`;
-    if (h > 16) svg += `<text x="${gx2 + colW / 2}" y="${y + h / 2 + 5}" fill="${l.pattern || l.light ? '#5c0f37' : '#fff'}" text-anchor="middle" font-size="12.5" font-weight="700">${fmtShort(l.value)}</text>`;
-    svg += `<line x1="${gx2 + colW + 4}" x2="${gx2 + colW + 14}" y1="${y + h / 2}" y2="${y + h / 2}" stroke="#9a9cb0"/><text x="${gx2 + colW + 18}" y="${y + h / 2 + 4}" font-size="12" fill="#1d1e33">${esc(l.short || l.label)}</text>`;
+    if (h > 16) svg += `<text x="${gx2 + colW / 2}" y="${y + h / 2 + 5}" fill="${l.pattern || l.light ? '#5c0f37' : '#fff'}" text-anchor="middle" font-size="14" font-weight="700">${fmtShort(l.value)}</text>`;
+    svg += `<line x1="${gx2 + colW + 4}" x2="${gx2 + colW + 14}" y1="${y + h / 2}" y2="${y + h / 2}" stroke="#9a9cb0"/><text x="${gx2 + colW + 18}" y="${y + h / 2 + 4}" font-size="14" fill="#1d1e33">${esc(l.short || l.label)}</text>`;
   });
   svg += `<text x="${gx2 + colW / 2}" y="${base + 20}" text-anchor="middle" font-size="13" font-weight="700" fill="#1d1e33">Sources</text>`;
   svg += `<line x1="20" x2="${W - 10}" y1="${base}" y2="${base}" stroke="#1d1e33"/></svg>`;
