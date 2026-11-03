@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793722946';
-import * as U from './ui.js?v=1793722946';
+import * as E from './engine.js?v=1793723153';
+import * as U from './ui.js?v=1793723153';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -60,10 +60,13 @@ ${sec(6, 'Financing Gap', (() => {
     + off.map((x) => tr(`Less ${esc(x.name)} <span class="note">(${esc(x.status)}, not yet counted)</span>`, '−' + fmt$(x.amount))).join('')
     + (pend > 0.5 || off.length ? tr(c.gapIfIncentives > 0.5 ? 'Gap if everything pending is awarded' : 'Surplus if everything pending is awarded', fmt$(Math.abs(c.gapIfIncentives)), 'tot') : '');
   const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
+  const why = U.gapWhy(p, c);
+  const eqNow = c.devEquityCommitted;
   const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
+    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can cover it with ${fmt$(gap)} more equity or an interest reserve in the loan. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded, it covers the gap with ${fmt$(-c.gapIfIncentives)} to spare, so Gabe's cash could drop from ${fmt$(eqNow)} to ${fmt$(c.equityIfIncentives)}.`
     : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer equity required if awarded: ${fmt$(c.equityIfIncentives)}.`
     : `Committed sources are ${fmt$(gap)} short, and ${fmt$(c.gapIfIncentives)} would remain unfunded even if everything pending is awarded.`;
-  return U.status(lvl, msg) + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
+  return U.status(lvl, msg) + (why ? `<h4 style="margin:12px 0 4px;font-size:15px">Where the gap comes from</h4><table class="tbl" style="max-width:640px"><tbody>${why.rows}</tbody></table><h4 style="margin:12px 0 4px;font-size:15px">How it closes</h4>` : '') + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
 })())}
 ${sec(7, 'Homebuyer Affordability', `<table class="tbl"><thead><tr><th><span class="sr-only">Actions</span></th><th class="n">Without assistance</th><th class="n">With assistance</th></tr></thead><tbody>
   ${[['Purchase price', (x) => fmt$(x.price)], ['Down payment', (x) => fmt$(x.down)], ['Loan amount', (x) => fmt$(x.loan)], ['Monthly housing payment', (x) => fmt$(x.housing)], ['Front-end DTI', (x) => fmtPct(x.frontDti)], ['Back-end DTI', (x) => fmtPct(x.backDti)], ['Cash to close', (x) => fmt$(x.cashToClose)], ['Cash shortfall', (x) => fmt$(x.cashGap)], ['Purchasing power', (x) => fmt$(x.maxPrice)], ['Payment affordability gap', (x) => (x.paymentGap === null ? 'Not yet calculated' : fmt$(x.paymentGap))]].map(([l, f]) => `<tr><td>${l}</td><td class="n">${f(hNo)}</td><td class="n">${f(h)}</td></tr>`).join('')}

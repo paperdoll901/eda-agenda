@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793722946';
-import * as E from './engine.js?v=1793722946';
-import * as U from './ui.js?v=1793722946';
+import * as S from './store.js?v=1793723153';
+import * as E from './engine.js?v=1793723153';
+import * as U from './ui.js?v=1793723153';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -102,7 +102,7 @@ function update() {
     ${U.kpi('Developer equity required', fmt$(c.requiredEquity), `After committed debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
     ${U.kpi('Construction interest', fmt$(c.interest.total), methodName(c.interest.method), '', 'interest')}
   </div>
-  ${U.status(gapLevel, c.gapCommitted > 0.5 ? `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${c.proposed + c.conditional > 0.5 ? (c.gapAll <= 0.5 ? `The pending sources included in this scenario (${fmt$(c.proposed + c.conditional)}) would close it if they are approved.` : `Even if the pending sources included here (${fmt$(c.proposed + c.conditional)}) are approved, ${fmt$(c.gapAll)} would still be unfunded.`) : (c.offIncentiveTotal > 0 ? '' : 'No other sources are pending.')}` : c.gapAll < -0.5 ? `Sources exceed uses by ${fmt$(-c.gapAll)}. Check for double counting or reduce a source.` : 'Committed sources cover total uses. The financing plan balances on paper.')}
+  ${(() => { const why = U.gapWhy(p, c); return why ? U.status(gapLevel, `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${why.text}`) + `<details class="recon" style="margin:8px 0"><summary style="cursor:pointer;font-weight:700">Where the gap comes from</summary><table class="tbl" style="max-width:640px;margin-top:6px"><tbody>${why.rows}</tbody></table></details>` : U.status(gapLevel, c.gapCommitted > 0.5 ? `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${c.proposed + c.conditional > 0.5 ? (c.gapAll <= 0.5 ? `The pending sources included in this scenario (${fmt$(c.proposed + c.conditional)}) would close it if they are approved.` : `Even if the pending sources included here (${fmt$(c.proposed + c.conditional)}) are approved, ${fmt$(c.gapAll)} would still be unfunded.`) : (c.offIncentiveTotal > 0 ? '' : 'No other sources are pending.')}` : c.gapAll < -0.5 ? `Sources exceed uses by ${fmt$(-c.gapAll)}. Check for double counting or reduce a source.` : 'Committed sources cover total uses. The financing plan balances on paper.'); })()}
   ${c.offIncentiveTotal > 0 ? `<div class="status info" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg><p><b>Not counted yet:</b> ${c.offIncentives.map((x) => `${esc(x.name)} (${fmt$(x.amount)}, ${esc(x.status)})`).join('; ')}. If it is awarded, the gap ${c.gapIfIncentives <= 0.5 ? `<b>closes</b>${c.gapIfIncentives < -0.5 ? ` with ${fmt$(-c.gapIfIncentives)} to spare` : ''}` : `falls to <b>${fmt$(c.gapIfIncentives)}</b>`} and the developer equity required drops to <b>${fmt$(c.equityIfIncentives)}</b>.<br><button class="btn sm" type="button" id="incOn" style="margin-top:8px">Include the incentive in this scenario</button></p></div>` : ''}
   ${c.warnings.filter((w) => w.level !== 'gap' && w.level !== 'info').map((w) => U.status('bad', esc(w.text))).join('')}
   ${c.maxLoan !== null ? `<p class="note">Maximum loan under the limits entered: <b>${fmt$(c.maxLoan)}</b>${c.maxByLtc !== null && c.maxByLtv !== null ? ` (the lower of loan-to-cost ${fmt$(c.maxByLtc)} and loan-to-value ${fmt$(c.maxByLtv)})` : ''}.</p>` : ''}

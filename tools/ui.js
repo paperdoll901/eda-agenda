@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793722946';
-import * as E from './engine.js?v=1793722946';
+import * as S from './store.js?v=1793723153';
+import * as E from './engine.js?v=1793723153';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -444,4 +444,23 @@ export function nextBar(prev, next) {
 export function caseNotes(p) {
   if (p.kind !== 'case' || !p.assumptionNotes) return '';
   return `<details class="more"><summary>Where do the Joseph Place numbers come from?</summary><ul class="note">${p.assumptionNotes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></details>`;
+}
+
+// Explains a financing gap as "costs no committed source pays for" (Joseph Place: interest + loan fees)
+export function gapWhy(p, c) {
+  if (!(c.gapCommitted > 0.5) || !p.budget || !p.budget.exhibitTotal) return null;
+  const items = c.budget.items.filter((i) => !i.atClosing && (i.value || 0) > 0);
+  const exD = items.filter((i) => (i.note || '').startsWith('Exhibit D')).reduce((t, i) => t + i.value, 0);
+  const extra = items.filter((i) => !(i.note || '').startsWith('Exhibit D'));
+  const extraTot = extra.reduce((t, i) => t + i.value, 0);
+  const round = c.committed - exD;
+  if (Math.abs(exD + extraTot - c.uses) > 1 || Math.abs(extraTot - round - c.gapCommitted) > 1) return null;
+  const f = (v) => '$' + Math.round(v).toLocaleString('en-US');
+  const rows = `<tr><td>Committed sources (loan + developer equity)</td><td class="n">${f(c.committed)}</td></tr>
+    <tr><td>Exhibit D construction budget they were sized to cover</td><td class="n">${f(exD)}</td></tr>
+    <tr><td>Left over because the casebook rounds the budget to ${f(c.committed)}</td><td class="n">${f(round)}</td></tr>
+    ${extra.map((i) => `<tr><td>${String(i.name).replace(/</g, '&lt;')} <span class="note">(not in the $${Math.round(c.committed / 1000)}k budget)</span></td><td class="n">${f(i.value)}</td></tr>`).join('')}
+    <tr class="tot"><td>Gap = financing costs − rounding</td><td class="n">${f(c.gapCommitted)}</td></tr>`;
+  const text = `The casebook sizes the loan and equity (${f(c.committed)}) to the construction budget only. The gap is the cost of the money itself: ${extra.map((i) => `${String(i.name).toLowerCase()} ${f(i.value)}`).join(' and ')}, which no committed source pays for yet (less the ${f(round)} the casebook rounds up).`;
+  return { rows, text };
 }
