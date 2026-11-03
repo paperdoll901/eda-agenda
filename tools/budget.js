@@ -55,19 +55,19 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
       <div id="cats"></div>
     </div>
 <div class="card results"><h3><span class="tag out">Results</span> Baseline vs. revised budget</h3><div id="cmp" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
-${U.learnTry(1, 'Joseph Place development budget', `<ol>
-<li>Load 1010 Joseph Place (use <b>Reset to Joseph Place</b> if you have changed it). Note the <b>$162,000</b> project budget: $143,000 vertical construction plus $19,000 not yet itemized.</li>
-<li>Open Exhibit D (the full construction budget) and move the $19,000 into the right categories: land, predevelopment, sitework and soft costs. Use the duplicate and add buttons.</li>
-<li>Look at the warnings for categories with $0. Which costs are truly missing, and which are already inside another line?</li>
-<li>Notice that interest ($11,680), loan fees ($2,000) and selling costs (6%) sit <i>outside</i> the $162,000, exactly as the casebook says. What is the full TDC?</li>
-<li>Set a construction contingency of 5% of hard costs, then a 10% hard-cost increase in the revised budget. How much does TDC change?</li></ol>`)}
+${U.learnTry(1, 'Joseph Place development budget', `<p>The Joseph Place budget is <b>Exhibit D</b>, Ferrybrook Holdings' construction budget, with every line placed in a Learning Lab category. Each line shows its Exhibit D reference.</p><ol>
+<li>Open each category. Notice that the builder's "General Project Requirements" (Exhibit D section 1) is split across <b>predevelopment</b> (design review, permits), <b>sitework</b> (utility connection fees), <b>soft costs</b> (insurance, project management) and <b>holding costs</b> (job security). Why does a developer separate them?</li>
+<li>Exhibit D totals about <b>$161,900</b>. The casebook rounds it to $162,000. Interest (~$11,680), loan fees ($2,000) and selling costs (6%) are <i>not</i> in Exhibit D. What is the full Total Development Cost?</li>
+<li>Find the lines marked $0. Title and acquisition closing costs, and taxes, insurance and utilities during the 9-month sale period, are missing from Exhibit D. Estimate them. How much do they reduce profit in the Pencil Test?</li>
+<li>The $5,000 builder contingency is about 3.8% of hard costs. Is that enough? Enter a 10% hard-cost increase in the revised budget and compare.</li>
+<li>Exhibit D reports $107 per sq. ft. for construction. The Lab shows hard costs per sq. ft. lower, and total cost per sq. ft. higher. Why are they different?</li></ol>`)}
 ${U.learnReflect('budget', ['Which costs are easiest to forget when a builder hands you a construction estimate?', 'Why does the casebook warn that closing costs may appear three times?', 'How would a three-month sales delay change this budget, and which lines would move?'])}
 <div id="dl"></div>
 ${U.nextBar(['./', 'Lab Home'], ['pencil.html', 'Pencil Test'])}
 <p class="disclaim">Budget figures are planning estimates entered by the user. Category definitions are instructional. Confirm every cost with bids, the lender and your professional team.</p>`;
 
 const catsEl = U.$('#cats');
-const open = new Set(['D', 'U']);
+const open = new Set(['D']);
 
 function itemRow(it, idx) {
   const b = `budget.items.${idx}`;
@@ -147,16 +147,18 @@ function update() {
     <h4 style="margin:16px 0 8px;font-size:14px">Cost category distribution</h4>
     ${rows.length ? U.barList(rows, { total: b.tdc }) : '<p class="note">Add costs to see the breakdown.</p>'}
     <table class="tbl" style="margin-top:12px"><tbody>
-      ${E.CATEGORIES.map((c) => `<tr><td>${c.key} · ${esc(c.name)}</td><td class="n">${fmt$(b.byCat[c.key])}</td></tr>`).join('')}
+      ${E.CATEGORIES.filter((c) => c.key !== 'U' || b.byCat.U > 0).map((c) => `<tr><td>${c.key} · ${esc(c.name)}</td><td class="n">${fmt$(b.byCat[c.key])}</td></tr>`).join('')}
       <tr class="tot"><td>Total Development Cost</td><td class="n">${fmt$(b.tdc)}</td></tr>
       <tr><td>Includes developer fee</td><td class="n">${fmt$(b.developerFee)}</td></tr>
     </tbody></table>
-    ${unitemized > 0 ? U.status('warn', `${fmt$(unitemized)} of the budget is not yet itemized. Assign it to categories (for Joseph Place, use Exhibit D) so missing costs can be found.`) : ''}
+    ${unitemized > 0 ? U.status('warn', `${fmt$(unitemized)} of the budget is not yet itemized. Assign it to categories so missing costs can be found.`) : ''}
+    ${p.budget.exhibitTotal ? (() => { const ex = b.items.filter((i) => (i.note || '').startsWith('Exhibit D')).reduce((t, i) => t + (i.value || 0), 0); return U.status('info', `<b>Exhibit D check:</b> lines from Exhibit D add to <b>${fmt$(ex)}</b>. Exhibit D prints ${fmt$(p.budget.exhibitTotal)} (its own subtotals differ by a few dollars from rounding); the casebook rounds to $162,000. Interest, loan fees and selling costs come from the casebook and sit outside Exhibit D.`); })() : ''}
+    ${(() => { const z = b.items.filter((i) => i.basis !== 'linked' && !(i.value > 0)); return z.length ? U.status('warn', `<b>${z.length} line${z.length > 1 ? 's are' : ' is'} $0:</b> ${z.map((i) => esc(i.name)).join('; ')}. Estimate each, or confirm it is truly zero.`) : ''; })()}
     ${zero.length ? U.status('warn', `These categories are $0: <b>${zero.join(', ')}</b>. Confirm each is truly zero or already included elsewhere.`) : ''}
     ${issues.map((v) => U.status(v.level === 'error' ? 'bad' : 'warn', esc(v.text))).join('')}
     <p class="note">Selling costs are part of TDC but are paid from the sale proceeds at closing. The Pencil Test deducts them once; the Capital Stack does not ask lenders or equity to fund them.</p>`;
   U.$('#cmp').innerHTML = `<table class="tbl"><thead><tr><th>Category</th><th class="n">Baseline</th><th class="n">Revised</th><th class="n">Change</th></tr></thead><tbody>
-    ${cmp.rows.map((r) => `<tr><td>${r.key} · ${esc(r.name)}</td><td class="n">${fmt$(r.base)}</td><td class="n">${fmt$(r.revised)}</td><td class="n">${r.change === 0 ? '·' : (r.change > 0 ? '▲ ' : '▼ ') + fmt$(Math.abs(r.change))}</td></tr>`).join('')}
+    ${cmp.rows.filter((r) => r.key !== 'U' || r.base > 0 || r.revised > 0).map((r) => `<tr><td>${r.key} · ${esc(r.name)}</td><td class="n">${fmt$(r.base)}</td><td class="n">${fmt$(r.revised)}</td><td class="n">${r.change === 0 ? '·' : (r.change > 0 ? '▲ ' : '▼ ') + fmt$(Math.abs(r.change))}</td></tr>`).join('')}
     <tr class="tot"><td>Total Development Cost</td><td class="n">${fmt$(cmp.base.tdc)}</td><td class="n">${fmt$(cmp.revised.tdc)}</td><td class="n">${cmp.change === 0 ? '·' : (cmp.change > 0 ? '▲ ' : '▼ ') + fmt$(Math.abs(cmp.change))}</td></tr>
   </tbody></table><p class="note">Revised = revised estimates where entered, plus the ${E.num(p.budget.costIncreasePct)}% hard-cost increase. ▲ means the revised budget costs more.</p>`;
 }

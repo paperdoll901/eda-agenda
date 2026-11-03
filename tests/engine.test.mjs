@@ -43,25 +43,33 @@ test('construction interest: average-balance estimate', () => {
   close(r.total, 4000);
 });
 
-test('Joseph Place budget reproduces casebook totals without double counting', () => {
+test('Joseph Place budget is Exhibit D, fully itemized, with no double counting', () => {
   const p = josephPlace();
   const b = E.budgetTotals(p);
-  close(b.byCat.D, 143000);
-  close(b.byCat.D + b.byCat.U, 162000);
+  const exhibitD = b.costBeforeClosing - b.interest - b.fees; // everything except casebook financing items
+  close(exhibitD, 161937); // Exhibit D line items (printed total $161,939, rounding)
+  close(b.byCat.U, 0); // nothing left un-itemized
+  assert.deepEqual(b.zeroCats, []);
+  close(b.byCat.A, 500);
+  close(b.byCat.B, 3422);
+  close(b.byCat.C, 16555);
+  close(b.byCat.D, 130910);
+  close(b.byCat.E, 4250);
+  close(b.byCat.G, 5000);
   close(b.fees, 2000);
   close(b.interest, 11680);
   close(b.atClosing, 12900); // 6% of $215,000
-  close(b.tdc, 162000 + 2000 + 11680 + 12900);
-  close(b.costBeforeClosing, 162000 + 2000 + 11680);
+  close(b.tdc, 161937 + 2000 + 11680 + 12900);
+  close(b.developerFee, 650);
 });
 
 test('pencil test: profit, margin, return on cost (Joseph Place base)', () => {
   const r = E.pencilTest(josephPlace());
   close(r.gross, 215000);
   close(r.net, 202100);
-  close(r.profit, 202100 - 175680); // 26,420; casebook rounds to $26,000
-  close(r.margin, 26420 / 215000, 1e-9);
-  close(r.roc, 26420 / 188580, 1e-9);
+  close(r.profit, 202100 - 175617); // 26,483; casebook rounds to $26,000
+  close(r.margin, 26483 / 215000, 1e-9);
+  close(r.roc, 26483 / 188517, 1e-9);
 });
 
 test('pencil test: selling costs deducted exactly once', () => {
@@ -74,7 +82,7 @@ test('pencil test: selling costs deducted exactly once', () => {
 test('break-even price covers all costs including percentage selling costs', () => {
   const p = josephPlace();
   const r = E.pencilTest(p);
-  close(r.breakEven, 175680 / 0.94);
+  close(r.breakEven, 175617 / 0.94);
   const atBE = E.pencilTest(p, { salePrice: r.breakEven });
   close(atBE.profit, 0, 0.5);
   assert.equal(atBE.status, 'breakeven');
@@ -89,7 +97,7 @@ test('target-margin price earns exactly the target margin', () => {
 
 test('return on developer equity uses committed equity, or is not calculated', () => {
   const r = E.pencilTest(josephPlace());
-  close(r.roe, 26420 / 16000, 1e-9);
+  close(r.roe, 26483 / 16000, 1e-9);
   const p = blankProject();
   assert.equal(E.pencilTest(p).roe, null);
 });
@@ -102,7 +110,7 @@ test('scenario comparison: lower prices and cost overrun reduce profit', () => {
   close(base - a, 25000 * 0.94);
   close(a - b, 10000 * 0.94);
   const over = E.pencilTest(p, { costIncreasePct: 10 }).profit;
-  close(base - over, 14300);
+  close(base - over, 13091);
   const delay = E.pencilTest(p, { delayMonths: 1 }).profit;
   close(base - delay, 973.33);
 });
@@ -110,7 +118,7 @@ test('scenario comparison: lower prices and cost overrun reduce profit', () => {
 test('cost-overrun exposure: hard-cost increase that takes profit to zero', () => {
   const p = josephPlace();
   const r = E.pencilTest(p);
-  close(r.overrunToZero, (26420 / 143000) * 100, 0.01);
+  close(r.overrunToZero, (26483 / 130910) * 100, 0.01);
 });
 
 test('conditional incentive is excluded until included in the scenario', () => {
@@ -127,28 +135,28 @@ test('conditional incentive is excluded until included in the scenario', () => {
 
 test('capital stack: sources & uses reconciliation for Joseph Place', () => {
   const cs = E.capitalStack(josephPlace());
-  close(cs.uses, 175680); // selling costs are paid from proceeds, not a construction-period use
+  close(cs.uses, 175617); // selling costs are paid from proceeds, not a construction-period use
   close(cs.committed, 162000); // $146,000 loan + $16,000 equity
-  close(cs.gapCommitted, 13680); // interest and loan fees still need a source
+  close(cs.gapCommitted, 13617); // interest and loan fees still need a source
   close(cs.uses, cs.committed + cs.gapCommitted);
 });
 
 test('loan-to-cost and loan-to-value', () => {
   const p = josephPlace();
   const cs = E.capitalStack(p);
-  close(cs.ltc, 146000 / 175680, 1e-9);
+  close(cs.ltc, 146000 / 175617, 1e-9);
   assert.equal(cs.ltv, null);
   p.finance.collateralValue = 200000; p.finance.ltvLimitPct = 75;
   const cs2 = E.capitalStack(p);
   close(cs2.ltv, 0.73, 1e-9);
   close(cs2.maxByLtv, 150000);
-  close(cs2.maxLoan, Math.min(150000, 175680 * 0.9));
+  close(cs2.maxLoan, Math.min(150000, 175617 * 0.9));
 });
 
 test('developer equity requirement after debt and grants', () => {
   const p = josephPlace();
   const cs = E.capitalStack(p);
-  close(cs.requiredEquity, 175680 - 146000);
+  close(cs.requiredEquity, 175617 - 146000);
   const cs2 = E.capitalStack(p, { loanAmount: 130000 });
   // $16,000 less debt means $16,000 more equity, minus the 12 months of interest no longer owed on it
   close(cs2.requiredEquity - cs.requiredEquity, 16000 - 16000 * 0.08);
@@ -249,17 +257,17 @@ test('validation catches negative costs, bad rates, bad terms', () => {
 
 test('percentage contingency follows hard costs and cost increases', () => {
   const p = josephPlace();
-  p.budget.items.find((i) => i.cat === 'G').pct = 10;
+  p.budget.items.push({ id: 'pc', cat: 'G', name: 'Added contingency', basis: 'pct', pct: 5, pctOf: 'hard' });
   const b = E.budgetTotals(p);
-  close(b.byCat.G, 14300);
+  close(b.byCat.G, 5000 + 130910 * 0.05);
   const b2 = E.budgetTotals(p, { costIncreasePct: 10 });
-  close(b2.byCat.D, 157300);
-  close(b2.byCat.G, 15730);
+  close(b2.byCat.D, 130910 * 1.1);
+  close(b2.byCat.G, 5000 + 130910 * 1.1 * 0.05);
 });
 
 test('revised estimates compare against baseline', () => {
   const p = josephPlace();
   p.budget.items[0].revised = 25000;
   const c = E.budgetComparison(p);
-  close(c.change, 3550);
+  close(c.change, 24500);
 });

@@ -10,6 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
+export const CASE_VERSION = 2; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -85,27 +86,61 @@ export function josephPlace() {
   const p = blankProject('1010 Joseph Place');
   p.id = 'joseph-place';
   p.kind = 'case';
+  p.caseVersion = CASE_VERSION;
   p.location = 'Memphis, Tennessee (ZIP 38107)';
   p.developer = 'Gabriel D. Franceschi, Ferrybrook Holdings, Inc. (EDA 2025 alumnus)';
   p.units = 1;
   p.sqft = 1500;
-  p.sqftNote = 'Preliminary materials describe about 1,500 heated sq. ft.; a later CMA uses 1,403 sq. ft. The casebook says these must be reconciled before final underwriting.';
+  p.sqftNote = 'Exhibit D uses about 1,500 heated sq. ft. Preliminary materials describe about 1,500 heated sq. ft.; a later CMA uses 1,403 sq. ft. The casebook says these must be reconciled before final underwriting.';
   p.timeline = { buildMonths: 3, saleMonths: 9 };
-  const src = 'Casebook: Schedule of Values, $143,000 vertical construction contract';
+  const X = (ref) => `Exhibit D ${ref}`;
   p.budget = {
     costIncreasePct: 0,
+    exhibitTotal: 161939, // printed total; line items add to $161,937 (rounding in the source)
     items: [
-      L('D', 'Site, foundation & underslab (15%)', { amount: 21450, note: src }),
-      L('D', 'Framing & dry-in (25%)', { amount: 35750, note: src }),
-      L('D', 'Rough systems / MEP (20%)', { amount: 28600, note: src }),
-      L('D', 'Insulation & drywall (15%)', { amount: 21450, note: src }),
-      L('D', 'Interior & exterior finishes (20%)', { amount: 28600, note: src }),
-      L('D', 'Completion & closeout (5%)', { amount: 7150, note: src }),
-      L('U', 'Balance of $162,000 project budget (land, site, soft costs per Exhibit D)', { amount: 19000, note: 'Casebook: $162,000 project budget less $143,000 vertical contract. Itemize from Exhibit D.' }),
-      L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook: $1,000 application fee + $1,000 origination estimate, outside the $162,000 budget.' }),
-      L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook: interest-only at 8% on the full $146,000 from closing, 3 months build + 9 months to sell.' }),
-      L('G', 'Construction contingency', { basis: 'pct', pct: 0, pctOf: 'hard', note: 'Not stated in the casebook. Confirm in Exhibit D whether a contingency is already inside the $162,000.' }),
-      L('H', 'Selling costs: brokerage + seller closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook uses 6% of the projected sale price for combined disposition costs.' }),
+      // A. Land acquisition
+      L('A', 'Land purchase price', { amount: 500, note: X('LD.01 Land Acquisition (CRA Essential Housing lot)') }),
+      L('A', 'Title, legal and acquisition closing costs', { amount: 0, note: 'Not in Exhibit D. Casebook: acquisition closing costs must be confirmed. Estimate this.' }),
+      // B. Predevelopment
+      L('B', 'Architect, engineering, soils study & land survey', { amount: 600, note: X('1.01') }),
+      L('B', 'Design review / plan check fees', { amount: 2500, note: X('1.02') }),
+      L('B', 'Permits (city / county)', { amount: 322, note: X('1.03') }),
+      // C. Site development
+      L('C', 'Clearing & stakeout', { amount: 850, note: X('3.01') }),
+      L('C', 'Finish grading', { amount: 511, note: X('3.11') }),
+      L('C', 'Utility connection fees (water, sewer, electric)', { amount: 6500, note: X('1.05') }),
+      L('C', 'Driveway, walkways & steps', { amount: 7671, note: X('15.01') }),
+      L('C', 'Landscaping', { amount: 1023, note: X('15.02') }),
+      // D. Hard construction
+      L('D', 'Foundation & slab (concrete)', { amount: 18098, note: X('4.02 foundation $5,114 + 4.03 slab $12,984') }),
+      L('D', 'Framing (lumber + labor)', { amount: 26733, note: X('5.01 lumber $16,548 + 5.06 labor $10,185') }),
+      L('D', 'Roofing, gutters & downspouts', { amount: 5421, note: X('8.01 $3,375 + 8.02 $2,046') }),
+      L('D', 'Exterior siding & exterior painting', { amount: 5757, note: X('6.01 siding $2,557 + 15.05 painting $3,200') }),
+      L('D', 'Windows & exterior doors', { amount: 3273, note: X('7.01 $2,046 + 7.02 $1,227') }),
+      L('D', 'Plumbing (ground, top-out, finish, fixtures)', { amount: 12194, note: X('16.01–16.04') }),
+      L('D', 'HVAC (rough + finish)', { amount: 7671, note: X('16.07 $3,580 + 16.08 $4,091') }),
+      L('D', 'Electrical & lighting fixtures', { amount: 8438, note: X('17.01 $4,091 + 17.02 $3,580 + 17.03 $767 (Exhibit D subtotal shows $8,439)') }),
+      L('D', 'Insulation', { amount: 2425, note: X('9.01') }),
+      L('D', 'Drywall (material & labor)', { amount: 7160, note: X('9.02') }),
+      L('D', 'Interior finishes (paint, trim, doors, hardware, carpentry, mirrors)', { amount: 9974, note: X('10.01 painting $2,046 + 11.01–11.04, 11.06 $7,928 (Exhibit D subtotal shows $7,927)') }),
+      L('D', 'Flooring', { amount: 4497, note: X('12.01') }),
+      L('D', 'Cabinets & countertops', { amount: 5335, note: X('13.01 $3,395 + 13.02 $1,940') }),
+      L('D', 'Appliances', { amount: 2700, note: X('14.01') }),
+      L('D', 'General contractor overhead, profit & builder\'s fee', { amount: 9350, note: X('18.01 overhead/profit $350 + 18.03 builder\'s fee $9,000') }),
+      L('D', 'Temporary utilities, final cleaning & touch-up', { amount: 1884, note: X('1.07 $350 + 1.12 $1,534') }),
+      // E. Soft costs
+      L('E', "Builder's risk insurance", { amount: 750, note: X('1.04') }),
+      L('E', 'Project management & supervision', { amount: 3500, note: X('1.10') }),
+      // F. Financing & holding
+      L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook: $1,000 application + $1,000 origination estimate. Not in Exhibit D.' }),
+      L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook: 8% interest-only on the full $146,000 from closing, 3 months build + 9 months to sell. Not in Exhibit D.' }),
+      L('F', 'Job site security', { amount: 650, note: X('1.09') }),
+      L('F', 'Property taxes, insurance & utilities while marketing', { basis: 'monthly', monthly: 0, note: 'Not in Exhibit D. Casebook: holding costs during the 9-month sale period must be confirmed. Enter a monthly estimate.' }),
+      // G. Contingency
+      L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
+      // H. Developer fee & disposition
+      L('H', 'Developer fee & program costs', { amount: 650, isDeveloperFee: true, note: X('LD.06 Development Cost') }),
+      L('H', 'Selling costs: brokerage + seller closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook: 6% of the projected sale price for combined disposition costs. Not in Exhibit D.' }),
     ],
   };
   p.sale = { price: 215000, commissionPct: 6, sellerClosingPct: 0, targetMarginPct: 10, priceNote: 'Working projected sale price, rounded from the $213,958 CMA estimate.' };
@@ -144,7 +179,8 @@ export function josephPlace() {
     b: { label: 'Lower price: $180,000', salePrice: 180000, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false },
   };
   p.assumptionNotes = [
-    'Sale price, budget, loan, equity, interest terms, loan fees and the 6% selling-cost rate come from the 1010 Joseph Place casebook.',
+    'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937; Exhibit D prints $161,939 because of rounding, and the casebook rounds to $162,000. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
+    'Sale price, loan, equity, interest terms, loan fees and the 6% selling-cost rate come from the casebook. They sit outside Exhibit D, exactly as the casebook explains.',
     'Casebook figures are teaching assumptions. They do not establish that a loan closed or a home sold.',
     'The $190,000 and $180,000 price scenarios and the $15,000 CRA incentive are classroom scenarios.',
     'Buyer rate, taxes, insurance, debt, cash and closing costs are illustrative placeholders. Verify before use.',
@@ -164,7 +200,8 @@ let memory = null;
 export function state() {
   if (memory) return memory;
   memory = read() || { projects: {}, activeId: 'joseph-place', activity: null };
-  if (!memory.projects['joseph-place']) memory.projects['joseph-place'] = josephPlace();
+  const jp = memory.projects['joseph-place'];
+  if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   if (!memory.projects[memory.activeId]) memory.activeId = 'joseph-place';
   return memory;
 }
