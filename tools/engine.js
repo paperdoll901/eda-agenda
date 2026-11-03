@@ -387,9 +387,13 @@ export function capitalStack(p, s = {}) {
   const isDevEquity = (x) => x.type === 'developerEquity' || x.type === 'landEquity' || x.type === 'deferredFee';
   const otherCommitted = counted.filter((x) => !isDevEquity(x) && x.status === 'committed').reduce((t, x) => t + x.amount, 0);
   const otherAll = counted.filter((x) => !isDevEquity(x)).reduce((t, x) => t + x.amount, 0);
-  const requiredEquity = Math.max(0, uses - otherCommitted);
-  const requiredEquityIfAllClose = Math.max(0, uses - otherAll);
-  const lenderMinEquity = isNum(f.minEquityPct) && num(f.minEquityPct) > 0 ? uses * pct(f.minEquityPct) : null;
+  // owner's equity minimum (e.g. THF: 10% of total project cost), on the same cost basis and rounding as loan-to-cost.
+  // Incentives and grants are project sources; they never count toward the owner's equity minimum.
+  const minRaw = isNum(f.minEquityPct) && num(f.minEquityPct) > 0 ? eligible * pct(f.minEquityPct) : null;
+  const lenderMinEquity = minRaw !== null && num(f.ltcRoundTo) > 0 ? Math.round(minRaw / num(f.ltcRoundTo)) * num(f.ltcRoundTo) : minRaw;
+  const floor = lenderMinEquity || 0;
+  const requiredEquity = Math.max(floor, uses - otherCommitted);
+  const requiredEquityIfAllClose = Math.max(floor, uses - otherAll);
   const devEquityCommitted = counted.filter((x) => isDevEquity(x) && x.status === 'committed').reduce((t, x) => t + x.amount, 0);
   const warnings = [];
   if (maxByLtc !== null && loan > maxByLtc + 0.5) warnings.push({ level: 'risk', text: `The loan exceeds the ${num(f.ltcLimitPct)}% loan-to-cost limit by ${Math.round(loan - maxByLtc).toLocaleString()} dollars.` });
@@ -401,7 +405,7 @@ export function capitalStack(p, s = {}) {
   const offIncentives = srcs.filter((x) => x.type === 'incentive' && !x.includeInScenario);
   const offIncentiveTotal = offIncentives.reduce((t, x) => t + x.amount, 0);
   const gapIfIncentives = gapAll - offIncentiveTotal;
-  const equityIfIncentives = Math.max(0, requiredEquityIfAllClose - offIncentiveTotal);
+  const equityIfIncentives = Math.max(floor, requiredEquityIfAllClose - offIncentiveTotal);
   return {
     offIncentives, offIncentiveTotal, gapIfIncentives, equityIfIncentives,
     uses, eligible, loan, sources: srcs, counted, committed, proposed, conditional, allSources,

@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 6; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 7; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -179,12 +179,12 @@ export function josephPlace() {
     ],
     drawNote: 'Draw amounts are from the casebook Schedule of Values. The month each draw falls in is an illustrative classroom assumption.',
     interestReserve: 0,
-    ltcLimitPct: 90, ltvLimitPct: null, collateralValue: null, minEquityPct: null,
+    ltcLimitPct: 90, ltvLimitPct: null, collateralValue: null, minEquityPct: 10,
     limitNote: 'Casebook: 90% of eligible project cost is about $146,000. An appraisal-based cap must also be met; its percentage is not stated.',
   };
   p.sources = [
-    { id: 'jp-eq', type: 'developerEquity', name: 'Developer cash equity (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'Casebook: $162,000 budget = $146,000 loan + $16,000 developer equity.' },
-    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
+    { id: 'jp-eq', type: 'developerEquity', name: 'Owner\'s equity: Gabe\'s cash on hand (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'THF requires owner\'s equity of 10% of total project cost: 10% of $162,000 = $16,200, about $16,000. The loan covers the other 90% ($146,000).' },
+    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive tied to this parcel. It is a project source, not owner\'s equity: it can help pay costs but never counts toward Gabe\'s 10% equity. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
   p.buyer = {
     ...blankBuyer(),

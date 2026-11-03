@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793745986';
-import * as U from './ui.js?v=1793745986';
+import * as E from './engine.js?v=1793748505';
+import * as U from './ui.js?v=1793748505';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -55,7 +55,7 @@ ${sec(4, 'Sources & Uses', `<div class="grid even" style="gap:12px"><table class
   <table class="tbl"><thead><tr><th>Sources</th><th class="n">Amount</th></tr></thead><tbody>${c.sources.map((x) => tr(`${esc(x.name)} <span class="note">(${x.status}${x.type === 'incentive' && !x.includeInScenario ? ', not included' : ''})</span>`, fmt$(x.amount))).join('')}${tr('Committed sources', fmt$(c.committed), 'tot')}</tbody></table></div>
   <p class="note">Selling costs (${fmt$(c.sellingCostsAtClosing)}) are paid from sale proceeds at closing and are not construction-period uses.</p>`)}
 ${sec(5, 'Capital Stack', `<div style="max-width:700px">${U.stackChart(c.uses, c.counted.filter((x) => x.amount > 0).map((x) => ({ label: x.name, short: x.name.length > 30 ? x.name.slice(0, 28) + '…' : x.name, value: x.amount })).concat(c.gapCommitted - c.proposed - c.conditional > 0.5 ? [{ label: 'Unfunded gap', short: 'Unfunded gap', value: c.gapCommitted - c.proposed - c.conditional, pattern: true }] : []), { label: 'Capital stack' })}</div>
-  <table class="tbl"><tbody>${tr('Construction loan', `${fmt$(c.loan)} at ${E.num(p.finance.ratePct)}%`)}${tr('Loan-to-cost', fmtPct(c.ltc))}${tr('Loan-to-value', c.ltv === null ? 'Not yet calculated (no appraised value)' : fmtPct(c.ltv))}${tr('Construction interest', `${fmt$(c.interest.total)} (${{ full: 'full balance from closing', draws: 'draw-based', average: 'simplified average balance' }[c.interest.method]})`)}${tr('Developer equity required', fmt$(c.requiredEquity))}${tr('Developer equity committed', fmt$(c.devEquityCommitted))}</tbody></table>`)}
+  <table class="tbl"><tbody>${tr('Construction loan', `${fmt$(c.loan)} at ${E.num(p.finance.ratePct)}%`)}${tr('Loan-to-cost', fmtPct(c.ltc))}${tr('Loan-to-value', c.ltv === null ? 'Not yet calculated (no appraised value)' : fmtPct(c.ltv))}${tr('Construction interest', `${fmt$(c.interest.total)} (${{ full: 'full balance from closing', draws: 'draw-based', average: 'simplified average balance' }[c.interest.method]})`)}${tr('Developer cash needed', fmt$(c.requiredEquity))}${tr('Developer equity committed', fmt$(c.devEquityCommitted))}</tbody></table>`)}
 ${sec(6, 'Financing Gap', (() => {
   const gap = c.gapCommitted; const pend = c.proposed + c.conditional; const off = c.offIncentives || [];
   const why = U.gapWhy(p, c);
@@ -66,8 +66,8 @@ ${sec(6, 'Financing Gap', (() => {
   const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
   const eqNow = c.devEquityCommitted;
   const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
-    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can bring more equity or ask the lender about an interest reserve. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded in time, it would cover this with ${fmt$(-c.gapIfIncentives)} to spare.`
-    : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer equity required if awarded: ${fmt$(c.equityIfIncentives)}.`
+    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can bring more equity or ask the lender about an interest reserve. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded in time, it would cover this with ${fmt$(-c.gapIfIncentives)} to spare. The incentive does not count toward owner's equity: Gabe still brings ${fmt$(c.lenderMinEquity || 0)} of his own cash.`
+    : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer cash needed if awarded: ${fmt$(c.equityIfIncentives)}.`
     : `Committed sources are ${fmt$(gap)} short, and ${fmt$(c.gapIfIncentives)} would remain unfunded even if everything pending is awarded.`;
   return U.status(lvl, msg) + (why ? `<h4 style="margin:12px 0 4px;font-size:15px">Where the gap comes from</h4><table class="tbl" style="max-width:640px"><tbody>${why.rows}</tbody></table><h4 style="margin:12px 0 4px;font-size:15px">How it closes</h4>` : '') + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
 })())}
@@ -90,7 +90,7 @@ U.$('#csv').addEventListener('click', () => {
     ['1. Project Overview'], ['Location', p.location], ['Type', p.type], ['Units', p.units], ['Sq. ft.', p.sqft], ['Construction months', p.timeline.buildMonths], ['Sale months', p.timeline.saleMonths], [],
     ['2. Development Budget'], ...E.CATEGORIES.map((k) => [k.name, d(b.byCat[k.key])]), ['Total Development Cost', d(b.tdc)], [],
     ['3. Pencil Test', 'Base', sc.a?.label || '', sc.b?.label || ''], ...[['Sales price', 'price'], ['Net sales revenue', 'net'], ['Total project cost', 'totalCost'], ['Project profit', 'profit']].map(([l, k]) => [l, d(r[k]), A ? d(A[k]) : '', B ? d(B[k]) : '']), ['Profit margin', pc(r.margin), A ? pc(A.margin) : '', B ? pc(B.margin) : ''], ['Break-even price', d(r.breakEven), A ? d(A.breakEven) : '', B ? d(B.breakEven) : ''], [],
-    ['4-6. Sources & Uses'], ['Total uses', d(c.uses)], ...c.sources.map((x) => [x.name, d(x.amount), x.status]), ['Committed sources', d(c.committed)], ['Funding gap', d(c.gapCommitted)], ['Loan-to-cost', pc(c.ltc)], ['Developer equity required', d(c.requiredEquity)], [],
+    ['4-6. Sources & Uses'], ['Total uses', d(c.uses)], ...c.sources.map((x) => [x.name, d(x.amount), x.status]), ['Committed sources', d(c.committed)], ['Funding gap', d(c.gapCommitted)], ['Loan-to-cost', pc(c.ltc)], ['Developer cash needed', d(c.requiredEquity)], [],
     ['7. Homebuyer Affordability', 'Without assistance', 'With assistance'], ['Monthly payment', d(hNo.housing), d(h.housing)], ['Back-end DTI', pc(hNo.backDti), pc(h.backDti)], ['Cash to close', d(hNo.cashToClose), d(h.cashToClose)], ['Purchasing power', d(hNo.maxPrice), d(h.maxPrice)], [],
     ['8. Risks and Outstanding Assumptions'], ...risks.map((x) => [x])];
   U.download(`${U.slug(p.name)}-feasibility-summary.csv`, U.csv(rows), 'text/csv');

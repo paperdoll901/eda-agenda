@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793745986';
-import * as E from './engine.js?v=1793745986';
+import * as S from './store.js?v=1793748505';
+import * as E from './engine.js?v=1793748505';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -469,7 +469,7 @@ export function gapWhy(p, c) {
     <tr class="tot"><td>= Financing gap</td><td class="n">${f(c.gapCommitted)}</td></tr>`;
   const partsA = fin.map((i) => `${i.link === 'loanFees' ? 'loan fees' : i.link === 'interestBuild' ? 'interest during construction' : i.link === 'interestHold' ? 'interest while marketing' : 'construction interest'} (${f(i.value)})`);
   const parts = partsA.length > 1 ? partsA.slice(0, -1).join(', ') + ' and ' + partsA[partsA.length - 1] : partsA.join('');
-  const text = `The ${f(c.loan)} loan and ${f(c.committed - c.loan)} equity cover the ${f(dev)} development budget. ${parts.charAt(0).toUpperCase() + parts.slice(1)} still need a source: ${f(finTot)} in all.`;
+  const text = `The ${f(c.loan)} loan and ${f(c.committed - c.loan)} owner's equity (Gabe's cash on hand) cover the ${f(dev)} development budget. ${parts.charAt(0).toUpperCase() + parts.slice(1)} still need a source: ${f(finTot)} in all.`;
   return { rows, text };
 }
 
@@ -508,9 +508,10 @@ function caseMathRows(p, keys) {
     net: ['Net sales revenue', f(r.net), `${f(r.price)} sale − ${f(sell)} selling costs.`, 'p. 21'],
     profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.build)} construction interest − ${f(intr.hold)} marketing interest − ${f(fees)} loan fees${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
     loan: ['Construction loan', f(c.loan), `About 90% of the ${f(dev)} eligible project cost (${f(dev * 0.9)}), rounded.`, 'p. 19'],
-    equity: ['Developer equity', f(eq), `${f(dev)} budget − ${f(c.loan)} loan.`, 'p. 19'],
+    equity: ['Owner\'s equity (Gabe\'s cash on hand)', f(eq), `THF requires owner's equity of ${E.num(fx.minEquityPct) || 10}% of total project cost: ${E.num(fx.minEquityPct) || 10}% × ${f(c.eligible)} = ${f(c.eligible * (E.num(fx.minEquityPct) || 10) / 100)}, about ${f(c.lenderMinEquity || eq)}. The loan covers the other 90%.`, 'p. 19'],
+    incentive: ['CRA Essential Housing incentive', f((p.sources || []).filter((x) => x.type === 'incentive').reduce((t, x) => t + E.num(x.amount), 0)), `Tied to this parcel and still conditional. A project source, not owner's equity: if awarded it can pay the ${f(c.gapCommitted)} of interest and fees, but Gabe's ${f(c.lenderMinEquity || eq)} cash requirement stays the same.`, 'pp. 5–6'],
     gap: ['Cash still needed for interest and fees', f(c.gapCommitted), `${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees. The loan and equity cover only the ${f(dev)} budget, so Gabe pays these during construction.`, 'pp. 19–21'],
-    cash: ['Gabe\'s total cash in the deal', f(c.requiredEquity), `${f(eq)} equity + ${f(c.gapCommitted)} interest and fees.`, 'pp. 19–21'],
+    cash: ['Gabe\'s total cash needed', f(c.requiredEquity), `${f(eq)} owner's equity + ${f(c.gapCommitted)} interest and fees not covered by the loan.`, 'pp. 19–21'],
     closing: ['Cash left at closing', f(r.net - c.loan), `${f(r.net)} net − ${f(c.loan)} loan payoff. It returns Gabe's ${f(c.requiredEquity)} cash plus the ${f(r.profit)} return; it is not all profit.`, 'p. 30'],
   };
   const list = (keys || Object.keys(all)).map((k) => all[k]).filter(Boolean);
