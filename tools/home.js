@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793721821';
-import * as U from './ui.js?v=1793721821';
+import * as E from './engine.js?v=1793722946';
+import * as U from './ui.js?v=1793722946';
 
 const { main, project: p } = U.shell('home', 'Lab Home');
 const { fmt$, fmtPct, esc } = U;

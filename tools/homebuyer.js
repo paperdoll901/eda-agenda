@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793721821';
-import * as E from './engine.js?v=1793721821';
-import * as U from './ui.js?v=1793721821';
+import * as S from './store.js?v=1793722946';
+import * as E from './engine.js?v=1793722946';
+import * as U from './ui.js?v=1793722946';
 
 const { main, project: p } = U.shell('homebuyer', 'Homebuyer Affordability & Subsidy Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -113,9 +113,16 @@ function update() {
   let lvl, msg;
   if (!(E.num(b.income) > 0)) { lvl = 'info'; msg = 'Enter the buyer\'s annual income to test affordability.'; }
   else if (payOK && cashOK) { lvl = 'good'; msg = 'Under these assumptions the buyer <b>meets both DTI targets and has enough cash to close</b>. A lender must still verify income, credit and assets.'; }
-  else if (!payOK && !cashOK) { lvl = 'bad'; msg = '<b>Both tests fail</b>: the monthly payment is above the DTI targets <i>and</i> the buyer is short of cash to close.'; }
+  else if (!payOK && !cashOK) { lvl = 'bad'; msg = `<b>Both tests fail</b>: the monthly payment is above the DTI targets <i>and</i> the buyer is short ${fmt$(s.cashGap)} of cash to close.`; }
   else if (!payOK) { lvl = 'bad'; msg = 'The buyer has the cash to close, but the <b>monthly payment is above the DTI targets</b>. Down payment help alone may not fix this.'; }
   else { lvl = 'warn'; msg = 'The monthly payment fits, but the buyer is <b>short of cash to close</b>. Assistance or a lower cash requirement could close this gap.'; }
+  const debt = E.num(b.monthlyDebt);
+  const incNeed = Math.max(tf > 0 ? s.housing / (tf / 100) : 0, tb > 0 ? (s.housing + debt) / (tb / 100) : 0) * 12;
+  const recon = E.num(b.income) > 0 && !(payOK && cashOK) ? `<div class="status ${lvl} recon" role="status"><div style="flex:1;min-width:0"><b>What it would take to close the gap</b>
+    <table class="tbl" style="margin:8px 0 4px"><tbody>
+      ${payOK ? '' : `<tr><td>Sales price</td><td class="n">${fmt$(price)}</td></tr><tr><td>Price this buyer can carry at ${tf}% / ${tb}% DTI</td><td class="n">${fmt$(s.maxPrice)}</td></tr><tr class="tot"><td>Payment gap to close (price reduction, buydown or principal reduction)</td><td class="n">${fmt$(Math.max(0, s.paymentGap || 0))}</td></tr><tr><td>Or: income needed at this price</td><td class="n">${fmt$(incNeed)} <span class="note">vs. ${fmt$(E.num(b.income))}</span></td></tr>`}
+      ${cashOK ? '' : `<tr><td>Cash to close</td><td class="n">${fmt$(s.cashToClose)}</td></tr><tr><td>Buyer cash on hand</td><td class="n">${fmt$(s.cashAvailable)}</td></tr><tr class="tot"><td>Cash gap (down payment or closing-cost assistance)</td><td class="n">${fmt$(s.cashGap)}</td></tr>`}
+    </tbody></table>${b.incomeNote ? `<p class="note" style="margin:6px 0 0">This is the casebook's buyer question: can a household at the ZIP 38107 median income (${fmt$(E.num(b.income))}) buy at ${fmt$(price)}? A failing result here is the finding to discuss, not an error. Try a lower price on the Pencil Test, add assistance below, or test a higher-income buyer.</p>` : ''}</div></div>` : '';
   U.$('#res').innerHTML = `
   <div class="kpis">
     ${U.kpi('Estimated monthly housing payment', fmt$(s.housing), `P&I ${fmt$(s.pi)} · taxes ${fmt$(s.taxes)} · ins. ${fmt$(s.ins)} · MI ${fmt$(s.mi)}${s.hoa ? ' · HOA ' + fmt$(s.hoa) : ''}`, 'hero')}
@@ -127,7 +134,7 @@ function update() {
     ${U.kpi('Estimated purchasing power', fmt$(s.maxPrice), 'Highest price that meets both DTI targets')}
     ${U.kpi('Affordability gap (payment)', s.paymentGap === null ? 'Not yet calculated' : s.paymentGap > 0 ? fmt$(s.paymentGap) : '$0', s.paymentGap > 0 ? 'Price above purchasing power' : 'Price is within purchasing power', s.paymentGap > 0 ? 'neg' : 'pos', 'appraisalGap')}
   </div>
-  ${U.status(lvl, msg)}
+  ${U.status(lvl, msg)}${recon}
   ${U.status('info', `<b>Two different tests.</b> Payment affordability depends on income and the monthly payment. Cash affordability depends on savings and assistance. Here the payment gap is ${s.paymentGap === null ? 'not yet calculated' : fmt$(s.paymentGap)} and the cash gap is ${fmt$(s.cashGap)}.`)}
   ${b.includeAssistance && s.assistanceApplied > 0 && b.assistanceStatus !== 'approved' ? U.status('warn', 'Assistance is included but not approved. Treat this result as a scenario until the buyer is approved for the program.') : ''}
   ${issues.map((v) => U.status(v.level === 'error' ? 'bad' : 'warn', esc(v.text))).join('')}
