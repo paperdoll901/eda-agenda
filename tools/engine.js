@@ -376,7 +376,12 @@ export function capitalStack(p, s = {}) {
   if (gapCommitted > 0.5) warnings.push({ level: 'gap', text: 'Committed sources do not yet cover total uses. The financing plan is incomplete.' });
   if (gapAll < -0.5) warnings.push({ level: 'info', text: 'Sources exceed uses. Confirm whether any source is double counted or can be reduced.' });
   if (num(f.interestReserve) > loan) warnings.push({ level: 'risk', text: 'The interest reserve is larger than the loan.' });
+  const offIncentives = srcs.filter((x) => x.type === 'incentive' && !x.includeInScenario);
+  const offIncentiveTotal = offIncentives.reduce((t, x) => t + x.amount, 0);
+  const gapIfIncentives = gapAll - offIncentiveTotal;
+  const equityIfIncentives = Math.max(0, requiredEquityIfAllClose - offIncentiveTotal);
   return {
+    offIncentives, offIncentiveTotal, gapIfIncentives, equityIfIncentives,
     uses, loan, sources: srcs, counted, committed, proposed, conditional, allSources,
     gapCommitted, gapAll, ltc, ltv, maxByLtc, maxByLtv, maxLoan,
     requiredEquity, requiredEquityIfAllClose, lenderMinEquity, devEquityCommitted,
