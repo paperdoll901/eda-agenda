@@ -30,9 +30,9 @@ Four connected financial calculators for the Emerging Developer Academy™ Fall 
 
 ## Joseph Place figures
 
-Taken from the *1010 Joseph Place Development Casebook* (EDA Fall 2026): $215,000 working sale price; $162,000 project budget ($143,000 vertical construction Schedule of Values + $19,000 not yet itemized, which Exhibit D breaks down); $146,000 construction loan at 8% interest-only on the full balance; $16,000 developer equity; $1,000 application + $1,000 origination fees; 3-month build + 9 months to sell; 6% combined selling costs; 90% loan-to-cost.
+Taken from the *1010 Joseph Place Development Casebook* (EDA Fall 2026): $215,000 working sale price; project budget itemized from Exhibit D ($161,937 in line items; printed $161,939; casebook rounds to $162,000); $146,000 construction loan at 8% interest-only on the full balance; $16,000 developer equity; $1,000 application + $1,000 origination fees; 3-month build + 9 months to sell; 6% combined selling costs; 90% loan-to-cost.
 
-Classroom scenarios: $190,000 and $180,000 sale prices; $15,000 CRA incentive (conditional); 3% down payment. The illustrative buyer uses the casebook's $40,792 ZIP 38107 median income. Rate, taxes, insurance, debts and cash are editable placeholders.
+Classroom scenarios: $190,000 and $180,000 sale prices; $20,000 CRA incentive, not in Gabe's budget, off by default and toggled on or off; 3% down payment. The illustrative buyer uses the casebook's $40,792 ZIP 38107 median income. Rate, taxes, insurance, debts and cash are editable placeholders.
 
 ## Saving and privacy
 

@@ -125,11 +125,11 @@ test('conditional incentive is excluded until included in the scenario', () => {
   const p = josephPlace();
   assert.equal(E.includedIncentives(p), 0);
   const withI = E.pencilTest(p, { includeIncentive: true });
-  close(withI.profit - E.pencilTest(p).profit, 15000);
+  close(withI.profit - E.pencilTest(p).profit, 20000);
   const cs = E.capitalStack(p);
   assert.equal(cs.conditional, 0); // excluded
   const cs2 = E.capitalStack(p, { includeIncentive: true });
-  close(cs2.conditional, 15000);
+  close(cs2.conditional, 20000);
   close(cs2.committed, cs.committed); // never counted as committed
 });
 
