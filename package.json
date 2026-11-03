@@ -1,0 +1,6 @@
+{
+  "name": "eda-cohort-hub",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test tests/engine.test.mjs" }
+}
