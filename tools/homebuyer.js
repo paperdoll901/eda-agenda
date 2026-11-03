@@ -1,6 +1,6 @@
-import * as S from './store.js';
-import * as E from './engine.js';
-import * as U from './ui.js';
+import * as S from './store.js?v=1793718536';
+import * as E from './engine.js?v=1793718536';
+import * as U from './ui.js?v=1793718536';
 
 const { main, project: p } = U.shell('homebuyer', 'Homebuyer Affordability & Subsidy Calculator');
 const { fmt$, fmtPct, esc, tip } = U;

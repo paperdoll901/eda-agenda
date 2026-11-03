@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js';
-import * as E from './engine.js';
+import * as S from './store.js?v=1793718536';
+import * as E from './engine.js?v=1793718536';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -96,19 +96,54 @@ const FAC_HASH = '39a6db9e3a3deff21761d6ddc468cec674c0decf57e12c49fe068ac77512ac
 const FAC_KEY = 'eda-lab-fac';
 const isUnlocked = () => { try { return localStorage.getItem(FAC_KEY) === FAC_HASH; } catch (e) { return false; } };
 async function hashPw(pw) {
+  if (!(window.crypto && crypto.subtle)) return '';
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('eda-lab:' + pw));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-async function unlockFlow() {
-  const pw = prompt('Facilitator password:');
-  if (pw === null) return false;
-  if ((await hashPw(pw.trim())) === FAC_HASH) {
-    try { localStorage.setItem(FAC_KEY, FAC_HASH); localStorage.setItem('eda-lab-mode', 'facilitator'); } catch (e) {}
-    return true;
-  }
-  alert('That password did not work. Facilitator mode stays off.');
-  return false;
+function unlockFlow() {
+  return new Promise((resolve) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'facmodal';
+    wrap.innerHTML = `<form class="facbox" role="dialog" aria-modal="true" aria-labelledby="facTitle">
+      <h2 id="facTitle">Facilitator login</h2>
+      <p>Enter the facilitator password to turn on facilitator mode on this device.</p>
+      <label for="facPw">Facilitator password</label>
+      <input id="facPw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      <p class="facerr" id="facErr" role="alert" hidden>That password did not work. Check the spelling and capital letters.</p>
+      <div class="facbtns"><button class="btn" type="submit">Unlock</button><button class="btn alt" type="button" id="facCancel">Cancel</button></div>
+    </form>`;
+    document.body.appendChild(wrap);
+    const input = wrap.querySelector('#facPw');
+    setTimeout(() => input.focus(), 30);
+    const close = (ok) => { wrap.remove(); resolve(ok); };
+    wrap.querySelector('#facCancel').addEventListener('click', () => close(false));
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(false); });
+    wrap.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if ((await hashPw(input.value.trim())) === FAC_HASH) {
+        try { localStorage.setItem(FAC_KEY, FAC_HASH); localStorage.setItem('eda-lab-mode', 'facilitator'); } catch (err) {}
+        close(true);
+      } else { wrap.querySelector('#facErr').hidden = false; input.select(); }
+    });
+  });
 }
+
+/** In-page confirm / input box (browser pop-ups are blocked in many in-app browsers). */
+export function askBox(message, { input = null, ok = 'OK', cancel = 'Cancel' } = {}) {
+  return new Promise((resolve) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'facmodal';
+    wrap.innerHTML = `<form class="facbox" role="dialog" aria-modal="true"><p>${esc(message)}</p>${input !== null ? `<input type="text" id="askIn" value="${esc(input)}" aria-label="${esc(message)}">` : ''}<div class="facbtns"><button class="btn" type="submit">${esc(ok)}</button><button class="btn alt" type="button" data-c>${esc(cancel)}</button></div></form>`;
+    document.body.appendChild(wrap);
+    const inp = wrap.querySelector('#askIn');
+    setTimeout(() => (inp || wrap.querySelector('button')).focus(), 30);
+    const done = (v) => { wrap.remove(); resolve(v); };
+    wrap.querySelector('[data-c]').addEventListener('click', () => done(input !== null ? null : false));
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape') done(input !== null ? null : false); });
+    wrap.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); done(input !== null ? inp.value : true); });
+  });
+}
+
 function lockFacilitator() { try { localStorage.removeItem(FAC_KEY); localStorage.setItem('eda-lab-mode', 'participant'); } catch (e) {} }
 function getMode() {
   if (!isUnlocked()) return 'participant';
@@ -175,21 +210,21 @@ export function shell(pageKey, title) {
   <footer class="lab-foot">${BRAND} · ${LAB} · <span class="nw">Alliance for Housing Progress</span><br>An instructional tool. Results are estimates based on the assumptions entered and are not a loan approval, appraisal, or eligibility decision.</footer>`);
 
   $('#projSel').addEventListener('change', (e) => { S.setActive(e.target.value); location.reload(); });
-  $('#resetJP').addEventListener('click', () => { if (confirm('Reset 1010 Joseph Place to the original casebook figures? Your changes to the Joseph Place case will be lost. Your own projects are not affected.')) { S.resetJosephPlace(); location.reload(); } });
-  $('#startOwn').addEventListener('click', () => { const n = prompt('Name your project:', 'My Project'); if (n !== null) { S.startOwn(n.trim() || 'My Project'); location.reload(); } });
-  $('#saveCopy').addEventListener('click', () => { const n = prompt('Name this scenario:', `${p.name} (scenario)`); if (n !== null) { S.saveCopy(n.trim() || undefined); location.reload(); } });
+  $('#resetJP').addEventListener('click', async () => { if (await askBox('Reset 1010 Joseph Place to the original casebook figures? Your changes to the Joseph Place case will be lost. Your own projects are not affected.', { ok: 'Reset' })) { S.resetJosephPlace(); location.reload(); } });
+  $('#startOwn').addEventListener('click', async () => { const n = await askBox('Name your project:', { input: 'My Project', ok: 'Start project' }); if (n !== null) { S.startOwn(n.trim() || 'My Project'); location.reload(); } });
+  $('#saveCopy').addEventListener('click', async () => { const n = await askBox('Name this scenario:', { input: `${p.name} (scenario)`, ok: 'Save' }); if (n !== null) { S.saveCopy(n.trim() || undefined); location.reload(); } });
   $('#dlProject').addEventListener('click', () => download(`${slug(p.name)}-eda-project.json`, JSON.stringify(p, null, 2), 'application/json'));
   $('#upProject').addEventListener('change', async (e) => {
     const f = e.target.files[0]; if (!f) return;
-    try { S.importProject(JSON.parse(await f.text())); location.reload(); } catch (err) { alert(err.message || 'That file could not be opened.'); }
+    try { S.importProject(JSON.parse(await f.text())); location.reload(); } catch (err) { askBox(err.message || 'That file could not be opened.', { ok: 'OK' }); }
   });
-  $('#delProject').addEventListener('click', () => { if (confirm(`Delete "${p.name}" from this browser?`)) { S.deleteProject(p.id); location.reload(); } });
+  $('#delProject').addEventListener('click', async () => { if (await askBox(`Delete "${p.name}" from this browser?`, { ok: 'Delete' })) { S.deleteProject(p.id); location.reload(); } });
 
   if (qs.has('facilitator') && !isUnlocked()) { unlockFlow().then((ok) => { const q = new URLSearchParams(location.search); q.delete('facilitator'); location.replace(location.pathname + (q.toString() ? '?' + q : '') + location.hash); }); }
   const mode = getMode(); applyMode(mode);
   $$('.mode button[data-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
   const fl = $('#facLogin'); if (fl) fl.addEventListener('click', () => unlockFlow().then((ok) => { if (ok) location.reload(); }));
-  const lk = $('#facLock'); if (lk) lk.addEventListener('click', () => { if (confirm('Lock facilitator mode on this device? You will need the facilitator password to turn it back on.')) { lockFacilitator(); location.reload(); } });
+  const lk = $('#facLock'); if (lk) lk.addEventListener('click', async () => { if (await askBox('Lock facilitator mode on this device? You will need the facilitator password to turn it back on.', { ok: 'Lock' })) { lockFacilitator(); location.reload(); } });
   const showAct = () => {
     const a = S.state().activity;
     document.body.classList.toggle('has-activity', !!a || document.body.classList.contains('fac'));

@@ -1,6 +1,6 @@
-import * as S from './store.js';
-import * as E from './engine.js';
-import * as U from './ui.js';
+import * as S from './store.js?v=1793718536';
+import * as E from './engine.js?v=1793718536';
+import * as U from './ui.js?v=1793718536';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -80,7 +80,7 @@ function renderSources() {
   binder.fill();
 }
 main.addEventListener('click', (e) => { if (e.target.id === 'incOn') { p.sources.forEach((s) => { if (s.type === 'incentive') s.includeInScenario = true; }); U.saved(); renderSources(); update(); } });
-U.$('#srcs').addEventListener('click', (e) => { const d = e.target.closest('[data-del]'); if (d && confirm('Remove this source?')) { p.sources.splice(+d.dataset.del, 1); U.saved(); renderSources(); update(); } });
+U.$('#srcs').addEventListener('click', (e) => { const d = e.target.closest('[data-del]'); if (d) U.askBox('Remove this source?', { ok: 'Remove' }).then((ok) => { if (ok) { p.sources.splice(+d.dataset.del, 1); U.saved(); renderSources(); update(); } }); });
 U.$('#addSrc').addEventListener('click', () => {
   const t = U.$('#addType').value; const def = E.SOURCE_TYPES.find((x) => x.key === t);
   p.sources.push({ id: S.newId('s'), type: t, name: def.name, amount: 0, status: t === 'incentive' ? 'conditional' : 'proposed', includeInScenario: t === 'incentive' ? false : undefined });

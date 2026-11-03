@@ -1,6 +1,6 @@
-import * as S from './store.js';
-import * as E from './engine.js';
-import * as U from './ui.js';
+import * as S from './store.js?v=1793718536';
+import * as E from './engine.js?v=1793718536';
+import * as U from './ui.js?v=1793718536';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -109,7 +109,7 @@ catsEl.addEventListener('click', (e) => {
   const add = e.target.closest('[data-add]'), dup = e.target.closest('[data-dup]'), del = e.target.closest('[data-del]');
   if (add) { p.budget.items.push({ id: S.newId(), cat: add.dataset.add, name: 'New line item', basis: 'fixed', amount: 0, revised: null }); U.saved(); renderCats(); }
   if (dup) { const src = p.budget.items[+dup.dataset.dup]; const c = JSON.parse(JSON.stringify(src)); c.id = S.newId(); c.name = src.name + ' (copy)'; if (c.basis === 'linked') { c.basis = 'fixed'; c.amount = 0; delete c.link; } p.budget.items.splice(+dup.dataset.dup + 1, 0, c); U.saved(); renderCats(); }
-  if (del) { const it = p.budget.items[+del.dataset.del]; if (confirm(`Remove "${it.name}"?`)) { p.budget.items.splice(+del.dataset.del, 1); U.saved(); renderCats(); } }
+  if (del) { const it = p.budget.items[+del.dataset.del]; U.askBox(`Remove "${it.name}"?`, { ok: 'Remove' }).then((ok) => { if (ok) { p.budget.items.splice(+del.dataset.del, 1); U.saved(); renderCats(); } }); }
 });
 catsEl.addEventListener('change', (e) => {
   const s = e.target.closest('[data-basis]');
