@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793725294';
-import * as U from './ui.js?v=1793725294';
+import * as E from './engine.js?v=1793726123';
+import * as U from './ui.js?v=1793726123';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -33,7 +33,7 @@ if (p.sqftNote) risks.push(p.sqftNote);
 E.validateProject(p).forEach((v) => risks.push(v.text));
 
 const sec = (n, t, html) => `<div class="card" style="break-inside:avoid"><h3><span class="k" style="background:var(--navy);color:#fff;border-radius:6px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:13px">${n}</span> ${t}</h3>${html}</div>`;
-const tr = (l, v, cls = '') => `<tr class="${cls}"><td>${l}</td><td class="${/^[−$\d(]/.test(String(v).replace(/<[^>]+>/g, '')) ? 'n' : 'tx'}">${v}</td></tr>`;
+const tr = (l, v, cls = '') => { const t = String(v).replace(/<[^>]+>/g, ''); return `<tr class="${cls}"><td>${l}</td><td class="${/^[−$\d(]/.test(t) && !/[A-Za-z]{4,}/.test(t) ? 'n' : 'tx'}">${v}</td></tr>`; };
 
 main.innerHTML = `
 <div class="pagehead"><div><h2>EDA Development Financial Feasibility Summary</h2><p class="q">${esc(p.name)}${p.location ? ' · ' + esc(p.location) : ''} · Analysis date ${date}</p></div>

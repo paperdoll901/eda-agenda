@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793725294';
-import * as E from './engine.js?v=1793725294';
+import * as S from './store.js?v=1793726123';
+import * as E from './engine.js?v=1793726123';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -310,7 +310,7 @@ export function saved() {
 /* Output components                                                    */
 /* ------------------------------------------------------------------ */
 export function kpi(label, value, sub = '', cls = '', tipKey = '') {
-  return `<div class="kpi ${cls}"><div class="l">${esc(label)}${tipKey ? tip(tipKey) : ''}</div><div class="v">${value}</div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`;
+  return `<div class="kpi ${cls}"><div class="l">${esc(label)}${tipKey ? tip(tipKey) : ''}</div><div class="v${/[A-Za-z]{4,}/.test(String(value).replace(/<[^>]+>/g, '')) ? ' vt' : ''}">${value}</div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`;
 }
 const ICONS = {
   good: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.6-4.3-4.3 1.4-1.4 2.9 2.9 5.9-5.9 1.4 1.4z"/></svg>',
