@@ -177,7 +177,7 @@ export function josephPlace() {
     b: { label: 'Lower price: $180,000', salePrice: 180000, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false },
   };
   p.assumptionNotes = [
-    'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937; Exhibit D prints $161,939 because of rounding, and the casebook rounds to $162,000. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
+    'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
     'Sale price, loan, equity, interest terms, loan fees and the 6% selling-cost rate come from the casebook. They sit outside Exhibit D, exactly as the casebook explains.',
     'Casebook figures are teaching assumptions. They do not establish that a loan closed or a home sold.',
     'The $190,000 and $180,000 price scenarios are classroom scenarios. The $20,000 CRA incentive is not in Gabe\'s budget; it is off by default and can be turned on and off.',

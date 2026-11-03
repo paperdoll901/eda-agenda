@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793719798';
-import * as E from './engine.js?v=1793719798';
-import * as U from './ui.js?v=1793719798';
+import * as S from './store.js?v=1793720443';
+import * as E from './engine.js?v=1793720443';
+import * as U from './ui.js?v=1793720443';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -152,7 +152,7 @@ function update() {
       <tr><td>Includes developer fee</td><td class="n">${fmt$(b.developerFee)}</td></tr>
     </tbody></table>
     ${unitemized > 0 ? U.status('warn', `${fmt$(unitemized)} of the budget is not yet itemized. Assign it to categories so missing costs can be found.`) : ''}
-    ${p.budget.exhibitTotal ? (() => { const ex = b.items.filter((i) => (i.note || '').startsWith('Exhibit D')).reduce((t, i) => t + (i.value || 0), 0); return U.status('info', `<b>Exhibit D check:</b> lines from Exhibit D add to <b>${fmt$(ex)}</b>. Exhibit D prints ${fmt$(p.budget.exhibitTotal)} (its own subtotals differ by a few dollars from rounding); the casebook rounds to $162,000. Interest, loan fees and selling costs come from the casebook and sit outside Exhibit D.`); })() : ''}
+    ${p.budget.exhibitTotal ? (() => { const isD = (i) => (i.note || '').startsWith('Exhibit D'); const ex = b.items.filter(isD).reduce((t, i) => t + (i.value || 0), 0); const out = b.items.filter((i) => !isD(i) && (i.value || 0) > 0); const ok = Math.abs(ex + out.reduce((t, i) => t + i.value, 0) - b.tdc) < 1; return `<div class="status ${ok ? 'good' : 'warn'} recon" role="status"><div style="flex:1;min-width:0"><b>How this budget ties to the case</b><table class="tbl" style="margin:8px 0 4px"><tbody><tr><td>Exhibit D construction budget (line items)</td><td class="n">${fmt$(ex)}</td></tr>${out.map((i) => `<tr><td>+ ${esc(i.name)} <span class="note">(casebook)</span></td><td class="n">${fmt$(i.value)}</td></tr>`).join('')}<tr class="tot"><td>= Total Development Cost</td><td class="n">${fmt$(b.tdc)}</td></tr></tbody></table>${ok ? '' : 'Some lines were added or changed, so this no longer ties to the case. Reset to Joseph Place to compare.'}<div class="fac-only" style="display:none">Facilitator note: Exhibit D prints ${fmt$(p.budget.exhibitTotal)} because its own subtotals round up by a few dollars; the casebook rounds the same budget to $162,000. The Lab uses the line items as written.</div></div></div>`; })() : ''}
     ${(() => { const z = b.items.filter((i) => i.basis !== 'linked' && !(i.value > 0)); return z.length ? U.status('warn', `<b>${z.length} line${z.length > 1 ? 's are' : ' is'} $0:</b> ${z.map((i) => esc(i.name)).join('; ')}. Estimate each, or confirm it is truly zero.`) : ''; })()}
     ${zero.length ? U.status('warn', `These categories are $0: <b>${zero.join(', ')}</b>. Confirm each is truly zero or already included elsewhere.`) : ''}
     ${issues.map((v) => U.status(v.level === 'error' ? 'bad' : 'warn', esc(v.text))).join('')}

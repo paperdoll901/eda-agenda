@@ -283,3 +283,12 @@ body.fac .kpi.hero .v{font-size:clamp(28px,3.4vw,36px)}
 .swipe{display:none;font-size:13px;font-weight:700;color:var(--navy);margin:4px 0 0;text-align:right}
 .tblwrap.over + .swipe{display:block}
 @media (max-width:700px){.tbl{font-size:14px}.tbl th,.tbl td{padding:7px 6px}.tbl th{font-size:12px}}
+.kpis.homek{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi{display:flex;flex-direction:column}
+.kpi .l{justify-content:space-between;align-items:flex-start;gap:6px;min-height:2.6em}
+.kpi .l .tip{margin-top:1px}
+.kpi .v{margin-top:auto;padding-top:4px}
+.kpi .s{margin-top:2px}
+@media (max-width:560px){.kpis.homek{grid-template-columns:1fr 1fr}.kpis.homek .kpi:first-child{grid-column:1/-1}}
+body.fac .status .fac-only{display:block!important;margin-top:6px}
+.recon .tbl{width:100%;background:#fff}.recon .tbl td{white-space:normal}.recon .tbl td.n{white-space:nowrap}

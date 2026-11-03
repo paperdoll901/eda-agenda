@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793719798';
-import * as U from './ui.js?v=1793719798';
+import * as E from './engine.js?v=1793720443';
+import * as U from './ui.js?v=1793720443';
 
 const { main, project: p } = U.shell('home', 'Lab Home');
 const { fmt$, fmtPct, esc } = U;
@@ -12,7 +12,7 @@ main.innerHTML = `
 <div class="card" style="border-top:5px solid var(--mag)">
   <h3>Working on: ${esc(p.name)} ${p.kind === 'case' ? '<span class="tag in">Instructional case</span>' : '<span class="tag out">My project</span>'}</h3>
   ${p.developer ? `<p class="note" style="margin-top:-4px">${esc(p.developer)} · ${esc(p.location)}</p>` : p.location ? `<p class="note">${esc(p.location)}</p>` : ''}
-  <div class="kpis" style="margin-top:10px">
+  <div class="kpis homek" style="margin-top:10px">
     ${U.kpi('Total development cost', fmt$(r.totalCost), '', '', 'tdc')}
     ${U.kpi('Sales price', fmt$(r.price))}
     ${U.kpi('Projected profit', fmt$(r.profit), fmtPct(r.margin) + ' margin', r.profit >= 0 ? 'pos' : 'neg')}
