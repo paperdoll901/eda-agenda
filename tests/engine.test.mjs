@@ -47,6 +47,7 @@ test('Joseph Place budget is Exhibit D, fully itemized, with no double counting'
   const p = josephPlace();
   const b = E.budgetTotals(p);
   const exhibitD = b.costBeforeClosing - b.interest - b.fees; // everything except casebook financing items
+  assert.ok(p.budget.items.filter((i) => i.basis !== 'linked').every((i) => i.amount > 0), 'every Exhibit D line has an amount');
   close(exhibitD, 161937); // Exhibit D line items (printed total $161,939, rounding)
   close(b.byCat.U, 0); // nothing left un-itemized
   assert.deepEqual(b.zeroCats, []);

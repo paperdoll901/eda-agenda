@@ -291,7 +291,7 @@ export const color = (i) => PALETTE[i % PALETTE.length];
 
 export function barList(rows, { total, fmt = fmt$ } = {}) {
   const max = Math.max(...rows.map((r) => Math.abs(r.value)), 1);
-  return `<div class="bars" role="list">${rows.map((r, i) => `<div class="bar" role="listitem"><span>${esc(r.label)}</span><span class="tr" aria-hidden="true"><span class="fl" style="display:block;width:${(Math.abs(r.value) / max) * 100}%;background:${r.color || color(i)}"></span></span><span class="a">${fmt(r.value)}${total ? `<br><small style="font-weight:400;color:var(--gray)">${fmtPct(r.value / total, 0)}</small>` : ''}</span></div>`).join('')}</div>`;
+  return `<div class="bars" role="list">${rows.map((r, i) => `<div class="bar" role="listitem"><span>${esc(r.label)}</span><span class="tr" aria-hidden="true"><span class="fl" style="display:block;width:${(Math.abs(r.value) / max) * 100}%;background:${r.color || color(i)}"></span></span><span class="a">${fmt(r.value)}${total ? `<br><small style="font-weight:400;color:var(--gray)">${r.value / total > 0 && r.value / total < 0.01 ? '<1%' : fmtPct(r.value / total, 0)}</small>` : ''}</span></div>`).join('')}</div>`;
 }
 
 /** Line chart. series: [{name, color, dash, points:[{x,y}]}] */

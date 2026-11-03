@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 3; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 4; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -100,7 +100,6 @@ export function josephPlace() {
     items: [
       // A. Land acquisition
       L('A', 'Land purchase price', { amount: 500, note: X('LD.01 Land Acquisition (CRA Essential Housing lot)') }),
-      L('A', 'Title, legal and acquisition closing costs', { amount: 0, note: 'Not in Exhibit D. Casebook: acquisition closing costs must be confirmed. Estimate this.' }),
       // B. Predevelopment
       L('B', 'Architect, engineering, soils study & land survey', { amount: 600, note: X('1.01') }),
       L('B', 'Design review / plan check fees', { amount: 2500, note: X('1.02') }),
@@ -135,7 +134,6 @@ export function josephPlace() {
       L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook: $1,000 application + $1,000 origination estimate. Not in Exhibit D.' }),
       L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook: 8% interest-only on the full $146,000 from closing, 3 months build + 9 months to sell. Not in Exhibit D.' }),
       L('F', 'Job site security', { amount: 650, note: X('1.09') }),
-      L('F', 'Property taxes, insurance & utilities while marketing', { basis: 'monthly', monthly: 0, note: 'Not in Exhibit D. Casebook: holding costs during the 9-month sale period must be confirmed. Enter a monthly estimate.' }),
       // G. Contingency
       L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
       // H. Developer fee & disposition
