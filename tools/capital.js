@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793728302';
-import * as E from './engine.js?v=1793728302';
-import * as U from './ui.js?v=1793728302';
+import * as S from './store.js?v=1793744959';
+import * as E from './engine.js?v=1793744959';
+import * as U from './ui.js?v=1793744959';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -59,9 +59,10 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Construction draw & interest schedule</h3><div id="drawEdit"></div><div id="draws"></div></div>
 <div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
+${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'gap', 'cash', 'closing'])}
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D). The lender's 90% loan-to-cost cap sets the loan size.</li>
-<li>Look at the financing gap. Interest and loan fees (about $13,680) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
+<li>Look at the financing gap. Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
 <li>Lower the loan-to-cost limit to 80%. How much additional equity is required?</li></ol>`)}
@@ -97,7 +98,7 @@ function update() {
     ${U.kpi('Funding gap (committed sources)', fmt$(Math.max(0, c.gapCommitted)), c.gapCommitted > 0.5 ? 'Still needs a source' : 'Committed sources cover uses', `hero ${c.gapCommitted > 0.5 ? 'neg' : 'pos'}`, 'gap')}
     ${U.kpi('Total uses', fmt$(c.uses), 'Construction-period costs', '', 'sources')}
     ${U.kpi('Committed sources', fmt$(c.committed), `+ ${fmt$(c.proposed)} proposed · ${fmt$(c.conditional)} conditional`)}
-    ${U.kpi('Loan-to-cost', fmtPct(c.ltc), E.isNum(p.finance.ltcLimitPct) ? `Limit ${E.num(p.finance.ltcLimitPct)}% → max ${fmt$(c.maxByLtc)}` : 'No limit entered', '', 'ltc')}
+    ${U.kpi('Loan-to-cost', fmtPct(c.ltc), E.isNum(p.finance.ltcLimitPct) ? `Limit ${E.num(p.finance.ltcLimitPct)}%${p.finance.ltcBasis === 'budget' ? ` of the ${fmt$(c.eligible)} budget` : ''} → max ${fmt$(c.maxByLtc)}` : 'No limit entered', '', 'ltc')}
     ${U.kpi('Loan-to-value', c.ltv === null ? 'Not yet calculated' : fmtPct(c.ltv), c.ltv === null ? 'Enter an appraised value' : E.isNum(p.finance.ltvLimitPct) ? `Limit ${E.num(p.finance.ltvLimitPct)}% → max ${fmt$(c.maxByLtv)}` : '', '', 'ltv')}
     ${U.kpi('Developer equity required', fmt$(c.requiredEquity), `After committed debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
     ${U.kpi('Construction interest', fmt$(c.interest.total), methodName(c.interest.method), '', 'interest')}

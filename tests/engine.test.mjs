@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import * as E from '../tools/engine.js';
 import { josephPlace, blankProject } from '../tools/store.js';
 
+// exact math (casebook rounding off) for formula tests
+const jpExact = () => { const p = josephPlace(); p.finance.interestRoundTo = 0; p.sale.sellingRoundTo = 0; p.finance.ltcBasis = undefined; p.finance.ltcRoundTo = 0; p.budget.items = p.budget.items.filter((i) => !/^Rounding to the/.test(i.name)); return p; };
 const close = (a, b, tol = 0.01) => assert.ok(Math.abs(a - b) <= tol, `expected ${b}, got ${a}`);
 
 test('mortgage amortization matches the standard formula', () => {
@@ -44,7 +46,7 @@ test('construction interest: average-balance estimate', () => {
 });
 
 test('Joseph Place budget is Exhibit D, fully itemized, with no double counting', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const b = E.budgetTotals(p);
   const exhibitD = b.costBeforeClosing - b.interest - b.fees; // everything except casebook financing items
   assert.ok(p.budget.items.filter((i) => i.basis !== 'linked').every((i) => i.amount > 0), 'every Exhibit D line has an amount');
@@ -65,7 +67,7 @@ test('Joseph Place budget is Exhibit D, fully itemized, with no double counting'
 });
 
 test('pencil test: profit, margin, return on cost (Joseph Place base)', () => {
-  const r = E.pencilTest(josephPlace());
+  const r = E.pencilTest(jpExact());
   close(r.gross, 215000);
   close(r.net, 202100);
   close(r.profit, 202100 - 175617); // 26,483; casebook rounds to $26,000
@@ -74,14 +76,14 @@ test('pencil test: profit, margin, return on cost (Joseph Place base)', () => {
 });
 
 test('pencil test: selling costs deducted exactly once', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const r = E.pencilTest(p);
   // profit = gross - TDC (TDC already contains selling costs)
   close(r.profit, r.gross - r.totalCost);
 });
 
 test('break-even price covers all costs including percentage selling costs', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const r = E.pencilTest(p);
   close(r.breakEven, 175617 / 0.94);
   const atBE = E.pencilTest(p, { salePrice: r.breakEven });
@@ -90,21 +92,21 @@ test('break-even price covers all costs including percentage selling costs', () 
 });
 
 test('target-margin price earns exactly the target margin', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const r = E.pencilTest(p);
   const t = E.pencilTest(p, { salePrice: r.targetPrice });
   close(t.margin, 0.10, 1e-6);
 });
 
 test('return on developer equity uses committed equity, or is not calculated', () => {
-  const r = E.pencilTest(josephPlace());
+  const r = E.pencilTest(jpExact());
   close(r.roe, 26483 / 16000, 1e-9);
   const p = blankProject();
   assert.equal(E.pencilTest(p).roe, null);
 });
 
 test('scenario comparison: lower prices and cost overrun reduce profit', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const base = E.pencilTest(p).profit;
   const a = E.pencilTest(p, { salePrice: 190000 }).profit;
   const b = E.pencilTest(p, { salePrice: 180000 }).profit;
@@ -117,13 +119,13 @@ test('scenario comparison: lower prices and cost overrun reduce profit', () => {
 });
 
 test('cost-overrun exposure: hard-cost increase that takes profit to zero', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const r = E.pencilTest(p);
   close(r.overrunToZero, (26483 / 130910) * 100, 0.01);
 });
 
 test('conditional incentive is excluded until included in the scenario', () => {
-  const p = josephPlace();
+  const p = jpExact();
   assert.equal(E.includedIncentives(p), 0);
   const withI = E.pencilTest(p, { includeIncentive: true });
   close(withI.profit - E.pencilTest(p).profit, 20000);
@@ -135,7 +137,7 @@ test('conditional incentive is excluded until included in the scenario', () => {
 });
 
 test('capital stack: sources & uses reconciliation for Joseph Place', () => {
-  const cs = E.capitalStack(josephPlace());
+  const cs = E.capitalStack(jpExact());
   close(cs.uses, 175617); // selling costs are paid from proceeds, not a construction-period use
   close(cs.committed, 162000); // $146,000 loan + $16,000 equity
   close(cs.gapCommitted, 13617); // interest and loan fees still need a source
@@ -143,7 +145,7 @@ test('capital stack: sources & uses reconciliation for Joseph Place', () => {
 });
 
 test('loan-to-cost and loan-to-value', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const cs = E.capitalStack(p);
   close(cs.ltc, 146000 / 175617, 1e-9);
   assert.equal(cs.ltv, null);
@@ -155,7 +157,7 @@ test('loan-to-cost and loan-to-value', () => {
 });
 
 test('developer equity requirement after debt and grants', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const cs = E.capitalStack(p);
   close(cs.requiredEquity, 175617 - 146000);
   const cs2 = E.capitalStack(p, { loanAmount: 130000 });
@@ -164,7 +166,7 @@ test('developer equity requirement after debt and grants', () => {
 });
 
 test('loan principal is a source, not a cost', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const tdc1 = E.budgetTotals(p).tdc;
   p.finance.interestMethod = 'draws';
   p.finance.ratePct = 0; // remove interest so only principal could change TDC
@@ -175,7 +177,7 @@ test('loan principal is a source, not a cost', () => {
 });
 
 test('affordability: down payment, loan, DTI and cash to close', () => {
-  const b = { ...josephPlace().buyer, price: 200000, downPct: 3, ratePct: 6, termYears: 30, miAnnualPct: 0.6, upfrontPct: 0, financeUpfront: false, taxRatePct: 1.2, insuranceAnnual: 1200, hoaMonthly: 0, closingCostsMode: 'pct', closingCostsPct: 3, income: 72000, monthlyDebt: 500, dpa: 0, cca: 0, principalReduction: 0, otherAssist: 0 };
+  const b = { ...jpExact().buyer, price: 200000, downPct: 3, ratePct: 6, termYears: 30, miAnnualPct: 0.6, upfrontPct: 0, financeUpfront: false, taxRatePct: 1.2, insuranceAnnual: 1200, hoaMonthly: 0, closingCostsMode: 'pct', closingCostsPct: 3, income: 72000, monthlyDebt: 500, dpa: 0, cca: 0, principalReduction: 0, otherAssist: 0 };
   const r = E.affordability(b);
   close(r.down, 6000);
   close(r.loan, 194000);
@@ -190,7 +192,7 @@ test('affordability: down payment, loan, DTI and cash to close', () => {
 });
 
 test('assistance is applied only to eligible expenses and never twice', () => {
-  const b = { ...josephPlace().buyer, price: 200000, downPct: 3, closingCostsMode: 'pct', closingCostsPct: 3, dpa: 10000, dpaCoversClosing: false, cca: 9000, otherAssist: 5000, principalReduction: 0, upfrontPct: 0 };
+  const b = { ...jpExact().buyer, price: 200000, downPct: 3, closingCostsMode: 'pct', closingCostsPct: 3, dpa: 10000, dpaCoversClosing: false, cca: 9000, otherAssist: 5000, principalReduction: 0, upfrontPct: 0 };
   const r = E.affordability(b);
   close(r.dpaApplied, 6000); // capped at the down payment
   close(r.ccaApplied, 6000); // capped at closing costs
@@ -202,14 +204,14 @@ test('assistance is applied only to eligible expenses and never twice', () => {
 });
 
 test('principal reduction lowers the loan and is not also deducted from cash', () => {
-  const b = { ...josephPlace().buyer, price: 200000, downPct: 3, closingCostsPct: 3, dpa: 0, cca: 0, otherAssist: 0, principalReduction: 10000, upfrontPct: 0 };
+  const b = { ...jpExact().buyer, price: 200000, downPct: 3, closingCostsPct: 3, dpa: 0, cca: 0, otherAssist: 0, principalReduction: 10000, upfrontPct: 0 };
   const r = E.affordability(b);
   close(r.loan, 184000);
   close(r.cashToClose, 12000);
 });
 
 test('financed upfront fee increases the loan, unfinanced fee increases cash to close', () => {
-  const base = { ...josephPlace().buyer, price: 200000, downPct: 3.5, upfrontPct: 1.75, closingCostsPct: 0, dpa: 0, cca: 0, otherAssist: 0, principalReduction: 0 };
+  const base = { ...jpExact().buyer, price: 200000, downPct: 3.5, upfrontPct: 1.75, closingCostsPct: 0, dpa: 0, cca: 0, otherAssist: 0, principalReduction: 0 };
   const fin = E.affordability({ ...base, financeUpfront: true });
   close(fin.loan, 193000 * 1.0175);
   const cash = E.affordability({ ...base, financeUpfront: false });
@@ -218,7 +220,7 @@ test('financed upfront fee increases the loan, unfinanced fee increases cash to 
 });
 
 test('max affordable price meets both DTI targets', () => {
-  const b = josephPlace().buyer;
+  const b = jpExact().buyer;
   const m = E.maxAffordablePrice(b);
   const r = E.affordability(b, { price: m });
   assert.ok(r.frontDti <= 0.31 + 1e-6 && r.backDti <= 0.43 + 1e-6);
@@ -227,7 +229,7 @@ test('max affordable price meets both DTI targets', () => {
 });
 
 test('missing income: DTI and purchasing power are not fabricated', () => {
-  const b = { ...josephPlace().buyer, income: 0, price: 150000 };
+  const b = { ...jpExact().buyer, income: 0, price: 150000 };
   const s = E.affordabilitySummary(b);
   assert.equal(s.frontDti, null);
   assert.equal(s.maxPrice, null);
@@ -257,7 +259,7 @@ test('validation catches negative costs, bad rates, bad terms', () => {
 });
 
 test('percentage contingency follows hard costs and cost increases', () => {
-  const p = josephPlace();
+  const p = jpExact();
   p.budget.items.push({ id: 'pc', cat: 'G', name: 'Added contingency', basis: 'pct', pct: 5, pctOf: 'hard' });
   const b = E.budgetTotals(p);
   close(b.byCat.G, 5000 + 130910 * 0.05);
@@ -267,14 +269,14 @@ test('percentage contingency follows hard costs and cost increases', () => {
 });
 
 test('revised estimates compare against baseline', () => {
-  const p = josephPlace();
+  const p = jpExact();
   p.budget.items[0].revised = 25000;
   const c = E.budgetComparison(p);
   close(c.change, 24500);
 });
 
 test('market comps reproduce the Joseph Place CMA', () => {
-  const p = josephPlace();
+  const p = jpExact();
   const r = E.marketComps(p);
   assert.equal(Math.round(r.value), 213958);
   assert.equal(Math.round(r.low), 150121);
@@ -284,7 +286,7 @@ test('market comps reproduce the Joseph Place CMA', () => {
   assert.equal(Math.round(r.gapToClosed), 12968);
 });
 test('market comps: list-to-sale ratio and exclusions', () => {
-  const p = josephPlace();
+  const p = jpExact();
   p.market.listToSalePct = 94.1;
   assert.equal(Math.round(E.marketComps(p).value), 202967);
   p.market.listToSalePct = 100;
@@ -296,10 +298,27 @@ test('market comps: list-to-sale ratio and exclusions', () => {
   assert.equal(E.marketComps(p).status, 'aboveRange');
 });
 test('market comps: bed and bath adjustments', () => {
-  const p = josephPlace();
+  const p = jpExact();
   p.market.adjPerBed = 5000; p.market.adjPerBath = 4000;
   const r = E.marketComps(p);
   assert.equal(r.comps[1].adjTotal, -5000);
   assert.equal(r.comps[2].adjTotal, -2000);
   assert.equal(Math.round(r.value), 211624);
+});
+
+test('Joseph Place matches the casebook figures exactly', () => {
+  const p = josephPlace();
+  const b = E.budgetTotals(p), r = E.pencilTest(p), c = E.capitalStack(p);
+  close(b.tdc, 189000); close(b.atClosing, 13000); close(c.interest.total, 12000);
+  close(r.net, 202000); close(r.profit, 26000);
+  close(c.uses, 176000); close(c.gapCommitted, 14000); close(c.requiredEquity, 30000);
+  close(r.net - c.loan, 56000);
+  close(r.breakEven, 176000 / 0.94);
+  // casebook: about $1,000 more interest for each extra month
+  close(E.pencilTest(p, { delayMonths: 1 }).profit, 25000);
+});
+test('Joseph Place loan-to-cost is measured on the $162,000 budget, as in the casebook', () => {
+  const c = E.capitalStack(josephPlace());
+  close(c.eligible, 162000); close(c.maxByLtc, 146000); close(c.ltc, 146000 / 162000, 1e-9);
+  assert.equal(c.warnings.filter((w) => w.level === 'risk').length, 0);
 });

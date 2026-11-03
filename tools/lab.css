@@ -319,3 +319,14 @@ body.fac .kpi.hero .v{font-size:clamp(24px,min(3.2vw,11cqi),36px)}
 .cout{margin:8px 0 0;font-size:15px;color:var(--ink);background:var(--tint,#f5f7fb);border-radius:6px;padding:8px 10px}
 .usebtns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
 .comph .caddr{font-size:16px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px}
+.casemath summary{cursor:pointer;list-style-position:outside}.casemath .tbl td.tx{min-width:220px}
+@media (max-width:700px){
+.casemath .tblwrap{overflow:visible}
+.casemath table.tbl,.casemath table.tbl tbody,.casemath table.tbl tr,.casemath table.tbl td{display:block!important;width:auto!important;min-width:0!important}
+.casemath table.tbl thead{display:none}
+.casemath table.tbl tr{border-bottom:1px solid var(--line);padding:10px 2px}
+.casemath table.tbl td{border:0!important;padding:2px 0!important;text-align:left!important;white-space:normal!important}
+.casemath table.tbl td:first-child{display:flex!important;justify-content:space-between;gap:10px}
+.casemath table.tbl td.n{font-size:18px;font-weight:800;color:var(--navy)}
+.casemath table.tbl td:last-child{color:var(--gray);font-size:14px}
+}

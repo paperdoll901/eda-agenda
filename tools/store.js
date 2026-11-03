@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 4; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 5; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -150,21 +150,22 @@ export function josephPlace() {
       L('E', "Builder's risk insurance", { amount: 750, note: X('1.04') }),
       L('E', 'Project management & supervision', { amount: 3500, note: X('1.10') }),
       // F. Financing & holding
-      L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook: $1,000 application + $1,000 origination estimate. Not in Exhibit D.' }),
-      L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook: 8% interest-only on the full $146,000 from closing, 3 months build + 9 months to sell. Not in Exhibit D.' }),
+      L('F', 'Loan application & origination fees', { basis: 'linked', link: 'loanFees', note: 'Casebook p. 20: $1,000 application fee + $1,000 origination fee = $2,000. Not in Exhibit D.' }),
+      L('F', 'Construction-period interest', { basis: 'linked', link: 'interest', note: 'Casebook p. 20: $146,000 × 8% ÷ 12 = $973 a month × 12 months (3 to build + 9 to sell) = $11,680. The casebook rounds interest to the nearest $1,000: about $12,000. Not in Exhibit D.' }),
       L('F', 'Job site security', { amount: 650, note: X('1.09') }),
       // G. Contingency
       L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
+      L('G', 'Rounding to the $162,000 development budget', { amount: 63, note: 'Casebook pp. 15, 19 and 21: the Exhibit D line items ($161,937) are presented as a $162,000 development budget.' }),
       // H. Developer fee & disposition
       L('H', 'Developer fee & program costs', { amount: 650, isDeveloperFee: true, note: X('LD.06 Development Cost') }),
-      L('H', 'Selling costs: brokerage + seller paid closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook: 6% of the projected sale price for combined disposition costs. Not in Exhibit D.' }),
+      L('H', 'Selling costs: brokerage + seller paid closing (combined)', { basis: 'linked', link: 'commission', atClosing: true, note: 'Casebook pp. 17, 21 and 30: 6% of the $215,000 sale price = $12,900. The casebook rounds it to the nearest $1,000: $13,000 cost of sale. Not in Exhibit D.' }),
       L('H', 'Seller paid closing costs (only if beyond the 6%)', { basis: 'linked', link: 'sellerClosing', atClosing: true, note: 'Set by the seller paid closing cost %. The casebook\'s 6% already includes typical seller paid closing costs, so this is 0% unless you are testing more.' }),
     ],
   };
-  p.sale = { price: 215000, commissionPct: 6, sellerClosingPct: 0, targetMarginPct: 10, priceNote: 'Working projected sale price, rounded from the $213,958 CMA estimate.' };
+  p.sale = { price: 215000, commissionPct: 6, sellerClosingPct: 0, sellingRoundTo: 1000, targetMarginPct: 10, priceNote: 'Working projected sale price, rounded from the $213,958 CMA estimate.' };
   p.finance = {
     lender: 'The Housing Fund (THF), teaching-case scenario',
-    loanAmount: 146000, loanStatus: 'committed', ratePct: 8, termMonths: 12, applicationFee: 1000, originationFee: 1000, originationPct: 0, otherLoanFees: 0,
+    loanAmount: 146000, loanStatus: 'committed', ratePct: 8, termMonths: 12, applicationFee: 1000, originationFee: 1000, originationPct: 0, otherLoanFees: 0, interestRoundTo: 1000, ltcBasis: 'budget', ltcRoundTo: 1000,
     interestMethod: 'full',
     draws: [
       { month: 1, amount: 3000, label: 'Loan balance above vertical contract (illustrative timing)' },
@@ -198,7 +199,7 @@ export function josephPlace() {
     b: { label: 'Lower price: $180,000', salePrice: 180000, costIncreasePct: 0, delayMonths: 0, rateDeltaPct: 0, includeIncentive: false },
   };
   p.assumptionNotes = [
-    'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
+    'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937, presented in the casebook as a $162,000 development budget. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
     'Sale price, loan, equity, interest terms, loan fees and the 6% selling-cost rate come from the casebook. They sit outside Exhibit D, exactly as the casebook explains.',
     'Casebook figures are teaching assumptions. They do not establish that a loan closed or a home sold.',
     'The $190,000 and $180,000 price scenarios are classroom scenarios. The $20,000 CRA incentive is not in Gabe\'s budget; it is off by default and can be turned on and off.',

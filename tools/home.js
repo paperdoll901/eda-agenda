@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793728302';
-import * as U from './ui.js?v=1793728302';
+import * as E from './engine.js?v=1793744959';
+import * as U from './ui.js?v=1793744959';
 
 const { main, project: p } = U.shell('home', 'Lab Home');
 const { fmt$, fmtPct, esc } = U;
@@ -21,6 +21,7 @@ main.innerHTML = `
   </div>
   <p class="note">Switch projects, reset Joseph Place, or start your own project from the bar at the top. Your work is saved only in this browser.</p>
 </div>
+${U.caseMath(p, ['price', 'budget', 'interest', 'fees', 'selling', 'tdc', 'net', 'profit', 'gap', 'cash', 'closing'])}
 <a class="card mstep" href="comps.html" style="display:block;margin-top:18px;border-left:6px solid var(--green);text-decoration:none;color:inherit"><span class="no" style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:var(--dg)">Start with the market</span><h3 style="margin:4px 0 6px">Market Comps &amp; Sale Price Support</h3><p style="margin:0 0 6px">Enter comparable sales and listings, adjust them to the subject home, and see what sale price the market supports before you build the budget.</p><span class="go" style="font-weight:700;color:var(--navy)">Open Market Comps →</span></a>
 <h3 style="margin:22px 0 10px">Work through the four tools in order</h3>
 <div class="steps">

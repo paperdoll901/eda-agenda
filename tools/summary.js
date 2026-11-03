@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793728302';
-import * as U from './ui.js?v=1793728302';
+import * as E from './engine.js?v=1793744959';
+import * as U from './ui.js?v=1793744959';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -66,7 +66,7 @@ ${sec(6, 'Financing Gap', (() => {
   const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
   const eqNow = c.devEquityCommitted;
   const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
-    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can cover it with ${fmt$(gap)} more equity or an interest reserve in the loan. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded, it covers the gap with ${fmt$(-c.gapIfIncentives)} to spare, so Gabe's cash could drop from ${fmt$(eqNow)} to ${fmt$(c.equityIfIncentives)}.`
+    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can bring more equity or ask the lender about an interest reserve. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded in time, it would cover this with ${fmt$(-c.gapIfIncentives)} to spare.`
     : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer equity required if awarded: ${fmt$(c.equityIfIncentives)}.`
     : `Committed sources are ${fmt$(gap)} short, and ${fmt$(c.gapIfIncentives)} would remain unfunded even if everything pending is awarded.`;
   return U.status(lvl, msg) + (why ? `<h4 style="margin:12px 0 4px;font-size:15px">Where the gap comes from</h4><table class="tbl" style="max-width:640px"><tbody>${why.rows}</tbody></table><h4 style="margin:12px 0 4px;font-size:15px">How it closes</h4>` : '') + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
@@ -78,6 +78,7 @@ ${sec(8, 'Financial Risks and Outstanding Assumptions', risks.length ? `<ul>${ri
 ${mk.value !== null ? sec(9, 'Market Support for the Sales Price', `<table class="tbl"><thead><tr><th>Comp</th><th>Status</th><th class="n">Price</th><th class="n">$ / sq. ft.</th><th class="n">Value for subject</th></tr></thead><tbody>${mk.comps.filter((x) => x.used).map((x) => `<tr><td>${esc(x.address || 'Comp')}</td><td>${E.COMP_STATUS[x.status]}</td><td class="n">${fmt$(x.price)}</td><td class="n">${fmt$(x.ppsf)}</td><td class="n">${fmt$(x.indicated)}</td></tr>`).join('')}</tbody></table>
   <table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${tr('Supported value (average of comps)', fmt$(mk.value), 'tot')}${mk.closedValue !== null ? tr('Closed sales support', fmt$(mk.closedValue)) : ''}${tr('Range of comps', `${fmt$(mk.low)} to ${fmt$(mk.high)}`)}${tr('Sales price used in this summary', fmt$(mk.price))}</tbody></table>
   <p class="note">Subject living area ${mk.subjectSqft.toLocaleString('en-US')} sq. ft. Each comp's price per sq. ft. is applied to the subject, plus any adjustments. Not an appraisal.</p>`) : ''}
+${U.caseMath(p)}
 ${Object.values(p.reflections || {}).some((x) => x && String(x).trim()) ? `<div class="card"><h3>My reflections</h3>${Object.entries(p.reflections).filter(([, v]) => v && String(v).trim()).map(([k, v]) => `<p><b>${esc({ budget: 'Budget', pencil: 'Pencil Test', capital: 'Capital Stack', homebuyer: 'Homebuyer' }[k.split('-')[0]] || k)} Q${+k.split('-')[1] + 1}:</b> ${esc(v)}</p>`).join('')}</div>` : ''}
 <p class="disclaim">Prepared with the ${U.LAB}, ${U.BRAND}, hosted by the <span class="nw">Alliance for Housing Progress</span>. Property taxes, insurance, interest rates, loan terms, mortgage insurance and assistance eligibility require independent verification. Browser-saved projects are not backed up by EDA.</p>`;
 

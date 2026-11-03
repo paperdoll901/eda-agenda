@@ -122,6 +122,13 @@ export function loanFees(p) {
 
 export function interestFor(p) {
   const f = p.finance || {};
+  const r = constructionInterestRaw(p, f);
+  // a case can round interest the way its casebook presents it (e.g. $11,680 shown as ~$12,000)
+  const to = num(f.interestRoundTo);
+  const total = to > 0 ? Math.round(r.total / to) * to : r.total;
+  return { ...r, exact: r.total, rounding: total - r.total, total };
+}
+function constructionInterestRaw(p, f) {
   return constructionInterest({
     loan: f.loanAmount,
     ratePct: f.ratePct,
@@ -180,7 +187,7 @@ export function budgetTotals(p, opts = {}) {
       let v = 0;
       if (it.link === 'interest') v = interest;
       else if (it.link === 'loanFees') v = fees;
-      else if (it.link === 'commission') v = gross * pct(p.sale?.commissionPct);
+      else if (it.link === 'commission') { v = gross * pct(p.sale?.commissionPct); const to = num(p.sale?.sellingRoundTo); if (to > 0) v = Math.round(v / to) * to; }
       else if (it.link === 'sellerClosing') v = gross * pct(p.sale?.sellerClosingPct);
       it.value = v;
     }
@@ -192,10 +199,13 @@ export function budgetTotals(p, opts = {}) {
   const tdc = Object.values(byCat).reduce((s, v) => s + v, 0);
   const atClosing = items.filter((i) => i.atClosing).reduce((s, i) => s + (i.value || 0), 0);
   // split closing costs into percent-of-sale and fixed parts (for break-even)
-  const closingPctOfSale = items
+  let closingPctOfSale = items
     .filter((i) => i.atClosing && ((i.basis === 'pct' && i.pctOf === 'sale') || (i.basis === 'linked' && (i.link === 'commission' || i.link === 'sellerClosing'))))
     .reduce((s, i) => s + (i.value || 0), 0);
-  const closingFixed = atClosing - closingPctOfSale;
+  // break-even uses the true percentage; any casebook rounding of selling costs is treated as a fixed amount
+  const comm = items.find((i) => i.basis === 'linked' && i.link === 'commission');
+  if (comm && num(p.sale?.sellingRoundTo) > 0) closingPctOfSale += gross * pct(p.sale?.commissionPct) - comm.value;
+  const closingFixed = comm && num(p.sale?.sellingRoundTo) > 0 ? atClosing - comm.value - (closingPctOfSale - gross * pct(p.sale?.commissionPct)) : atClosing - closingPctOfSale;
   const developerFee = items.filter((i) => i.isDeveloperFee).reduce((s, i) => s + (i.value || 0), 0);
   const sqft = num(p.sqft);
   const zeroCats = CATEGORIES.filter((c) => c.key !== 'U' && !(byCat[c.key] > 0)).map((c) => c.key);
@@ -356,10 +366,13 @@ export function capitalStack(p, s = {}) {
   const allSources = committed + proposed + conditional;
   const gapCommitted = uses - committed;
   const gapAll = uses - allSources;
-  const ltc = safeDiv(loan, uses);
+  // eligible cost for loan-to-cost: total uses, or (as in the casebook) the development budget before interest and loan fees
+  const eligible = f.ltcBasis === 'budget' ? uses - interest.total - loanFees(q) : uses;
+  const ltc = safeDiv(loan, eligible);
   const collateral = num(f.collateralValue);
   const ltv = collateral > 0 ? loan / collateral : null;
-  const maxByLtc = isNum(f.ltcLimitPct) && num(f.ltcLimitPct) > 0 ? uses * pct(f.ltcLimitPct) : null;
+  const ltcRaw = isNum(f.ltcLimitPct) && num(f.ltcLimitPct) > 0 ? eligible * pct(f.ltcLimitPct) : null;
+  const maxByLtc = ltcRaw !== null && num(f.ltcRoundTo) > 0 ? Math.round(ltcRaw / num(f.ltcRoundTo)) * num(f.ltcRoundTo) : ltcRaw;
   const maxByLtv = isNum(f.ltvLimitPct) && num(f.ltvLimitPct) > 0 && collateral > 0 ? collateral * pct(f.ltvLimitPct) : null;
   const caps = [maxByLtc, maxByLtv].filter((v) => v !== null);
   const maxLoan = caps.length ? Math.min(...caps) : null;
@@ -384,7 +397,7 @@ export function capitalStack(p, s = {}) {
   const equityIfIncentives = Math.max(0, requiredEquityIfAllClose - offIncentiveTotal);
   return {
     offIncentives, offIncentiveTotal, gapIfIncentives, equityIfIncentives,
-    uses, loan, sources: srcs, counted, committed, proposed, conditional, allSources,
+    uses, eligible, loan, sources: srcs, counted, committed, proposed, conditional, allSources,
     gapCommitted, gapAll, ltc, ltv, maxByLtc, maxByLtv, maxLoan,
     requiredEquity, requiredEquityIfAllClose, lenderMinEquity, devEquityCommitted,
     interest, interestReserve: num(f.interestReserve), loanForCosts: loan - num(f.interestReserve),

@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793728302';
-import * as E from './engine.js?v=1793728302';
-import * as U from './ui.js?v=1793728302';
+import * as S from './store.js?v=1793744959';
+import * as E from './engine.js?v=1793744959';
+import * as U from './ui.js?v=1793744959';
 
 const { main, project: p } = U.shell('budget', 'Development Budget Builder');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -56,9 +56,10 @@ ${U.learnTeach(`<p>A development budget is more than the builder's construction 
       <div id="cats"></div>
     </div>
 <div class="card results"><h3><span class="tag out">Results</span> Baseline vs. revised budget</h3><div id="cmp" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
+${U.caseMath(p, ['budget', 'interest', 'fees', 'selling', 'tdc'])}
 ${U.learnTry(1, 'Joseph Place development budget', `<p>The Joseph Place budget is <b>Exhibit D</b>, Ferrybrook Holdings' construction budget, with every line placed in a Learning Lab category. Each line shows its Exhibit D reference.</p><ol>
 <li>Open each category. Notice that the builder's "General Project Requirements" (Exhibit D section 1) is split across <b>predevelopment</b> (design review, permits), <b>sitework</b> (utility connection fees), <b>soft costs</b> (insurance, project management) and <b>holding costs</b> (job security). Why does a developer separate them?</li>
-<li>Exhibit D totals about <b>$162,000</b>. Interest (~$11,680), loan fees ($2,000) and selling costs (6%) are <i>not</i> in Exhibit D. What is the full Total Development Cost?</li>
+<li>Exhibit D totals about <b>$162,000</b>. Interest (about $12,000), loan fees ($2,000) and selling costs (about $13,000) are <i>not</i> in Exhibit D. What is the full Total Development Cost?</li>
 <li>Exhibit D leaves out two costs the casebook says Gabe must confirm: acquisition closing costs (title, legal) and holding costs during the 9-month sale period (taxes, insurance, utilities). Add them: in <b>Land Acquisition</b> click <b>+ Add a line</b> and enter an estimate; in <b>Financing &amp; Holding</b> add a line, choose <b>Per month × project months</b>, and enter a monthly estimate. How much do they reduce profit in the Pencil Test?</li>
 <li>The $5,000 builder contingency is about 3.8% of hard costs. Is that enough? Enter a 10% hard-cost increase in the revised budget and compare.</li>
 <li>Exhibit D reports $107 per sq. ft. for construction. The Lab shows hard costs per sq. ft. lower, and total cost per sq. ft. higher. Why are they different?</li></ol>`)}
