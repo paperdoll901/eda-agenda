@@ -62,7 +62,8 @@ ${U.learnTry(2, 'Joseph Place pencil test', `<ol>
 <li>In the comparison table, Scenario A is <b>$190,000</b> and Scenario B is <b>$180,000</b>. At which price does the project stop meeting a 10% target margin? Does either price lose money?</li>
 <li>Add a <b>10% hard-cost increase</b> to Scenario A. What happens to profit and the break-even price?</li>
 <li>Add a <b>3-month delay</b> to Scenario B. How much does each extra month cost in interest?</li>
-<li>Find the cost-overrun exposure in the results: how large can a hard-cost overrun get before profit reaches $0?</li></ol>`)}
+<li>Find the cost-overrun exposure in the results: how large can a hard-cost overrun get before profit reaches $0?</li>
+<li>Gabe's budget leaves out the <b>$20,000 CRA incentive</b>. Check <b>Include this incentive</b> in the inputs, or tick it for one scenario. Does the $180,000 price still lose money with the incentive?</li></ol>`)}
 ${U.learnReflect('pencil', ['What happens to developer profit when construction costs increase by 10%?', 'At what sales price does the project stop meeting the developer\'s target margin?', 'Why is a positive pencil test not the same as a lender approval or proof of market demand?'])}
 <div id="dl"></div>
 ${U.nextBar(['budget.html', 'Budget Builder'], ['capital.html', 'Capital Stack'])}
@@ -71,7 +72,7 @@ ${U.nextBar(['budget.html', 'Budget Builder'], ['capital.html', 'Capital Stack']
 function renderIncentives() {
   const inc = (p.sources || []).map((s, i) => [s, i]).filter(([s]) => s.type === 'incentive');
   U.$('#incentives').innerHTML = inc.length ? inc.map(([s, i]) => `<div class="status info"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg><p><b>${esc(s.name)}</b>: ${fmt$(E.num(s.amount))}, status <b>${esc(s.status)}</b>.<br>
-    <label><input type="checkbox" data-bind="sources.${i}.includeInScenario" data-kind="bool"> Include this incentive in the base case</label> ${tip('incentive')}<br><span class="note">${esc(s.note || 'Not counted unless you include it. Including it does not mean it is approved.')}</span></p></div>`).join('')
+    <label style="display:inline-flex;gap:8px;align-items:center;font-weight:700;margin-top:6px"><input type="checkbox" style="width:22px;height:22px" data-bind="sources.${i}.includeInScenario" data-kind="bool"> Include the ${fmt$(E.num(s.amount))} incentive in the base case</label> ${tip('incentive')}<br><span class="note">${esc(s.note || 'Not counted unless you include it. Including it does not mean it is approved.')}</span></p></div>`).join('')
     : `<p class="note">No development incentives entered. Add one in the <a href="capital.html">Capital Stack</a> tool.</p>`;
 }
 renderIncentives();

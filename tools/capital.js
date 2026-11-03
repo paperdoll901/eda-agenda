@@ -62,7 +62,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D, rounded). The lender's 90% loan-to-cost cap sets the loan size.</li>
 <li>Look at the financing gap. Interest and loan fees (about $13,680) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
-<li>In the scenario table, compare <b>No incentive</b> with <b>$15,000 CRA incentive included</b>. How does the incentive change the gap and the equity Gabe must bring? Why is it still conditional?</li>
+<li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
 <li>Lower the loan-to-cost limit to 80%. How much additional equity is required?</li></ol>`)}
 ${U.learnReflect('capital', ['How much additional equity is required when the lender reduces its loan-to-cost ratio?', 'How does a development incentive affect the financing gap, and why should it not be counted until it is approved?', 'Why can\'t the buyer\'s mortgage or down payment assistance pay for construction?'])}

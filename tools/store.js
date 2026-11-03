@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 2; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 3; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -164,7 +164,7 @@ export function josephPlace() {
   };
   p.sources = [
     { id: 'jp-eq', type: 'developerEquity', name: 'Developer cash equity (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'Casebook: $162,000 budget = $146,000 loan + $16,000 developer equity.' },
-    { id: 'jp-cra', type: 'incentive', name: 'CRA development incentive (illustrative classroom scenario)', amount: 15000, status: 'conditional', includeInScenario: false, note: 'Classroom scenario amount. Its treatment (developer funding, buyer assistance or another benefit) is not confirmed in the casebook, so it is never counted as committed.' },
+    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'Not included in Gabe\'s budget (Exhibit D). Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
   p.buyer = {
     ...blankBuyer(),
@@ -182,7 +182,7 @@ export function josephPlace() {
     'The budget is Exhibit D, the Ferrybrook Holdings construction budget (October 2026). Its line items add to $161,937; Exhibit D prints $161,939 because of rounding, and the casebook rounds to $162,000. Lines are grouped into the Learning Lab categories; each line shows its Exhibit D reference.',
     'Sale price, loan, equity, interest terms, loan fees and the 6% selling-cost rate come from the casebook. They sit outside Exhibit D, exactly as the casebook explains.',
     'Casebook figures are teaching assumptions. They do not establish that a loan closed or a home sold.',
-    'The $190,000 and $180,000 price scenarios and the $15,000 CRA incentive are classroom scenarios.',
+    'The $190,000 and $180,000 price scenarios are classroom scenarios. The $20,000 CRA incentive is not in Gabe\'s budget; it is off by default and can be turned on and off.',
     'Buyer rate, taxes, insurance, debt, cash and closing costs are illustrative placeholders. Verify before use.',
   ];
   return p;
