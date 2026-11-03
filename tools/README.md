@@ -40,4 +40,4 @@ Projects save only in the participant's browser (`localStorage`). There are no a
 
 ## Modes
 
-Add `?mode=facilitator` (or use the toggle) for larger presentation-friendly results, the Current Classroom Activity selector, and a show/hide control for explanations. `?activity=1`–`4` highlights a classroom exercise.
+Participants see no mode switch. Facilitators open any Lab page with `?facilitator` (for example `tools/?facilitator`), enter the facilitator password once, and that device gets the Participant / Facilitator switch, larger presentation-friendly results, the Current Classroom Activity selector and a show/hide control for explanations. "Lock" turns it off again on that device. Only a hash of the password is in the code. This keeps participants out of the presentation controls; it is not a security boundary, and no data is hidden from participants. `?activity=1`–`4` highlights a classroom exercise.
