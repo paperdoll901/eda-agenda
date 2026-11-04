@@ -290,7 +290,7 @@ export function pencilTest(p, s = {}) {
   const totalCost = b.tdc; // total project cost, including selling costs
   const margin = safeDiv(profit, gross);
   const roc = safeDiv(profit, totalCost);
-  const equity = (q.sources || []).filter((x) => (x.type === 'developerEquity' || x.type === 'landEquity') && x.status === 'committed').reduce((t, x) => t + (x.link === 'loanFees' ? loanFees(q) : num(x.amount)), 0);
+  const equity = (q.sources || []).filter((x) => (x.type === 'developerEquity' || x.type === 'landEquity') && x.status === 'committed').reduce((t, x) => t + (x.link ? capitalStack(q).sources.find((y) => y.id === x.id)?.amount || 0 : num(x.amount)), 0);
   const roe = equity > 0 ? profit / equity : null;
   const rate = units > 0 && gross > 0 ? b.closingPctOfSale / gross : pct(q.sale?.commissionPct) + pct(q.sale?.sellerClosingPct);
   const fixed = b.closingFixed;
@@ -363,8 +363,12 @@ export function capitalStack(p, s = {}) {
   const uses = b.costBeforeClosing; // construction-period uses; selling costs are paid from proceeds at closing
   const loan = Math.max(0, num(f.loanAmount));
   const interest = interestFor(q);
+  // eligible (total project) cost for loan-to-cost: total uses; or the development budget before interest and loan fees;
+  // or the budget plus the cost of the loan (fees), with interest carried in reserves
+  const eligible = f.ltcBasis === 'budget' ? uses - interest.total - loanFees(q) : f.ltcBasis === 'budgetPlusFees' ? uses - interest.total : uses;
+  const srcAmount = (x) => (x.link === 'loanFees' ? loanFees(q) : x.link === 'equityRemainder' ? Math.max(0, eligible - loan) : num(x.amount));
   const srcs = [{ id: 'loan', type: 'constructionLoan', name: 'Construction loan', amount: loan, status: f.loanStatus || 'committed' }]
-    .concat((q.sources || []).map((x) => ({ ...x, amount: x.link === 'loanFees' ? loanFees(q) : num(x.amount) })));
+    .concat((q.sources || []).map((x) => ({ ...x, amount: srcAmount(x) })));
   // an incentive only counts in this scenario when the participant includes it
   const counted = srcs.filter((x) => !(x.type === 'incentive' && !x.includeInScenario));
   const by = (st) => counted.filter((x) => x.status === st).reduce((t, x) => t + x.amount, 0);
@@ -374,8 +378,6 @@ export function capitalStack(p, s = {}) {
   const allSources = committed + proposed + conditional;
   const gapCommitted = uses - committed;
   const gapAll = uses - allSources;
-  // eligible cost for loan-to-cost: total uses, or (as in the casebook) the development budget before interest and loan fees
-  const eligible = f.ltcBasis === 'budget' ? uses - interest.total - loanFees(q) : uses;
   const ltc = safeDiv(loan, eligible);
   const collateral = num(f.collateralValue);
   const ltv = collateral > 0 ? loan / collateral : null;

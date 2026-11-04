@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793790922';
-import * as E from './engine.js?v=1793790922';
-import * as U from './ui.js?v=1793790922';
+import * as S from './store.js?v=1793791679';
+import * as E from './engine.js?v=1793791679';
+import * as U from './ui.js?v=1793791679';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -61,7 +61,7 @@ ${U.learnTeach(`<p>A <b>pencil test</b> is the quick feasibility check a develop
 </div>
 ${U.caseMath(p, ['price', 'selling', 'net', 'budget', 'interest', 'fees', 'profit'])}
 ${U.learnTry(2, 'Joseph Place pencil test', `<ol>
-<li>With Joseph Place loaded, read the base case at the <b>$215,000</b> working sale price. Compare the result to the casebook's <b>$26,000 preliminary developer return</b>. The Lab should match it.</li>
+<li>With Joseph Place loaded, read the base case at the <b>$215,000</b> working sale price. Compare the result to the casebook's <b>$26,000 preliminary developer return</b>. Why is the Lab about $480 lower? (Hint: the origination fee.)</li>
 <li>In the comparison table, Scenario A is <b>$190,000</b> and Scenario B is <b>$180,000</b>. At which price does the project stop meeting a 10% target margin? Does either price lose money?</li>
 <li>Add a <b>10% hard-cost increase</b> to Scenario A. What happens to profit and the break-even price?</li>
 <li>Add a <b>3-month delay</b> to Scenario B. How much does each extra month cost in interest?</li>

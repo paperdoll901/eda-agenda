@@ -10,7 +10,7 @@
  */
 
 const KEY = 'eda-lab-v1';
-export const CASE_VERSION = 10; // bump when the Joseph Place case data changes
+export const CASE_VERSION = 11; // bump when the Joseph Place case data changes
 let uid = 0;
 export const newId = (p = 'i') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -150,9 +150,9 @@ export function josephPlace() {
       L('E', "Builder's risk insurance", { amount: 750, note: X('1.04') }),
       L('E', 'Project management & supervision', { amount: 3500, note: X('1.10') }),
       // F. Financing & holding
-      L('F', 'Cost of the loan: application fee + origination fee', { basis: 'linked', link: 'loanFees', note: 'THF $1,000 application fee, paid when the loan application is submitted (fixed), + 1% origination fee, paid at loan closing if approved: 1% × $146,000 = $1,460. Changes with the loan amount. The cost of the loan, paid by the developer; not part of the reserves. Not in Exhibit D.' }),
-      L('F', 'Interest during construction (3 months)', { basis: 'linked', link: 'interestBuild', note: 'Casebook p. 20: $146,000 × 8% ÷ 12 = $973 a month × 3 months to build = $2,920, about $3,000. Not in Exhibit D.' }),
-      L('F', 'Interest while marketing the home (9 months)', { basis: 'linked', link: 'interestHold', note: 'Casebook p. 20: the broker expects up to 9 months to sell. $973 a month × 9 = $8,760, about $9,000. Selling sooner lowers this. Not in Exhibit D.' }),
+      L('F', 'Cost of the loan: application fee + origination fee', { basis: 'linked', link: 'loanFees', note: 'THF $1,000 application fee, paid when the loan application is submitted (fixed), + 1% origination fee, paid at loan closing if approved: 1% × $148,000 = $1,480. Changes with the loan amount. The cost of the loan, paid by the developer; not part of the reserves. Not in Exhibit D.' }),
+      L('F', 'Interest during construction (3 months)', { basis: 'linked', link: 'interestBuild', note: 'Casebook p. 20: $148,000 × 8% ÷ 12 = $987 a month × 3 months to build = $2,960, about $3,000. Not in Exhibit D.' }),
+      L('F', 'Interest while marketing the home (9 months)', { basis: 'linked', link: 'interestHold', note: 'Casebook p. 20: the broker expects up to 9 months to sell. $987 a month × 9 = $8,880, about $9,000. Selling sooner lowers this. Not in Exhibit D.' }),
       L('F', 'Job site security', { amount: 650, note: X('1.09') }),
       // G. Contingency
       L('G', 'Builder contingency', { amount: 5000, note: X('18.02 (about 3.8% of hard costs)') }),
@@ -166,7 +166,7 @@ export function josephPlace() {
   p.sale = { price: 215000, commissionPct: 6, sellerClosingPct: 0, sellingRoundTo: 1000, targetMarginPct: 10, priceNote: 'Working projected sale price, rounded from the $213,958 CMA estimate.' };
   p.finance = {
     lender: 'The Housing Fund (THF), teaching-case scenario',
-    loanAmount: 146000, loanStatus: 'committed', ratePct: 8, termMonths: 12, applicationFee: 1000, originationFee: 0, originationPct: 1, otherLoanFees: 0, interestRoundTo: 1000, ltcBasis: 'budget', ltcRoundTo: 1000,
+    loanAmount: 148000, loanStatus: 'committed', ratePct: 8, termMonths: 12, applicationFee: 1000, originationFee: 0, originationPct: 1, otherLoanFees: 0, interestRoundTo: 1000, ltcBasis: 'budgetPlusFees', ltcRoundTo: 1000,
     interestMethod: 'full',
     draws: [
       { month: 1, amount: 3000, label: 'Loan balance above vertical contract (illustrative timing)' },
@@ -180,12 +180,11 @@ export function josephPlace() {
     drawNote: 'Draw amounts are from the casebook Schedule of Values. The month each draw falls in is an illustrative classroom assumption.',
     interestReserve: 0,
     ltcLimitPct: 90, ltvLimitPct: null, collateralValue: null, minEquityPct: 10,
-    limitNote: 'Casebook: 90% of eligible project cost is about $146,000. An appraisal-based cap must also be met; its percentage is not stated.',
+    limitNote: 'THF lends 90% of total project cost: 90% × ($162,000 budget + $2,480 cost of the loan) = $148,032, rounded to $148,000. The casebook shows about $146,000 before the cost of the loan. An appraisal-based cap must also be met; its percentage is not stated.',
   };
   p.sources = [
-    { id: 'jp-eq', type: 'developerEquity', name: 'Owner\'s equity: Gabe\'s cash on hand (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'THF requires owner\'s equity of 10% of total project cost: 10% of $162,000 = $16,200, about $16,000. The loan covers the other 90% ($146,000).' },
-    { id: 'jp-lc', type: 'developerEquity', name: 'Cost of the loan (application and origination fees)', link: 'loanFees', amount: 2460, status: 'committed', note: 'Paid by Gabe: the $1,000 THF application fee when the application is submitted and the 1% origination fee at loan closing. Follows the loan amount. Separate from his 10% owner\'s equity.' },
-    { id: 'jp-res', type: 'loanReserve', name: 'Available reserves to support holding costs (loan payments)', amount: 12000, status: 'committed', note: 'Reserves set aside and drawn over time to cover the interest-only loan payments while the loan is outstanding: about $973 a month, $3,000 for 3 months to build + $9,000 for 9 months to sell = $12,000. Repaid from the sale at closing. If the home takes longer to sell, the extra loan payments are not covered.' },
+    { id: 'jp-eq', type: 'developerEquity', name: 'Owner\'s equity: Gabe\'s 10% cash on hand (Ferrybrook Holdings)', link: 'equityRemainder', amount: 16480, status: 'committed', note: 'THF finances 90% of total project cost; Gabe brings the other 10% in cash. Total project cost = $162,000 budget + $2,480 cost of the loan = $164,480. Loan $148,000; Gabe\'s 10% = $16,480. His cash pays the cost of the loan ($1,000 application fee at submission, $1,480 origination at closing) and the rest of the budget.' },
+    { id: 'jp-res', type: 'loanReserve', name: 'Available reserves to support holding costs (loan payments)', amount: 12000, status: 'committed', note: 'Reserves set aside and drawn over time to cover the interest-only loan payments while the loan is outstanding: about $987 a month, $3,000 for 3 months to build + $9,000 for 9 months to sell = $12,000. Repaid from the sale at closing. If the home takes longer to sell, the extra loan payments are not covered.' },
     { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive tied to this parcel. It is a project source, not owner\'s equity: it can pay for the developer\'s financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts toward Gabe\'s 10% equity. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
   p.buyer = {
