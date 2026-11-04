@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793791679';
-import * as E from './engine.js?v=1793791679';
-import * as U from './ui.js?v=1793791679';
+import * as S from './store.js?v=1793792515';
+import * as E from './engine.js?v=1793792515';
+import * as U from './ui.js?v=1793792515';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -61,7 +61,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 <div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 ${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'reserve', 'cash', 'incentive', 'closing'])}
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
-<li>Read the case: the casebook shows a <b>$146,000</b> loan + <b>$16,000</b> developer equity for the $162,000 budget. In the Lab, the cost of the loan is part of total project cost: $162,000 + $2,480 = $164,480. THF lends 90% (<b>$148,000</b>) and Gabe brings the other 10% (<b>$16,480</b>), which also pays the loan's application and origination fees.</li>
+<li>Read the case: THF lends <b>$146,000</b>, 90% of the $162,000 total development cost, and requires Gabe to put in at least 10% (<b>$16,000</b>). The loan stays the same however he applies his cash. Where does his cash go, and why is his total contribution more than the minimum?</li>
 <li>Loan payments (about $12,000) and loan fees ($2,000) sit <i>outside</i> the $162,000. Find the <b>available reserves to support holding costs</b> in the sources. How does Gabe's 10% cover the cost of the loan, how do the reserves carry the loan payments, and what happens if the home takes longer to sell than the reserves cover?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
@@ -75,7 +75,7 @@ function renderSources() {
   const el = U.$('#srcs');
   el.innerHTML = p.sources.length ? `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Source</th><th class="n" style="min-width:110px">Amount</th><th style="min-width:120px">Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${p.sources.map((s, i) => `<tr>
     <td><input type="text" aria-label="Source name" data-bind="sources.${i}.name" data-kind="text"><div class="note">${esc((E.SOURCE_TYPES.find((t) => t.key === s.type) || {}).name || s.type)}${s.type === 'incentive' ? ` · <label><input type="checkbox" data-bind="sources.${i}.includeInScenario" data-kind="bool"> Include in base case</label>` : ''}</div>${s.note ? `<div class="src">${esc(s.note)}</div>` : ''}</td>
-    <td>${s.link ? `<input type="text" readonly aria-label="Amount (linked)" data-link="${s.id}" value="${fmt$((E.capitalStack(p).sources.find((y) => y.id === s.id) || {}).amount || 0)}"><div class="note">${s.link === 'equityRemainder' ? 'The 10% of total project cost not financed' : 'Linked to the loan fees'}</div>` : `<input type="number" step="any" min="0" aria-label="Amount" data-bind="sources.${i}.amount" data-kind="num">`}</td>
+    <td>${s.link ? `<input type="text" readonly aria-label="Amount (linked)" data-link="${s.id}" value="${fmt$((E.capitalStack(p).sources.find((y) => y.id === s.id) || {}).amount || 0)}"><div class="note">${s.link === 'equityRemainder' ? 'Gabe\'s cash for whatever the loan does not cover' : 'Linked to the loan fees'}</div>` : `<input type="number" step="any" min="0" aria-label="Amount" data-bind="sources.${i}.amount" data-kind="num">`}</td>
     <td><select aria-label="Status" data-bind="sources.${i}.status" data-kind="select">${STATUS_OPTS.map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select></td>
     <td><button class="btn ghost sm" type="button" data-del="${i}" aria-label="Remove ${esc(s.name)}">✕</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="note">No other sources yet.</p>';
   binder.fill();
@@ -101,7 +101,7 @@ function update() {
     ${U.kpi('Committed sources', fmt$(c.committed), `+ ${fmt$(c.proposed)} proposed · ${fmt$(c.conditional)} conditional`)}
     ${U.kpi('Loan-to-cost', fmtPct(c.ltc), E.isNum(p.finance.ltcLimitPct) ? `Limit ${E.num(p.finance.ltcLimitPct)}%${p.finance.ltcBasis === 'budget' ? ` of the ${fmt$(c.eligible)} budget` : p.finance.ltcBasis === 'budgetPlusFees' ? ` of the ${fmt$(c.eligible)} project cost` : ''} → max ${fmt$(c.maxByLtc)}` : 'No limit entered', '', 'ltc')}
     ${U.kpi('Loan-to-value', c.ltv === null ? 'Not yet calculated' : fmtPct(c.ltv), c.ltv === null ? 'Enter an appraised value' : E.isNum(p.finance.ltvLimitPct) ? `Limit ${E.num(p.finance.ltvLimitPct)}% → max ${fmt$(c.maxByLtv)}` : '', '', 'ltv')}
-    ${U.kpi('Developer cash needed', fmt$(c.requiredEquity), c.lenderMinEquity !== null ? `Owner's equity: the ${E.num(p.finance.minEquityPct)}% of ${fmt$(c.eligible)} not financed · pays the ${fmt$(E.loanFees(p))} cost of the loan` : `After debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
+    ${U.kpi('Developer cash needed', fmt$(c.requiredEquity), c.lenderMinEquity !== null ? `THF minimum ${E.num(p.finance.minEquityPct)}%: ${fmt$(c.lenderMinEquity)} · also covers the ${fmt$(E.loanFees(p))} cost of the loan` : `After debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
     ${U.kpi('Loan interest', fmt$(c.interest.total), `${fmt$(c.interest.build)} construction + ${fmt$(c.interest.hold)} marketing · ${methodName(c.interest.method)}`, '', 'interest')}
   </div>
   ${(() => { const why = U.gapWhy(p, c); return why ? U.status(gapLevel, `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${why.text}`) + `<details class="recon" style="margin:8px 0"><summary style="cursor:pointer;font-weight:700">Where the gap comes from</summary><table class="tbl" style="max-width:640px;margin-top:6px"><tbody>${why.rows}</tbody></table></details>` : U.status(gapLevel, c.gapCommitted > 0.5 ? `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${c.proposed + c.conditional > 0.5 ? (c.gapAll <= 0.5 ? `The pending sources included in this scenario (${fmt$(c.proposed + c.conditional)}) would close it if they are approved.` : `Even if the pending sources included here (${fmt$(c.proposed + c.conditional)}) are approved, ${fmt$(c.gapAll)} would still be unfunded.`) : (c.offIncentiveTotal > 0 ? '' : 'No other sources are pending.')}` : c.gapAll < -0.5 ? `Sources exceed uses by ${fmt$(-c.gapAll)}. Check for double counting or reduce a source.` : 'Committed sources cover total uses. The financing plan balances on paper.'); })()}

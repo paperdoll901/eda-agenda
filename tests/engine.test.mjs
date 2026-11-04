@@ -309,22 +309,22 @@ test('market comps: bed and bath adjustments', () => {
 test('Joseph Place matches the casebook figures exactly', () => {
   const p = josephPlace();
   const b = E.budgetTotals(p), r = E.pencilTest(p), c = E.capitalStack(p);
-  close(b.tdc, 189480); close(b.atClosing, 13000); close(c.interest.total, 12000);
-  close(E.loanFees(p), 1000 + 148000 * 0.01); // THF application fee + 1% origination
-  close(r.net, 202000); close(r.profit, 25520);
-  close(c.uses, 176480); close(c.gapCommitted, 0); close(c.requiredEquity, 16480);
-  close(c.eligible, 164480); close(c.loan, 148000); // 90% of budget + cost of the loan, rounded
+  close(b.tdc, 189460); close(b.atClosing, 13000); close(c.interest.total, 12000);
+  close(E.loanFees(p), 1000 + 146000 * 0.01); // THF application fee + 1% origination
+  close(r.net, 202000); close(r.profit, 25540);
+  close(c.uses, 176460); close(c.gapCommitted, 0); close(c.requiredEquity, 18460);
+  close(c.eligible, 162000); close(c.loan, 146000); close(c.lenderMinEquity, 16000); // loan 90% of TDC; cash meets the 10% minimum
   // THF reserve for interest and loan fees: $14,000, repaid at closing with the loan
   close(c.sources.find((x) => x.type === 'loanReserve').amount, 12000);
-  close(r.net - c.loan - 12000, 42000);
-  close(r.breakEven, 176480 / 0.94);
+  close(r.net - c.loan - 12000, 44000);
+  close(r.breakEven, 176460 / 0.94);
   // casebook: about $1,000 more interest for each extra month
-  close(E.pencilTest(p, { delayMonths: 1 }).profit, 24520);
+  close(E.pencilTest(p, { delayMonths: 1 }).profit, 24540);
   // origination follows the loan amount
   const q = josephPlace(); q.finance.loanAmount = 130000; close(E.loanFees(q), 2300);
 });
-test('Joseph Place loan-to-cost: 90% of total project cost (budget + cost of the loan)', () => {
+test('Joseph Place loan is 90% of total development cost, as in the casebook', () => {
   const c = E.capitalStack(josephPlace());
-  close(c.eligible, 164480); close(c.maxByLtc, 148000); close(c.ltc, 148000 / 164480, 1e-9);
+  close(c.eligible, 162000); close(c.maxByLtc, 146000); close(c.ltc, 146000 / 162000, 1e-9);
   assert.equal(c.warnings.filter((w) => w.level === 'risk').length, 0);
 });

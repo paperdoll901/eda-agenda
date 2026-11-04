@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793791679';
-import * as E from './engine.js?v=1793791679';
+import * as S from './store.js?v=1793792515';
+import * as E from './engine.js?v=1793792515';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -512,16 +512,16 @@ function caseMathRows(p, keys) {
     price: ['Sale price', f(r.price), `Working price from the CMA estimate of $213,958 (Exhibit C), rounded.`, 'p. 9'],
     budget: ['Development budget', f(dev), `Exhibit D line items ${f(exD)}${dev - exD ? ` + ${f(dev - exD)} to the casebook's ${f(dev)} total` : ''}.`, 'pp. 15, 19'],
     interest: ['Loan interest', f(intr.total), `${f(E.num(fx.loanAmount))} × ${E.num(fx.ratePct)}% ÷ 12 = ${f(monthly)} a month. <b>During construction</b>: ${E.num(p.timeline.buildMonths)} months = ${f(intr.buildExact)}${Math.abs(intr.build - intr.buildExact) > 0.5 ? `, about ${f(intr.build)}` : ''}. <b>While marketing the home</b>: ${E.num(p.timeline.saleMonths)} months = ${f(intr.holdExact)}${Math.abs(intr.hold - intr.holdExact) > 0.5 ? `, about ${f(intr.hold)}` : ''}. The casebook rounds each to the nearest $1,000.`, 'p. 20'],
-    fees: ['Cost of the loan (fees)', f(fees), `${f(E.num(fx.applicationFee))} THF application fee, paid when the application is submitted (fixed)${E.num(fx.originationPct) ? ` + ${E.num(fx.originationPct)}% origination fee × ${f(E.num(fx.loanAmount))} loan = ${f(E.num(fx.loanAmount) * E.num(fx.originationPct) / 100)}, paid at loan closing if approved` : ''}${E.num(fx.originationFee) ? ` + ${f(E.num(fx.originationFee))} origination fee` : ''}. The origination fee changes with the loan amount. Part of total project cost, paid from Gabe's 10%; not part of the reserves.`, 'p. 20'],
+    fees: ['Cost of the loan (fees)', f(fees), `${f(E.num(fx.applicationFee))} THF application fee, paid when the application is submitted (fixed)${E.num(fx.originationPct) ? ` + ${E.num(fx.originationPct)}% origination fee × ${f(E.num(fx.loanAmount))} loan = ${f(E.num(fx.loanAmount) * E.num(fx.originationPct) / 100)}, paid at loan closing if approved` : ''}${E.num(fx.originationFee) ? ` + ${f(E.num(fx.originationFee))} origination fee` : ''}. The origination fee changes with the loan amount. Paid from Gabe's cash on hand; not part of the reserves.`, 'p. 20'],
     selling: ['Selling costs', f(sell), `${E.num(p.sale.commissionPct) + E.num(p.sale.sellerClosingPct)}% × ${f(r.price)} = ${f(exactSell)}${Math.abs(sell - exactSell) > 0.5 ? `, rounded to the nearest $1,000 as in the casebook: ${f(sell)}` : ''}. Paid from the sale at closing.`, 'pp. 17, 21'],
     tdc: ['Total modeled costs', f(b.tdc), `${f(dev)} budget + ${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} cost of the loan + ${f(sell)} selling costs.`, 'p. 22'],
     net: ['Net sales revenue', f(r.net), `${f(r.price)} sale − ${f(sell)} selling costs.`, 'p. 21'],
     profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.build)} construction interest − ${f(intr.hold)} marketing interest − ${f(fees)} cost of the loan${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
-    loan: ['Construction loan', f(c.loan), `THF lends 90% of total project cost: 90% × ${f(c.eligible)} (${f(dev)} budget + ${f(fees)} cost of the loan) = ${f(c.eligible * 0.9)}, rounded to ${f(c.loan)}. The casebook shows about $146,000 before the cost of the loan.`, 'p. 19'],
-    equity: ['Owner\'s equity (Gabe\'s 10% cash on hand)', f(eq), `The 10% not financed: ${f(c.eligible)} total project cost − ${f(c.loan)} loan = ${f(eq)}. It pays the ${f(fees)} cost of the loan (application fee at submission, origination at closing) and ${f(eq - fees)} of the budget.`, 'p. 19'],
+    loan: ['Construction loan', f(c.loan), `THF lends 90% of the ${f(c.eligible)} total development cost: ${f(c.eligible * 0.9)}, about ${f(c.loan)}. The loan amount does not change with how Gabe applies his cash.`, 'p. 19'],
+    equity: ['Owner\'s equity (Gabe\'s cash on hand)', f(eq), `THF's required minimum is 10% of total development cost: 10% × ${f(c.eligible)} = about ${f(c.lenderMinEquity || 0)}. Gabe applies his cash wherever the loan does not reach: ${f(c.eligible - c.loan)} of the budget + ${f(fees)} cost of the loan = ${f(eq)}. That meets the minimum.`, 'p. 19'],
     reserve: ['Available reserves for holding costs', f(res), `Interest-only loan payments: ${f(intr.build)} during construction + ${f(intr.hold)} while marketing = ${f(intr.total)}. Set aside and drawn over time, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
-    cash: ['Gabe\'s cash needed', f(c.requiredEquity), `His 10% owner's equity, ${f(eq)}. It covers the cost of the loan, so nothing more is needed; available reserves cover the loan payments.${c.requiredEquity - eq > 0.5 ? ` Plus ${f(c.requiredEquity - eq)} not covered under these inputs.` : ''}`, 'p. 19'],
-    incentive: ['CRA Essential Housing incentive', f(incAmt), `Tied to this parcel and still conditional. A project source, not owner's equity. If awarded, it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. Gabe's ${f(eq)} owner's equity (his 10%) stays the same.`, 'pp. 5–6'],
+    cash: ['Gabe\'s cash in the deal', f(c.requiredEquity), `Minimum THF contribution ${f(c.lenderMinEquity || 0)} + ${f(c.requiredEquity - (c.lenderMinEquity || 0))} applied to the cost of the loan (application fee at submission, origination at closing). Available reserves cover the loan payments.`, 'p. 19'],
+    incentive: ['CRA Essential Housing incentive', f(incAmt), `Tied to this parcel and still conditional. A project source, not owner's equity. If awarded, it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. Gabe's ${f(c.lenderMinEquity || eq)} minimum contribution stays the same.`, 'pp. 5–6'],
     closing: ['Cash left at closing', f(r.net - c.loan - res), `${f(r.net)} net − ${f(c.loan)} loan − ${f(res)} reserves repaid = Gabe's ${f(c.devEquityCommitted)} cash back + the ${f(r.profit)} return.`, 'p. 30'],
   };
   const list = (keys || Object.keys(all)).map((k) => all[k]).filter(Boolean);

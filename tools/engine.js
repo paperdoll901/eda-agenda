@@ -366,7 +366,9 @@ export function capitalStack(p, s = {}) {
   // eligible (total project) cost for loan-to-cost: total uses; or the development budget before interest and loan fees;
   // or the budget plus the cost of the loan (fees), with interest carried in reserves
   const eligible = f.ltcBasis === 'budget' ? uses - interest.total - loanFees(q) : f.ltcBasis === 'budgetPlusFees' ? uses - interest.total : uses;
-  const srcAmount = (x) => (x.link === 'loanFees' ? loanFees(q) : x.link === 'equityRemainder' ? Math.max(0, eligible - loan) : num(x.amount));
+  const others = (q.sources || []).filter((x) => x.link !== 'equityRemainder' && x.status === 'committed' && !(x.type === 'incentive' && !x.includeInScenario)).reduce((t, x) => t + (x.link === 'loanFees' ? loanFees(q) : num(x.amount)), 0);
+  // owner's equity that covers whatever the loan and other committed sources do not (at least the lender's minimum)
+  const srcAmount = (x) => (x.link === 'loanFees' ? loanFees(q) : x.link === 'equityRemainder' ? Math.max(0, uses - loan - others) : num(x.amount));
   const srcs = [{ id: 'loan', type: 'constructionLoan', name: 'Construction loan', amount: loan, status: f.loanStatus || 'committed' }]
     .concat((q.sources || []).map((x) => ({ ...x, amount: srcAmount(x) })));
   // an incentive only counts in this scenario when the participant includes it
