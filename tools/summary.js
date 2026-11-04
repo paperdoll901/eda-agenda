@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793748505';
-import * as U from './ui.js?v=1793748505';
+import * as E from './engine.js?v=1793750786';
+import * as U from './ui.js?v=1793750786';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -66,7 +66,7 @@ ${sec(6, 'Financing Gap', (() => {
   const lvl = gap <= 0.5 ? 'good' : c.gapIfIncentives <= 0.5 ? 'warn' : 'bad';
   const eqNow = c.devEquityCommitted;
   const msg = gap <= 0.5 ? 'Committed sources cover total uses.'
-    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can bring more equity or ask the lender about an interest reserve. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded in time, it would cover this with ${fmt$(-c.gapIfIncentives)} to spare. The incentive does not count toward owner's equity: Gabe still brings ${fmt$(c.lenderMinEquity || 0)} of his own cash.`
+    : why && c.gapIfIncentives <= 0.5 ? `${why.text} Gabe can bring more equity or ask the lender about an interest reserve. If the ${fmt$(c.offIncentiveTotal)} CRA incentive is awarded in time, it can close this gap with ${fmt$(-c.gapIfIncentives)} left for other eligible costs such as site work, predevelopment or eco-build standards. The incentive does not count toward owner's equity: Gabe still brings ${fmt$(c.lenderMinEquity || 0)} of his own cash.`
     : c.gapIfIncentives <= 0.5 ? `Committed sources are ${fmt$(gap)} short today. The gap <b>closes</b> if the pending ${off.length ? esc(off.map((x) => x.name).join(' and ')) : 'sources'} ${off.length + (pend > 0.5 ? 1 : 0) > 1 ? 'are' : 'is'} awarded${c.gapIfIncentives < -0.5 ? `, leaving ${fmt$(-c.gapIfIncentives)} to spare` : ''}. Until then, the developer must cover the gap with more equity or another source. Developer cash needed if awarded: ${fmt$(c.equityIfIncentives)}.`
     : `Committed sources are ${fmt$(gap)} short, and ${fmt$(c.gapIfIncentives)} would remain unfunded even if everything pending is awarded.`;
   return U.status(lvl, msg) + (why ? `<h4 style="margin:12px 0 4px;font-size:15px">Where the gap comes from</h4><table class="tbl" style="max-width:640px"><tbody>${why.rows}</tbody></table><h4 style="margin:12px 0 4px;font-size:15px">How it closes</h4>` : '') + `<table class="tbl" style="max-width:640px;margin-top:10px"><tbody>${rows}</tbody></table>`;
