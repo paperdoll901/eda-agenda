@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793790609';
-import * as E from './engine.js?v=1793790609';
-import * as U from './ui.js?v=1793790609';
+import * as S from './store.js?v=1793790922';
+import * as E from './engine.js?v=1793790922';
+import * as U from './ui.js?v=1793790922';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -75,7 +75,7 @@ function renderSources() {
   const el = U.$('#srcs');
   el.innerHTML = p.sources.length ? `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Source</th><th class="n" style="min-width:110px">Amount</th><th style="min-width:120px">Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>${p.sources.map((s, i) => `<tr>
     <td><input type="text" aria-label="Source name" data-bind="sources.${i}.name" data-kind="text"><div class="note">${esc((E.SOURCE_TYPES.find((t) => t.key === s.type) || {}).name || s.type)}${s.type === 'incentive' ? ` · <label><input type="checkbox" data-bind="sources.${i}.includeInScenario" data-kind="bool"> Include in base case</label>` : ''}</div>${s.note ? `<div class="src">${esc(s.note)}</div>` : ''}</td>
-    <td><input type="number" step="any" min="0" aria-label="Amount" data-bind="sources.${i}.amount" data-kind="num"></td>
+    <td>${s.link === 'loanFees' ? `<input type="text" readonly aria-label="Amount (linked)" value="${fmt$(E.loanFees(p))}"><div class="note">Linked to the loan fees</div>` : `<input type="number" step="any" min="0" aria-label="Amount" data-bind="sources.${i}.amount" data-kind="num">`}</td>
     <td><select aria-label="Status" data-bind="sources.${i}.status" data-kind="select">${STATUS_OPTS.map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select></td>
     <td><button class="btn ghost sm" type="button" data-del="${i}" aria-label="Remove ${esc(s.name)}">✕</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="note">No other sources yet.</p>';
   binder.fill();
@@ -90,6 +90,7 @@ U.$('#addSrc').addEventListener('click', () => {
 const binder = U.bind(main, p, (path) => { if (path === 'finance.interestMethod') renderDrawEditor(); update(); });
 
 function update() {
+  U.$$('[aria-label="Amount (linked)"]').forEach((el) => (el.value = fmt$(E.loanFees(p))));
   const c = E.capitalStack(p);
   const b = c.budget;
   const gapLevel = c.gapCommitted > 0.5 ? (c.gapIfIncentives <= 0.5 ? 'warn' : 'bad') : c.gapAll < -0.5 ? 'info' : 'good';

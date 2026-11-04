@@ -290,7 +290,7 @@ export function pencilTest(p, s = {}) {
   const totalCost = b.tdc; // total project cost, including selling costs
   const margin = safeDiv(profit, gross);
   const roc = safeDiv(profit, totalCost);
-  const equity = (q.sources || []).filter((x) => (x.type === 'developerEquity' || x.type === 'landEquity') && x.status === 'committed').reduce((t, x) => t + num(x.amount), 0);
+  const equity = (q.sources || []).filter((x) => (x.type === 'developerEquity' || x.type === 'landEquity') && x.status === 'committed').reduce((t, x) => t + (x.link === 'loanFees' ? loanFees(q) : num(x.amount)), 0);
   const roe = equity > 0 ? profit / equity : null;
   const rate = units > 0 && gross > 0 ? b.closingPctOfSale / gross : pct(q.sale?.commissionPct) + pct(q.sale?.sellerClosingPct);
   const fixed = b.closingFixed;
@@ -364,7 +364,7 @@ export function capitalStack(p, s = {}) {
   const loan = Math.max(0, num(f.loanAmount));
   const interest = interestFor(q);
   const srcs = [{ id: 'loan', type: 'constructionLoan', name: 'Construction loan', amount: loan, status: f.loanStatus || 'committed' }]
-    .concat((q.sources || []).map((x) => ({ ...x, amount: num(x.amount) })));
+    .concat((q.sources || []).map((x) => ({ ...x, amount: x.link === 'loanFees' ? loanFees(q) : num(x.amount) })));
   // an incentive only counts in this scenario when the participant includes it
   const counted = srcs.filter((x) => !(x.type === 'incentive' && !x.includeInScenario));
   const by = (st) => counted.filter((x) => x.status === st).reduce((t, x) => t + x.amount, 0);

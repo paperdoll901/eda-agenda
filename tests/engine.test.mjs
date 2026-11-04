@@ -5,7 +5,7 @@ import * as E from '../tools/engine.js';
 import { josephPlace, blankProject } from '../tools/store.js';
 
 // exact math (casebook rounding off) for formula tests
-const jpExact = () => { const p = josephPlace(); p.finance.interestRoundTo = 0; p.sale.sellingRoundTo = 0; p.finance.ltcBasis = undefined; p.finance.minEquityPct = null; p.sources = p.sources.filter((x) => x.type !== 'loanReserve' && x.id !== 'jp-lc'); p.finance.ltcRoundTo = 0; p.budget.items = p.budget.items.filter((i) => !/^Rounding to the/.test(i.name)); return p; };
+const jpExact = () => { const p = josephPlace(); p.finance.interestRoundTo = 0; p.sale.sellingRoundTo = 0; p.finance.ltcBasis = undefined; p.finance.originationPct = 0; p.finance.originationFee = 1000; p.finance.minEquityPct = null; p.sources = p.sources.filter((x) => x.type !== 'loanReserve' && x.id !== 'jp-lc'); p.finance.ltcRoundTo = 0; p.budget.items = p.budget.items.filter((i) => !/^Rounding to the/.test(i.name)); return p; };
 const close = (a, b, tol = 0.01) => assert.ok(Math.abs(a - b) <= tol, `expected ${b}, got ${a}`);
 
 test('mortgage amortization matches the standard formula', () => {
@@ -309,15 +309,18 @@ test('market comps: bed and bath adjustments', () => {
 test('Joseph Place matches the casebook figures exactly', () => {
   const p = josephPlace();
   const b = E.budgetTotals(p), r = E.pencilTest(p), c = E.capitalStack(p);
-  close(b.tdc, 189000); close(b.atClosing, 13000); close(c.interest.total, 12000);
-  close(r.net, 202000); close(r.profit, 26000);
-  close(c.uses, 176000); close(c.gapCommitted, 0); close(c.requiredEquity, 18000);
+  close(b.tdc, 189460); close(b.atClosing, 13000); close(c.interest.total, 12000);
+  close(E.loanFees(p), 1000 + 146000 * 0.01); // THF application fee + 1% origination
+  close(r.net, 202000); close(r.profit, 25540);
+  close(c.uses, 176460); close(c.gapCommitted, 0); close(c.requiredEquity, 18460);
   // THF reserve for interest and loan fees: $14,000, repaid at closing with the loan
   close(c.sources.find((x) => x.type === 'loanReserve').amount, 12000);
   close(r.net - c.loan - 12000, 44000);
-  close(r.breakEven, 176000 / 0.94);
+  close(r.breakEven, 176460 / 0.94);
   // casebook: about $1,000 more interest for each extra month
-  close(E.pencilTest(p, { delayMonths: 1 }).profit, 25000);
+  close(E.pencilTest(p, { delayMonths: 1 }).profit, 24540);
+  // origination follows the loan amount
+  const q = josephPlace(); q.finance.loanAmount = 130000; close(E.loanFees(q), 2300);
 });
 test('Joseph Place loan-to-cost is measured on the $162,000 budget, as in the casebook', () => {
   const c = E.capitalStack(josephPlace());
