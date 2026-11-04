@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793782980';
-import * as E from './engine.js?v=1793782980';
-import * as U from './ui.js?v=1793782980';
+import * as S from './store.js?v=1793789497';
+import * as E from './engine.js?v=1793789497';
+import * as U from './ui.js?v=1793789497';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -62,7 +62,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 ${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'reserve', 'cash', 'incentive', 'closing'])}
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D). The lender's 90% loan-to-cost cap sets the loan size.</li>
-<li>Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Find the <b>available reserves to support holding costs</b> in the sources. How do they carry the cost of debt, and what happens if the home takes longer to sell than the reserves cover?</li>
+<li>Loan payments (about $12,000) and loan fees ($2,000) sit <i>outside</i> the $162,000. Find the <b>available reserves to support holding costs</b> and Gabe's cash for loan costs in the sources. How do the reserves carry the loan payments, and what happens if the home takes longer to sell than the reserves cover?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
 <li>Lower the loan-to-cost limit to 80%. How much additional equity is required?</li></ol>`)}
@@ -100,7 +100,7 @@ function update() {
     ${U.kpi('Committed sources', fmt$(c.committed), `+ ${fmt$(c.proposed)} proposed · ${fmt$(c.conditional)} conditional`)}
     ${U.kpi('Loan-to-cost', fmtPct(c.ltc), E.isNum(p.finance.ltcLimitPct) ? `Limit ${E.num(p.finance.ltcLimitPct)}%${p.finance.ltcBasis === 'budget' ? ` of the ${fmt$(c.eligible)} budget` : ''} → max ${fmt$(c.maxByLtc)}` : 'No limit entered', '', 'ltc')}
     ${U.kpi('Loan-to-value', c.ltv === null ? 'Not yet calculated' : fmtPct(c.ltv), c.ltv === null ? 'Enter an appraised value' : E.isNum(p.finance.ltvLimitPct) ? `Limit ${E.num(p.finance.ltvLimitPct)}% → max ${fmt$(c.maxByLtv)}` : '', '', 'ltv')}
-    ${U.kpi('Developer cash needed', fmt$(c.requiredEquity), c.lenderMinEquity !== null ? `Owner's equity minimum ${E.num(p.finance.minEquityPct)}%: ${fmt$(c.lenderMinEquity)} · cash on hand ${fmt$(c.devEquityCommitted)}` : `After debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
+    ${U.kpi('Developer cash needed', fmt$(c.requiredEquity), c.lenderMinEquity !== null ? `Owner's equity ${E.num(p.finance.minEquityPct)}%: ${fmt$(c.lenderMinEquity)}${c.devEquityCommitted - c.lenderMinEquity > 0.5 ? ` + loan costs ${fmt$(c.devEquityCommitted - c.lenderMinEquity)}` : ''}` : `After debt, grants & other sources · ${fmt$(c.devEquityCommitted)} committed`, '', 'equity')}
     ${U.kpi('Loan interest', fmt$(c.interest.total), `${fmt$(c.interest.build)} construction + ${fmt$(c.interest.hold)} marketing · ${methodName(c.interest.method)}`, '', 'interest')}
   </div>
   ${(() => { const why = U.gapWhy(p, c); return why ? U.status(gapLevel, `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${why.text}`) + `<details class="recon" style="margin:8px 0"><summary style="cursor:pointer;font-weight:700">Where the gap comes from</summary><table class="tbl" style="max-width:640px;margin-top:6px"><tbody>${why.rows}</tbody></table></details>` : U.status(gapLevel, c.gapCommitted > 0.5 ? `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${c.proposed + c.conditional > 0.5 ? (c.gapAll <= 0.5 ? `The pending sources included in this scenario (${fmt$(c.proposed + c.conditional)}) would close it if they are approved.` : `Even if the pending sources included here (${fmt$(c.proposed + c.conditional)}) are approved, ${fmt$(c.gapAll)} would still be unfunded.`) : (c.offIncentiveTotal > 0 ? '' : 'No other sources are pending.')}` : c.gapAll < -0.5 ? `Sources exceed uses by ${fmt$(-c.gapAll)}. Check for double counting or reduce a source.` : 'Committed sources cover total uses. The financing plan balances on paper.'); })()}
