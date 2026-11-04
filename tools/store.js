@@ -184,7 +184,7 @@ export function josephPlace() {
   };
   p.sources = [
     { id: 'jp-eq', type: 'developerEquity', name: 'Owner\'s equity: Gabe\'s cash on hand (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'THF requires owner\'s equity of 10% of total project cost: 10% of $162,000 = $16,200, about $16,000. The loan covers the other 90% ($146,000).' },
-    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive tied to this parcel. It is a project source, not owner\'s equity: it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts toward Gabe\'s 10% equity. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
+    { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive tied to this parcel. It is a project source, not owner\'s equity: it can pay for the developer\'s financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts toward Gabe\'s 10% equity. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
   p.buyer = {
     ...blankBuyer(),
@@ -226,7 +226,7 @@ export function state() {
   Object.values(memory.projects).forEach((q) => {
     if (!q.market) q.market = q.kind === 'case' ? josephMarket() : blankMarket();
     if (q.kind === 'case' && /reconciled before final underwriting/.test(q.sqftNote || '')) delete q.sqftNote;
-    (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /it can help pay costs but/.test(x.note || '')) x.note = x.note.replace('it can help pay costs but never counts', 'it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts'); });
+    (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /it can help pay costs but/.test(x.note || '')) x.note = x.note.replace('it can help pay costs but never counts', 'it can pay for the developer\'s financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts'); });
     (q.sources || []).forEach((x) => { if (x.id === 'jp-cra' && /^Not included in Gabe/.test(x.note || '')) x.note = x.note.replace(/^Not included in Gabe's budget \(Exhibit D\)\./, 'A possible CRA Essential Housing incentive.'); });
     const items = q.budget && q.budget.items;
     if (!items || items.some((i) => i.basis === 'linked' && i.link === 'sellerClosing')) return;
