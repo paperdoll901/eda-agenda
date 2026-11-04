@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793763443';
-import * as E from './engine.js?v=1793763443';
-import * as U from './ui.js?v=1793763443';
+import * as S from './store.js?v=1793782729';
+import * as E from './engine.js?v=1793782729';
+import * as U from './ui.js?v=1793782729';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -62,7 +62,7 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 ${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'reserve', 'cash', 'incentive', 'closing'])}
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D). The lender's 90% loan-to-cost cap sets the loan size.</li>
-<li>Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Find the <b>THF reserve</b> in the sources. How does it carry the cost of debt, and what happens if the home takes longer to sell than the reserve covers?</li>
+<li>Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Find the <b>available reserves to support holding costs</b> in the sources. How do they carry the cost of debt, and what happens if the home takes longer to sell than the reserves cover?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
 <li>Lower the loan-to-cost limit to 80%. How much additional equity is required?</li></ol>`)}
@@ -151,7 +151,7 @@ function update() {
   <ul class="note"><li><b>Incentive:</b> counted as conditional, so it lowers the gap only if the incentive is awarded. If approved, it reduces the cash Gabe must bring.</li><li><b>Higher equity:</b> closes the gap with the developer's own cash. Profit stays the same, but return on equity falls.</li><li><b>Lower loan:</b> less debt means less interest, but more developer cash is required.</li><li><b>Higher financing costs:</b> more interest raises uses and lowers profit at the same time.</li></ul>`;
 }
 const methodName = (m) => ({ full: 'Full balance from closing', draws: 'Draw-based', average: 'Simplified average balance' }[m] || m);
-const shortName = (x) => ({ constructionLoan: 'Construction loan', loanReserve: 'Debt-cost reserve', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);
+const shortName = (x) => ({ constructionLoan: 'Construction loan', loanReserve: 'Holding-cost reserves', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);
 
 function drawEditor() {
   return `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table" style="margin-bottom:10px"><table class="tbl" id="drawTbl"><caption>Draw schedule (edit)</caption><thead><tr><th>Description</th><th>Month</th><th class="n">Amount</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>

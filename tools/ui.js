@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793763443';
-import * as E from './engine.js?v=1793763443';
+import * as S from './store.js?v=1793782729';
+import * as E from './engine.js?v=1793782729';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -464,8 +464,8 @@ export function gapWhy(p, c) {
   const resv = (p.sources || []).filter((x) => x.type === 'loanReserve' && x.status === 'committed').reduce((t, x) => t + E.num(x.amount), 0);
   if (resv > 0) {
     const ff = (v) => '$' + Math.round(v).toLocaleString('en-US');
-    const rowsR = `<tr><td>Total uses before the sale</td><td class="n">${ff(c.uses)}</td></tr><tr><td>− Construction loan</td><td class="n">${ff(c.loan)}</td></tr><tr><td>− Owner's equity (cash on hand)</td><td class="n">${ff(c.devEquityCommitted)}</td></tr><tr><td>− THF reserve for interest &amp; loan fees</td><td class="n">${ff(resv)}</td></tr><tr class="tot"><td>= Not yet covered</td><td class="n">${ff(c.gapCommitted)}</td></tr>`;
-    return { rows: rowsR, text: `The THF reserve (${ff(resv)}) was sized for the planned schedule. Interest and fees now total ${ff(c.uses - c.loan - c.devEquityCommitted)}, so ${ff(c.gapCommitted)} is not covered. Gabe must bring more cash or ask THF to increase the reserve.` };
+    const rowsR = `<tr><td>Total uses before the sale</td><td class="n">${ff(c.uses)}</td></tr><tr><td>− Construction loan</td><td class="n">${ff(c.loan)}</td></tr><tr><td>− Owner's equity (cash on hand)</td><td class="n">${ff(c.devEquityCommitted)}</td></tr><tr><td>− Available reserves for holding costs</td><td class="n">${ff(resv)}</td></tr><tr class="tot"><td>= Not yet covered</td><td class="n">${ff(c.gapCommitted)}</td></tr>`;
+    return { rows: rowsR, text: `The available reserves (${ff(resv)}) were sized for the planned schedule. Interest and fees now total ${ff(c.uses - c.loan - c.devEquityCommitted)}, so ${ff(c.gapCommitted)} is not covered. Gabe must bring more cash or add to the reserves.` };
   }
   const f = (v) => '$' + Math.round(v).toLocaleString('en-US');
   const nm = (i) => String(i.name).replace(/</g, '&lt;');
@@ -518,10 +518,10 @@ function caseMathRows(p, keys) {
     profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.build)} construction interest − ${f(intr.hold)} marketing interest − ${f(fees)} loan fees${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
     loan: ['Construction loan', f(c.loan), `About 90% of the ${f(dev)} eligible project cost (${f(dev * 0.9)}), rounded.`, 'p. 19'],
     equity: ['Owner\'s equity (Gabe\'s cash on hand)', f(eq), `THF requires owner's equity of ${E.num(fx.minEquityPct) || 10}% of total project cost: ${E.num(fx.minEquityPct) || 10}% × ${f(c.eligible)} = ${f(c.eligible * (E.num(fx.minEquityPct) || 10) / 100)}, about ${f(c.lenderMinEquity || eq)}. The loan covers the other 90%.`, 'p. 19'],
-    reserve: ['THF reserve for interest & loan fees', f(res), `${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees = ${f(intr.total + fees)}. Held with the loan and drawn over time to pay the cost of debt, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
-    cash: ['Gabe\'s cash needed', f(c.requiredEquity), `${f(eq)} owner's equity: the 10% THF requires. The loan finances 90% of the ${f(dev)} acquisition and construction budget, and the reserve carries the cost of debt.`, 'p. 19'],
+    reserve: ['Available reserves for holding costs', f(res), `${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees = ${f(intr.total + fees)}. Set aside and drawn over time to cover holding costs during construction and marketing, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
+    cash: ['Gabe\'s cash needed', f(c.requiredEquity), `${f(eq)} owner's equity: the 10% THF requires. The loan finances 90% of the ${f(dev)} acquisition and construction budget, and available reserves cover the holding costs.`, 'p. 19'],
     incentive: ['CRA Essential Housing incentive', f(incAmt), `Tied to this parcel and still conditional. A project source, not owner's equity. If awarded, it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. Gabe's ${f(c.lenderMinEquity || eq)} cash requirement stays the same.`, 'pp. 5–6'],
-    closing: ['Cash left at closing', f(r.net - c.loan - res), `${f(r.net)} net − ${f(c.loan)} loan − ${f(res)} reserve repaid = Gabe's ${f(c.requiredEquity)} cash back + the ${f(r.profit)} return.`, 'p. 30'],
+    closing: ['Cash left at closing', f(r.net - c.loan - res), `${f(r.net)} net − ${f(c.loan)} loan − ${f(res)} reserves repaid = Gabe's ${f(c.requiredEquity)} cash back + the ${f(r.profit)} return.`, 'p. 30'],
   };
   const list = (keys || Object.keys(all)).map((k) => all[k]).filter(Boolean);
   return list.map(([a, v, how, pg]) => `<tr><td><b>${a}</b></td><td class="n">${v}</td><td class="tx" style="text-align:left">${how}</td><td style="white-space:nowrap">${pg}</td></tr>`).join('');
