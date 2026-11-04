@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793789497';
-import * as E from './engine.js?v=1793789497';
+import * as S from './store.js?v=1793790609';
+import * as E from './engine.js?v=1793790609';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -464,7 +464,7 @@ export function gapWhy(p, c) {
   const resv = (p.sources || []).filter((x) => x.type === 'loanReserve' && x.status === 'committed').reduce((t, x) => t + E.num(x.amount), 0);
   if (resv > 0) {
     const ff = (v) => '$' + Math.round(v).toLocaleString('en-US');
-    const rowsR = `<tr><td>Total uses before the sale</td><td class="n">${ff(c.uses)}</td></tr><tr><td>− Construction loan</td><td class="n">${ff(c.loan)}</td></tr><tr><td>− Gabe's cash (owner's equity + loan costs)</td><td class="n">${ff(c.devEquityCommitted)}</td></tr><tr><td>− Available reserves for holding costs</td><td class="n">${ff(resv)}</td></tr><tr class="tot"><td>= Not yet covered</td><td class="n">${ff(c.gapCommitted)}</td></tr>`;
+    const rowsR = `<tr><td>Total uses before the sale</td><td class="n">${ff(c.uses)}</td></tr><tr><td>− Construction loan</td><td class="n">${ff(c.loan)}</td></tr><tr><td>− Gabe's cash (owner's equity + cost of the loan)</td><td class="n">${ff(c.devEquityCommitted)}</td></tr><tr><td>− Available reserves for holding costs</td><td class="n">${ff(resv)}</td></tr><tr class="tot"><td>= Not yet covered</td><td class="n">${ff(c.gapCommitted)}</td></tr>`;
     return { rows: rowsR, text: `The available reserves (${ff(resv)}) were sized for the planned schedule. Loan payments now total ${ff(c.uses - c.loan - c.devEquityCommitted)}, so ${ff(c.gapCommitted)} is not covered. Gabe must bring more cash or add to the reserves.` };
   }
   const f = (v) => '$' + Math.round(v).toLocaleString('en-US');
@@ -513,7 +513,7 @@ function caseMathRows(p, keys) {
     price: ['Sale price', f(r.price), `Working price from the CMA estimate of $213,958 (Exhibit C), rounded.`, 'p. 9'],
     budget: ['Development budget', f(dev), `Exhibit D line items ${f(exD)}${dev - exD ? ` + ${f(dev - exD)} to the casebook's ${f(dev)} total` : ''}.`, 'pp. 15, 19'],
     interest: ['Loan interest', f(intr.total), `${f(E.num(fx.loanAmount))} × ${E.num(fx.ratePct)}% ÷ 12 = ${f(monthly)} a month. <b>During construction</b>: ${E.num(p.timeline.buildMonths)} months = ${f(intr.buildExact)}${Math.abs(intr.build - intr.buildExact) > 0.5 ? `, about ${f(intr.build)}` : ''}. <b>While marketing the home</b>: ${E.num(p.timeline.saleMonths)} months = ${f(intr.holdExact)}${Math.abs(intr.hold - intr.holdExact) > 0.5 ? `, about ${f(intr.hold)}` : ''}. The casebook rounds each to the nearest $1,000.`, 'p. 20'],
-    fees: ['Loan costs (fees)', f(fees), `${f(E.num(fx.applicationFee))} application fee, paid when the loan application is submitted, + ${f(E.num(fx.originationFee))} origination fee, paid at loan closing if approved. Costs of the loan, paid by Gabe; not part of the reserves.`, 'p. 20'],
+    fees: ['Cost of the loan (fees)', f(fees), `${f(E.num(fx.applicationFee))} application fee, paid when the loan application is submitted, + ${f(E.num(fx.originationFee))} origination fee, paid at loan closing if approved. Costs of the loan, paid by Gabe; not part of the reserves.`, 'p. 20'],
     selling: ['Selling costs', f(sell), `${E.num(p.sale.commissionPct) + E.num(p.sale.sellerClosingPct)}% × ${f(r.price)} = ${f(exactSell)}${Math.abs(sell - exactSell) > 0.5 ? `, rounded to the nearest $1,000 as in the casebook: ${f(sell)}` : ''}. Paid from the sale at closing.`, 'pp. 17, 21'],
     tdc: ['Total modeled costs', f(b.tdc), `${f(dev)} budget + ${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees + ${f(sell)} selling costs.`, 'p. 22'],
     net: ['Net sales revenue', f(r.net), `${f(r.price)} sale − ${f(sell)} selling costs.`, 'p. 21'],
@@ -521,7 +521,7 @@ function caseMathRows(p, keys) {
     loan: ['Construction loan', f(c.loan), `About 90% of the ${f(dev)} eligible project cost (${f(dev * 0.9)}), rounded.`, 'p. 19'],
     equity: ['Owner\'s equity (Gabe\'s cash on hand)', f(eq), `THF requires owner's equity of ${E.num(fx.minEquityPct) || 10}% of total project cost: ${E.num(fx.minEquityPct) || 10}% × ${f(c.eligible)} = ${f(c.eligible * (E.num(fx.minEquityPct) || 10) / 100)}, about ${f(c.lenderMinEquity || eq)}. The loan covers the other 90%.`, 'p. 19'],
     reserve: ['Available reserves for holding costs', f(res), `Interest-only loan payments: ${f(intr.build)} during construction + ${f(intr.hold)} while marketing = ${f(intr.total)}. Set aside and drawn over time, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
-    cash: ['Gabe\'s cash needed', f(c.requiredEquity), `${f(eq)} owner's equity (the 10% THF requires)${lc > 0.5 ? ` + ${f(lc)} loan costs (application and origination fees)` : ''}. The loan finances 90% of the ${f(dev)} acquisition and construction budget, and available reserves cover the loan payments.`, 'p. 19'],
+    cash: ['Gabe\'s cash needed', f(c.requiredEquity), `${f(eq)} owner's equity (the 10% THF requires)${lc > 0.5 ? ` + ${f(lc)} cost of the loan (application and origination fees)` : ''}. The loan finances 90% of the ${f(dev)} acquisition and construction budget, and available reserves cover the loan payments.`, 'p. 19'],
     incentive: ['CRA Essential Housing incentive', f(incAmt), `Tied to this parcel and still conditional. A project source, not owner's equity. If awarded, it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. Gabe's ${f(c.lenderMinEquity || eq)} owner's equity requirement stays the same.`, 'pp. 5–6'],
     closing: ['Cash left at closing', f(r.net - c.loan - res), `${f(r.net)} net − ${f(c.loan)} loan − ${f(res)} reserves repaid = Gabe's ${f(c.devEquityCommitted)} cash back + the ${f(r.profit)} return.`, 'p. 30'],
   };

@@ -150,7 +150,7 @@ export function josephPlace() {
       L('E', "Builder's risk insurance", { amount: 750, note: X('1.04') }),
       L('E', 'Project management & supervision', { amount: 3500, note: X('1.10') }),
       // F. Financing & holding
-      L('F', 'Loan costs: application fee + origination fee', { basis: 'linked', link: 'loanFees', note: 'Casebook p. 20: $1,000 application fee, paid when the loan application is submitted, + $1,000 origination fee, paid at loan closing if the loan is approved = $2,000. Costs of the loan, paid by the developer; not part of the reserves. Not in Exhibit D.' }),
+      L('F', 'Cost of the loan: application fee + origination fee', { basis: 'linked', link: 'loanFees', note: 'Casebook p. 20: $1,000 application fee, paid when the loan application is submitted, + $1,000 origination fee, paid at loan closing if the loan is approved = $2,000. Costs of the loan, paid by the developer; not part of the reserves. Not in Exhibit D.' }),
       L('F', 'Interest during construction (3 months)', { basis: 'linked', link: 'interestBuild', note: 'Casebook p. 20: $146,000 × 8% ÷ 12 = $973 a month × 3 months to build = $2,920, about $3,000. Not in Exhibit D.' }),
       L('F', 'Interest while marketing the home (9 months)', { basis: 'linked', link: 'interestHold', note: 'Casebook p. 20: the broker expects up to 9 months to sell. $973 a month × 9 = $8,760, about $9,000. Selling sooner lowers this. Not in Exhibit D.' }),
       L('F', 'Job site security', { amount: 650, note: X('1.09') }),
@@ -184,7 +184,7 @@ export function josephPlace() {
   };
   p.sources = [
     { id: 'jp-eq', type: 'developerEquity', name: 'Owner\'s equity: Gabe\'s cash on hand (Ferrybrook Holdings)', amount: 16000, status: 'committed', note: 'THF requires owner\'s equity of 10% of total project cost: 10% of $162,000 = $16,200, about $16,000. The loan covers the other 90% ($146,000).' },
-    { id: 'jp-lc', type: 'developerEquity', name: 'Gabe\'s cash for loan costs (application and origination fees)', amount: 2000, status: 'committed', note: 'Paid by Gabe: $1,000 when the loan application is submitted and $1,000 at loan closing. A cost of the loan, separate from his 10% owner\'s equity.' },
+    { id: 'jp-lc', type: 'developerEquity', name: 'Cost of the loan (application and origination fees)', amount: 2000, status: 'committed', note: 'Paid by Gabe: $1,000 when the loan application is submitted and $1,000 at loan closing. A cost of the loan, separate from his 10% owner\'s equity.' },
     { id: 'jp-res', type: 'loanReserve', name: 'Available reserves to support holding costs (loan payments)', amount: 12000, status: 'committed', note: 'Reserves set aside and drawn over time to cover the interest-only loan payments while the loan is outstanding: about $973 a month, $3,000 for 3 months to build + $9,000 for 9 months to sell = $12,000. Repaid from the sale at closing. If the home takes longer to sell, the extra loan payments are not covered.' },
     { id: 'jp-cra', type: 'incentive', name: 'CRA Essential Housing development incentive', amount: 20000, status: 'conditional', includeInScenario: false, note: 'A possible CRA Essential Housing incentive tied to this parcel. It is a project source, not owner\'s equity: it can pay for the developer\'s financing gap, site costs, predevelopment, or added features such as eco-build standards, but never counts toward Gabe\'s 10% equity. Turn it on to see how a $20,000 CRA incentive changes profit, the funding gap and the equity Gabe must bring. Change the status to committed once it is awarded in writing.' },
   ];
@@ -226,6 +226,7 @@ export function state() {
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   Object.values(memory.projects).forEach((q) => {
+    if (q.kind === 'case') { (q.sources || []).forEach((x) => { if (x.id === 'jp-lc') x.name = 'Cost of the loan (application and origination fees)'; }); (q.budget?.items || []).forEach((i) => { if (i.link === 'loanFees' && /^Loan costs:/.test(i.name)) i.name = 'Cost of the loan: application fee + origination fee'; }); }
     (q.sources || []).forEach((x) => { if (x.id === 'jp-res' && /THF|loan fees\)/.test(x.name || '')) { x.name = 'Available reserves to support holding costs (loan payments)'; x.note = 'Reserves set aside and drawn over time to cover holding costs while the loan is outstanding: interest-only loan payments of about $973 a month, $12,000 for 3 months to build + 9 to sell, plus the $2,000 loan application and origination fees. Repaid from the sale at closing. If the home takes longer to sell, the extra loan payments are not covered.'; } });
     if (!q.market) q.market = q.kind === 'case' ? josephMarket() : blankMarket();
     if (q.kind === 'case' && /reconciled before final underwriting/.test(q.sqftNote || '')) delete q.sqftNote;
