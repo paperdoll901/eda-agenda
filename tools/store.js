@@ -59,6 +59,17 @@ export function blankMarket() {
   return { subjectSqft: null, subjectBeds: null, subjectBaths: null, subjectYear: null, areaMedian: null, listToSalePct: 100, adjPerBed: 0, adjPerBath: 0, adjPerYear: 0, source: '',
     comps: [1, 2, 3].map(() => ({ id: newId('c'), address: '', status: 'closed', date: '', price: null, sqft: null, beds: null, baths: null, year: null, otherAdj: 0, note: '', include: true })) };
 }
+export function josephDraws() {
+  return [
+    { month: 1, amount: 3000, label: 'At loan closing: other eligible budget costs (outside the vertical contract)' },
+    { month: 1, amount: 21450, label: 'Draw 1 (15%): Site, foundation & underslab work' },
+    { month: 1, amount: 35750, label: 'Draw 2 (25%): Framing & dry-in' },
+    { month: 2, amount: 28600, label: 'Draw 3 (20%): Rough systems (MEP)' },
+    { month: 2, amount: 21450, label: 'Draw 4 (15%): Insulation & drywall' },
+    { month: 3, amount: 28600, label: 'Draw 5 (20%): Interior & exterior finishes' },
+    { month: 3, amount: 7150, label: 'Draw 6 (5%): Substantial completion & closeout' },
+  ];
+}
 export function josephMarket() {
   const C = (address, status, date, price, sqft, beds, baths, year, note) => ({ id: newId('c'), address, status, date, price, sqft, beds, baths, year, otherAdj: 0, note, include: true });
   return {
@@ -168,16 +179,8 @@ export function josephPlace() {
     lender: 'The Housing Fund (THF), teaching-case scenario',
     loanAmount: 146000, loanStatus: 'committed', ratePct: 8, termMonths: 12, applicationFee: 1000, originationFee: 0, originationPct: 1, otherLoanFees: 0, interestRoundTo: 1000, ltcBasis: 'budget', ltcRoundTo: 1000,
     interestMethod: 'full',
-    draws: [
-      { month: 1, amount: 3000, label: 'Loan balance above vertical contract (illustrative timing)' },
-      { month: 1, amount: 21450, label: 'Site, foundation & underslab' },
-      { month: 1, amount: 35750, label: 'Framing & dry-in' },
-      { month: 2, amount: 28600, label: 'Rough systems / MEP' },
-      { month: 2, amount: 21450, label: 'Insulation & drywall' },
-      { month: 3, amount: 28600, label: 'Interior & exterior finishes' },
-      { month: 3, amount: 7150, label: 'Completion & closeout' },
-    ],
-    drawNote: 'Draw amounts are from the casebook Schedule of Values. The month each draw falls in is an illustrative classroom assumption.',
+    draws: josephDraws(),
+    drawNote: 'Draws follow Exhibit H, the Schedule of Values for the $143,000 vertical construction contract. They are spread over the 3-month build as in the casebook\'s construction milestones (p. 27): Draws 1–2 in month 1, 3–4 in month 2, 5–6 in month 3. Each draw is reimbursed after the work is complete and verified. The other $3,000 of the $146,000 loan funds eligible budget costs outside the vertical contract at closing.',
     interestReserve: 0,
     ltcLimitPct: 90, ltvLimitPct: null, collateralValue: null, minEquityPct: 10,
     limitNote: 'THF lends 90% of total development cost: 90% × $162,000 = $145,800, about $146,000.',
@@ -225,6 +228,7 @@ export function state() {
   const jp = memory.projects['joseph-place'];
   if (!jp || jp.caseVersion !== CASE_VERSION) { memory.projects['joseph-place'] = josephPlace(); try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (e) {} }
   Object.values(memory.projects).forEach((q) => {
+    if (q.kind === 'case' && q.finance && !(q.finance.draws || []).some((d) => /^Draw 1/.test(d.label || ''))) { q.finance.draws = josephDraws(); }
     if (q.kind === 'case') { (q.sources || []).forEach((x) => { if (x.id === 'jp-lc') x.name = 'Cost of the loan (application and origination fees)'; }); (q.budget?.items || []).forEach((i) => { if (i.link === 'loanFees' && /^Loan costs:/.test(i.name)) i.name = 'Cost of the loan: application fee + origination fee'; }); }
     (q.sources || []).forEach((x) => { if (x.id === 'jp-res' && /THF|loan fees\)/.test(x.name || '')) { x.name = 'Available reserves to support holding costs (loan payments)'; x.note = 'Reserves set aside and drawn over time to cover holding costs while the loan is outstanding: interest-only loan payments of about $973 a month, $12,000 for 3 months to build + 9 to sell, plus the $2,000 loan application and origination fees. Repaid from the sale at closing. If the home takes longer to sell, the extra loan payments are not covered.'; } });
     if (!q.market) q.market = q.kind === 'case' ? josephMarket() : blankMarket();

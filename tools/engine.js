@@ -96,14 +96,22 @@ export function constructionInterest({ loan, ratePct, buildMonths, holdMonths, m
       schedule.push({ month: m, phase: m <= b ? 'Construction' : 'Marketing & hold', draw, balance: bal, interest });
     }
   } else {
+    // interest is on the full balance (or a simplified average), but the draws are still shown month by month
+    const byMonth = {};
+    (draws || []).forEach((d) => { const m = Math.max(1, Math.round(num(d.month))); byMonth[m] = (byMonth[m] || 0) + Math.max(0, num(d.amount)); });
+    const hasDraws = Object.keys(byMonth).length > 0;
+    let cum = 0;
     for (let m = 1; m <= months; m++) {
       const bal = method === 'average' && m <= b ? L * 0.5 : L;
       const interest = bal * r;
       total += interest;
-      schedule.push({ month: m, phase: m <= b ? 'Construction' : 'Marketing & hold', draw: m === 1 && method === 'full' ? L : 0, balance: bal, interest });
+      const draw = hasDraws ? byMonth[m] || 0 : m === 1 && method === 'full' ? L : 0;
+      cum += draw;
+      schedule.push({ month: m, phase: m <= b ? 'Construction' : 'Marketing & hold', draw, drawnToDate: cum, balance: bal, interest });
     }
   }
   const drawn = method === 'draws' ? schedule.reduce((s, x) => s + x.draw, 0) : L;
+  if (method === 'draws') { let c = 0; schedule.forEach((x) => { c += x.draw; x.drawnToDate = c; }); }
   return { total, schedule, method, months, drawn, monthlyAtFull: L * r };
 }
 

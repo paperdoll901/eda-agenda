@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793792515';
-import * as E from './engine.js?v=1793792515';
-import * as U from './ui.js?v=1793792515';
+import * as S from './store.js?v=1793806206';
+import * as E from './engine.js?v=1793806206';
+import * as U from './ui.js?v=1793806206';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -129,12 +129,23 @@ function update() {
 
   // draw schedule
   const ms = c.interest.schedule;
-  U.$('#draws').innerHTML = `<p class="note" style="margin-top:-4px">Method: <b>${methodName(c.interest.method)}</b>. ${c.interest.method === 'full' ? 'The full loan is outstanding from closing, as in the Joseph Place case terms.' : c.interest.method === 'average' ? 'A simplified estimate (half the loan outstanding during construction, all of it during the sale period). Use only when no draw schedule is available.' : 'Each draw is outstanding from the month it is drawn. Edit the draw schedule below.'} ${p.finance.drawNote ? esc(p.finance.drawNote) : ''}</p>
-  <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Month</th><th>Phase</th><th class="n">Draw</th><th class="n">Balance</th><th class="n">Interest</th></tr></thead><tbody>
-  ${ms.map((m) => `<tr><td>${m.month}</td><td>${m.phase}</td><td class="n">${m.draw ? fmt$(m.draw) : '·'}</td><td class="n">${fmt$(m.balance)}</td><td class="n">${fmt$(m.interest)}</td></tr>`).join('')}
-  <tr class="tot"><td colspan="2">Total</td><td class="n">${fmt$(c.interest.drawn)}</td><td></td><td class="n">${fmt$(c.interest.total)}</td></tr></tbody></table></div>
+  const dl = (p.finance.draws || []).filter((d) => E.num(d.amount) > 0);
+  const byM = {}; dl.forEach((d) => { const m = Math.max(1, Math.round(E.num(d.month))); (byM[m] = byM[m] || []).push(d); });
+  const contract = dl.filter((d) => /^Draw \d/.test(d.label || '')).reduce((t, d) => t + E.num(d.amount), 0);
+  let cumS = 0;
+  const sov = dl.length ? `<h4 style="margin:6px 0 6px;font-size:15px">Schedule of values: when the loan is drawn</h4>
+  <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Month</th><th>Draw (released after the work is verified)</th><th class="n">Amount</th><th class="n">Drawn to date</th></tr></thead><tbody>
+  ${dl.map((d) => { cumS += E.num(d.amount); return `<tr><td>${Math.round(E.num(d.month))}</td><td class="tx" style="text-align:left">${esc(d.label || 'Draw')}</td><td class="n">${fmt$(E.num(d.amount))}</td><td class="n">${fmt$(cumS)}</td></tr>`; }).join('')}
+  <tr class="tot"><td colspan="2">Total drawn${contract ? ` (vertical construction contract ${fmt$(contract)})` : ''}</td><td class="n">${fmt$(cumS)}</td><td></td></tr></tbody></table></div>` : '';
+  U.$('#draws').innerHTML = `<p class="note" style="margin-top:-4px">Interest method: <b>${methodName(c.interest.method)}</b>. ${c.interest.method === 'full' ? 'Interest is charged on the full loan balance from closing, as in the Joseph Place case terms, even though the money is drawn in stages.' : c.interest.method === 'average' ? 'A simplified estimate (half the loan outstanding during construction, all of it during the sale period). Use only when no draw schedule is available.' : 'Interest is charged only on what has been drawn. Edit the draw schedule below.'} ${p.finance.drawNote ? esc(p.finance.drawNote) : ''}</p>
+  ${sov}
+  <h4 style="margin:14px 0 6px;font-size:15px">Month by month: draws and interest</h4>
+  <div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"><table class="tbl"><thead><tr><th>Month</th><th>Phase</th><th class="n">Draws released</th><th class="n">Drawn to date</th><th class="n">Interest charged on</th><th class="n">Interest</th></tr></thead><tbody>
+  ${ms.map((m) => `<tr><td>${m.month}</td><td>${m.phase}${byM[m.month] ? `<br><span class="note">${byM[m.month].map((d) => esc((d.label || '').split(':')[0])).join(', ')}</span>` : ''}</td><td class="n">${m.draw ? fmt$(m.draw) : '·'}</td><td class="n">${fmt$(m.drawnToDate ?? 0)}</td><td class="n">${fmt$(m.balance)}</td><td class="n">${fmt$(m.interest)}</td></tr>`).join('')}
+  <tr class="tot"><td colspan="2">Total</td><td class="n">${fmt$(ms.reduce((t, m) => t + m.draw, 0))}</td><td></td><td></td><td class="n">${fmt$(c.interest.exact)}</td></tr>
+  ${Math.abs(c.interest.rounding) > 0.5 ? `<tr><td colspan="5">Rounded to the nearest $1,000, as in the casebook</td><td class="n">${fmt$(c.interest.total)}</td></tr>` : ''}</tbody></table></div>
   ${p.finance.interestMethod === 'draws' && Math.abs(c.interest.drawn - c.loan) > 1 ? U.status('warn', `The draw schedule totals ${fmt$(c.interest.drawn)}, but the loan is ${fmt$(c.loan)}. Adjust the draws so they add up to the loan.`) : ''}
-  <p class="note">At ${E.num(p.finance.ratePct)}%, each extra month at the full balance adds about <b>${fmt$(c.interest.monthlyAtFull)}</b> of interest, before taxes, insurance and upkeep.</p>`;
+  <p class="note">All draws are released during the ${E.num(p.timeline.buildMonths)}-month build. At ${E.num(p.finance.ratePct)}%, each month the loan stays outstanding adds about <b>${fmt$(c.interest.monthlyAtFull)}</b> of interest, before taxes, insurance and upkeep.</p>`;
 
   // funding scenarios
   const hasInc = p.sources.some((s) => s.type === 'incentive');
