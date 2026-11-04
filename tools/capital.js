@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793750890';
-import * as E from './engine.js?v=1793750890';
-import * as U from './ui.js?v=1793750890';
+import * as S from './store.js?v=1793763443';
+import * as E from './engine.js?v=1793763443';
+import * as U from './ui.js?v=1793763443';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -8,7 +8,7 @@ p.sources = p.sources || [];
 p.finance.draws = p.finance.draws || [];
 
 const STATUS_OPTS = [['committed', 'Committed'], ['proposed', 'Proposed'], ['conditional', 'Conditional']];
-const LAYER_COLORS = { constructionLoan: '#2E3192', cdfi: '#5C5FC4', subordinate: '#7A7C93', predevGrant: '#2C8C9E', projectGrant: '#2C8C9E', incentive: '#B98A1E', investorEquity: '#C7559A', developerEquity: '#4E7F1C', landEquity: '#8CC63F', deferredFee: '#8CC63F', other: '#9a9cb0' };
+const LAYER_COLORS = { constructionLoan: '#2E3192', loanReserve: '#5C5FC4', cdfi: '#5C5FC4', subordinate: '#7A7C93', predevGrant: '#2C8C9E', projectGrant: '#2C8C9E', incentive: '#B98A1E', investorEquity: '#C7559A', developerEquity: '#4E7F1C', landEquity: '#8CC63F', deferredFee: '#8CC63F', other: '#9a9cb0' };
 
 main.innerHTML = `
 <div class="pagehead"><div><h2>3 · Capital Stack & Financing Simulator</h2><p class="q">Where will the money come from, how much developer capital is required, and is the financing plan complete?</p></div></div>
@@ -59,10 +59,10 @@ ${U.learnTeach(`<p>Every project has <b>uses</b> (what the money pays for) and <
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Construction draw & interest schedule</h3><div id="drawEdit"></div><div id="draws"></div></div>
 <div class="card results"><h3><span class="tag out">Results</span> Funding scenario comparison</h3><div id="fsc" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
-${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'gap', 'cash', 'incentive', 'closing'])}
+${U.caseMath(p, ['budget', 'loan', 'equity', 'interest', 'fees', 'reserve', 'cash', 'incentive', 'closing'])}
 ${U.learnTry(3, 'Joseph Place capital stack', `<ol>
 <li>Read the case: <b>$146,000</b> construction loan at 8% interest-only + <b>$16,000</b> developer equity = the $162,000 project budget (Exhibit D). The lender's 90% loan-to-cost cap sets the loan size.</li>
-<li>Look at the financing gap. Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Who pays them during construction?</li>
+<li>Interest and loan fees (about $14,000) sit <i>outside</i> the $162,000. Find the <b>THF reserve</b> in the sources. How does it carry the cost of debt, and what happens if the home takes longer to sell than the reserve covers?</li>
 <li>Gabe's budget does not include the <b>$20,000 CRA incentive</b>. In the scenario table, compare <b>No incentive</b> with <b>Incentive included</b>, then check <b>Include in base case</b> under Other funding sources. How does it change the gap and the equity Gabe must bring? What has to happen before it can be marked committed?</li>
 <li>Change "How interest is charged" to <b>On the amount drawn</b>. How much interest would a draw-based loan save compared with the case's full-balance terms?</li>
 <li>Lower the loan-to-cost limit to 80%. How much additional equity is required?</li></ol>`)}
@@ -104,7 +104,7 @@ function update() {
     ${U.kpi('Loan interest', fmt$(c.interest.total), `${fmt$(c.interest.build)} construction + ${fmt$(c.interest.hold)} marketing · ${methodName(c.interest.method)}`, '', 'interest')}
   </div>
   ${(() => { const why = U.gapWhy(p, c); return why ? U.status(gapLevel, `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${why.text}`) + `<details class="recon" style="margin:8px 0"><summary style="cursor:pointer;font-weight:700">Where the gap comes from</summary><table class="tbl" style="max-width:640px;margin-top:6px"><tbody>${why.rows}</tbody></table></details>` : U.status(gapLevel, c.gapCommitted > 0.5 ? `Committed sources fall short of uses by <b>${fmt$(c.gapCommitted)}</b>. ${c.proposed + c.conditional > 0.5 ? (c.gapAll <= 0.5 ? `The pending sources included in this scenario (${fmt$(c.proposed + c.conditional)}) would close it if they are approved.` : `Even if the pending sources included here (${fmt$(c.proposed + c.conditional)}) are approved, ${fmt$(c.gapAll)} would still be unfunded.`) : (c.offIncentiveTotal > 0 ? '' : 'No other sources are pending.')}` : c.gapAll < -0.5 ? `Sources exceed uses by ${fmt$(-c.gapAll)}. Check for double counting or reduce a source.` : 'Committed sources cover total uses. The financing plan balances on paper.'); })()}
-  ${c.offIncentiveTotal > 0 ? `<div class="status info" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg><p><b>Not counted yet:</b> ${c.offIncentives.map((x) => `${esc(x.name)} (${fmt$(x.amount)}, ${esc(x.status)})`).join('; ')}. If it is awarded, the gap ${c.gapIfIncentives <= 0.5 ? `<b>closes</b>${c.gapIfIncentives < -0.5 ? ` with ${fmt$(-c.gapIfIncentives)} to spare` : ''}` : `falls to <b>${fmt$(c.gapIfIncentives)}</b>`}. ${c.lenderMinEquity !== null ? `It can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. It is a project source, not owner's equity: Gabe still needs at least <b>${fmt$(c.lenderMinEquity)}</b> of his own cash (the lender's ${E.num(p.finance.minEquityPct)}% equity requirement), so his cash needed would be <b>${fmt$(c.equityIfIncentives)}</b>.` : `The cash the developer must bring would be <b>${fmt$(c.equityIfIncentives)}</b>.`}<br><button class="btn sm" type="button" id="incOn" style="margin-top:8px">Include the incentive in this scenario</button></p></div>` : ''}
+  ${c.offIncentiveTotal > 0 ? `<div class="status info" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg><p><b>Not counted yet:</b> ${c.offIncentives.map((x) => `${esc(x.name)} (${fmt$(x.amount)}, ${esc(x.status)})`).join('; ')}. ${c.gapCommitted <= 0.5 ? `If it is awarded, it adds <b>${fmt$(c.offIncentiveTotal)}</b> for eligible project costs. ` : `If it is awarded, the gap ${c.gapIfIncentives <= 0.5 ? `<b>closes</b>${c.gapIfIncentives < -0.5 ? ` with ${fmt$(-c.gapIfIncentives)} to spare` : ''}` : `falls to <b>${fmt$(c.gapIfIncentives)}</b>`}. `}${c.lenderMinEquity !== null ? `It can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. It is a project source, not owner's equity: Gabe still needs at least <b>${fmt$(c.lenderMinEquity)}</b> of his own cash (the lender's ${E.num(p.finance.minEquityPct)}% equity requirement), so his cash needed would be <b>${fmt$(c.equityIfIncentives)}</b>.` : `The cash the developer must bring would be <b>${fmt$(c.equityIfIncentives)}</b>.`}<br><button class="btn sm" type="button" id="incOn" style="margin-top:8px">Include the incentive in this scenario</button></p></div>` : ''}
   ${c.warnings.filter((w) => w.level !== 'gap' && w.level !== 'info').map((w) => U.status('bad', esc(w.text))).join('')}
   ${c.maxLoan !== null ? `<p class="note">Maximum loan under the limits entered: <b>${fmt$(c.maxLoan)}</b>${c.maxByLtc !== null && c.maxByLtv !== null ? ` (the lower of loan-to-cost ${fmt$(c.maxByLtc)} and loan-to-value ${fmt$(c.maxByLtv)})` : ''}.</p>` : ''}
   ${c.interestReserve > 0 ? `<p class="note">${fmt$(c.interestReserve)} of the loan is an interest reserve, so ${fmt$(c.loanForCosts)} is available for other costs. The reserve pays interest that is already counted as a use; it is not an extra cost.</p>` : ''}
@@ -151,7 +151,7 @@ function update() {
   <ul class="note"><li><b>Incentive:</b> counted as conditional, so it lowers the gap only if the incentive is awarded. If approved, it reduces the cash Gabe must bring.</li><li><b>Higher equity:</b> closes the gap with the developer's own cash. Profit stays the same, but return on equity falls.</li><li><b>Lower loan:</b> less debt means less interest, but more developer cash is required.</li><li><b>Higher financing costs:</b> more interest raises uses and lowers profit at the same time.</li></ul>`;
 }
 const methodName = (m) => ({ full: 'Full balance from closing', draws: 'Draw-based', average: 'Simplified average balance' }[m] || m);
-const shortName = (x) => ({ constructionLoan: 'Construction loan', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);
+const shortName = (x) => ({ constructionLoan: 'Construction loan', loanReserve: 'Debt-cost reserve', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);
 
 function drawEditor() {
   return `<div class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table" style="margin-bottom:10px"><table class="tbl" id="drawTbl"><caption>Draw schedule (edit)</caption><thead><tr><th>Description</th><th>Month</th><th class="n">Amount</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>

@@ -344,6 +344,7 @@ export function sensitivity(p, prices, costChanges) {
 
 export const SOURCE_TYPES = [
   { key: 'developerEquity', name: 'Developer cash equity', equity: true },
+  { key: 'loanReserve', name: 'Lender reserve for interest & loan fees', debt: true },
   { key: 'landEquity', name: 'Eligible land equity (lender-recognized)', equity: true },
   { key: 'cdfi', name: 'CDFI financing', debt: true },
   { key: 'subordinate', name: 'Other subordinate / secondary financing', debt: true },
