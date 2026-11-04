@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793782729';
-import * as E from './engine.js?v=1793782729';
+import * as S from './store.js?v=1793782980';
+import * as E from './engine.js?v=1793782980';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -518,7 +518,7 @@ function caseMathRows(p, keys) {
     profit: ['Preliminary developer return', f(r.profit), `${f(r.net)} net − ${f(dev)} budget − ${f(intr.build)} construction interest − ${f(intr.hold)} marketing interest − ${f(fees)} loan fees${r.incentive ? ` + ${f(r.incentive)} incentive` : ''}.`, 'pp. 21, 30'],
     loan: ['Construction loan', f(c.loan), `About 90% of the ${f(dev)} eligible project cost (${f(dev * 0.9)}), rounded.`, 'p. 19'],
     equity: ['Owner\'s equity (Gabe\'s cash on hand)', f(eq), `THF requires owner's equity of ${E.num(fx.minEquityPct) || 10}% of total project cost: ${E.num(fx.minEquityPct) || 10}% × ${f(c.eligible)} = ${f(c.eligible * (E.num(fx.minEquityPct) || 10) / 100)}, about ${f(c.lenderMinEquity || eq)}. The loan covers the other 90%.`, 'p. 19'],
-    reserve: ['Available reserves for holding costs', f(res), `${f(intr.build)} construction interest + ${f(intr.hold)} marketing interest + ${f(fees)} loan fees = ${f(intr.total + fees)}. Set aside and drawn over time to cover holding costs during construction and marketing, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
+    reserve: ['Available reserves for holding costs', f(res), `Loan payments: ${f(intr.build)} during construction + ${f(intr.hold)} while marketing, plus ${f(fees)} loan fees = ${f(intr.total + fees)}. Set aside and drawn over time to cover holding costs during construction and marketing, then repaid from the sale.${c.gapCommitted > 0.5 ? ` ${f(c.gapCommitted)} is not yet covered.` : ''}`, 'pp. 19–20'],
     cash: ['Gabe\'s cash needed', f(c.requiredEquity), `${f(eq)} owner's equity: the 10% THF requires. The loan finances 90% of the ${f(dev)} acquisition and construction budget, and available reserves cover the holding costs.`, 'p. 19'],
     incentive: ['CRA Essential Housing incentive', f(incAmt), `Tied to this parcel and still conditional. A project source, not owner's equity. If awarded, it can pay for the developer's financing gap, site costs, predevelopment, or added features such as eco-build standards. Gabe's ${f(c.lenderMinEquity || eq)} cash requirement stays the same.`, 'pp. 5–6'],
     closing: ['Cash left at closing', f(r.net - c.loan - res), `${f(r.net)} net − ${f(c.loan)} loan − ${f(res)} reserves repaid = Gabe's ${f(c.requiredEquity)} cash back + the ${f(r.profit)} return.`, 'p. 30'],
