@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793806206';
-import * as E from './engine.js?v=1793806206';
-import * as U from './ui.js?v=1793806206';
+import * as S from './store.js?v=1793938071';
+import * as E from './engine.js?v=1793938071';
+import * as U from './ui.js?v=1793938071';
 
 const { main, project: p } = U.shell('capital', 'Capital Stack & Financing Simulator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -160,7 +160,7 @@ function update() {
   ].map(([l, s]) => { const x = E.capitalStack(p, s); const pt = E.pencilTest(p, s); return { l, x, pt }; });
   U.$('#fsc').innerHTML = `<table class="tbl"><thead><tr><th>Scenario</th><th class="n">Total uses</th><th class="n">Committed sources</th><th class="n">Gap now (committed)</th><th class="n">Gap if pending approved</th><th class="n">Cash needed now</th><th class="n">Cash needed if pending approved</th><th class="n">Profit</th></tr></thead><tbody>
   ${SC.map(({ l, x, pt }) => `<tr><td>${esc(l)}</td><td class="n">${fmt$(x.uses)}</td><td class="n">${fmt$(x.committed)}</td><td class="n">${x.gapCommitted > 0.5 ? '✕ ' + fmt$(x.gapCommitted) : '✓ $0'}</td><td class="n">${x.gapAll > 0.5 ? '✕ ' + fmt$(x.gapAll) : '✓ $0'}</td><td class="n">${fmt$(x.requiredEquity)}</td><td class="n">${fmt$(x.requiredEquityIfAllClose)}</td><td class="n">${fmt$(pt.profit)}</td></tr>`).join('')}</tbody></table>
-  <ul class="note"><li><b>Incentive:</b> counted as conditional, so it lowers the gap only if the incentive is awarded. If approved, it reduces the cash Gabe must bring.</li><li><b>Higher equity:</b> closes the gap with the developer's own cash. Profit stays the same, but return on equity falls.</li><li><b>Lower loan:</b> less debt means less interest, but more developer cash is required.</li><li><b>Higher financing costs:</b> more interest raises uses and lowers profit at the same time.</li></ul>`;
+  <ul class="note"><li><b>Incentive:</b> counted as conditional, so it lowers the gap only if the incentive is awarded. If approved, it reduces the cash Gabe must bring.</li><li><b>Higher equity:</b> closes the gap with the developer's own cash. Profit stays the same.</li><li><b>Lower loan:</b> less debt means less interest, but more developer cash is required.</li><li><b>Higher financing costs:</b> more interest raises uses and lowers profit at the same time.</li></ul>`;
 }
 const methodName = (m) => ({ full: 'Full balance from closing', draws: 'Draw-based', average: 'Simplified average balance' }[m] || m);
 const shortName = (x) => ({ constructionLoan: 'Construction loan', loanReserve: 'Holding-cost reserves', developerEquity: 'Developer equity', landEquity: 'Land equity', incentive: 'Incentive', cdfi: 'CDFI loan', subordinate: 'Subordinate debt', investorEquity: 'Investor equity', predevGrant: 'Predev grant', projectGrant: 'Project grant', deferredFee: 'Deferred fee', other: 'Other' }[x.type] || x.name);

@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793806206';
-import * as E from './engine.js?v=1793806206';
-import * as U from './ui.js?v=1793806206';
+import * as S from './store.js?v=1793938071';
+import * as E from './engine.js?v=1793938071';
+import * as U from './ui.js?v=1793938071';
 
 const { main, project: p } = U.shell('pencil', 'Development Pencil Test & Feasibility Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -70,7 +70,7 @@ ${U.learnTry(2, 'Joseph Place pencil test', `<ol>
 ${U.learnReflect('pencil', ['What happens to developer profit when construction costs increase by 10%?', 'At what sales price does the project stop meeting the developer\'s target margin?', 'Why is a positive pencil test not the same as a lender approval or proof of market demand?'])}
 <div id="dl"></div>
 ${U.nextBar(['budget.html', 'Budget Builder'], ['capital.html', 'Capital Stack'])}
-<p class="disclaim">Financial feasibility is not lender approval, an appraisal or proof of market demand. Results are estimates based only on the assumptions entered. Return on developer equity is a simplified project-level figure; it is not annualized and is not an investor IRR.</p>`;
+<p class="disclaim">Financial feasibility is not lender approval, an appraisal or proof of market demand. Results are estimates based only on the assumptions entered.</p>`;
 
 function renderIncentives() {
   const inc = (p.sources || []).map((s, i) => [s, i]).filter(([s]) => s.type === 'incentive');
@@ -139,13 +139,12 @@ function update() {
   const tgt = E.num(p.sale.targetMarginPct);
   const issues = E.validateProject(p).filter((v) => !v.field.startsWith('buyer'));
   U.$('#res').innerHTML = `
-    <div class="kpis">
+    <div class="kpis kpi4">
       ${U.kpi('Project profit', fmt$(r.profit), 'Net sales − all costs', `hero ${r.profit >= 0 ? 'pos' : 'neg'}`)}
       ${U.kpi('Profit margin on sales', fmtPct(r.margin), `Target ${tgt}%`, r.margin === null ? '' : r.margin >= E.pct(tgt) ? 'pos' : 'neg', 'margin')}
       ${U.kpi('Return on cost', fmtPct(r.roc), 'Profit ÷ total project cost', '', 'roc')}
       ${U.kpi('Break-even sales price', fmt$(r.breakEven), r.breakEven && r.price ? `${fmtPct((r.price - r.breakEven) / r.price)} cushion below the base price` : '', '', 'breakeven')}
       ${U.kpi('Price needed for target margin', fmt$(r.targetPrice), `${tgt}% margin`)}
-      ${U.kpi('Return on developer equity', r.roe === null ? 'Not yet calculated' : fmtPct(r.roe), r.roe === null ? 'Enter committed developer equity in the Capital Stack' : `On ${fmt$(r.equity)} committed equity · simplified, not annualized, not IRR`, '', 'roe')}
     </div>
     ${U.status(lvl, msg)}
     <table class="tbl"><tbody>
@@ -187,6 +186,6 @@ U.$('#dl').innerHTML = U.downloadBar('Pencil Test', p, () => {
   const row = (l, f) => [l, f(r), f(A), f(B)];
   const d = (v) => (v === null ? 'Not yet calculated' : Math.round(v));
   const pc = (v) => (v === null ? 'Not yet calculated' : (v * 100).toFixed(2) + '%');
-  return [['Metric', 'Base case', sc.a.label, sc.b.label], row('Sales price', (x) => d(x.price)), row('Gross sales revenue', (x) => d(x.gross)), row('Selling costs', (x) => d(x.sellingCosts)), row('Net sales revenue', (x) => d(x.net)), row('Total development cost', (x) => d(x.totalCost)), row('Incentive applied', (x) => d(x.incentive)), row('Project profit', (x) => d(x.profit)), row('Profit margin', (x) => pc(x.margin)), row('Return on cost', (x) => pc(x.roc)), row('Return on developer equity (simplified)', (x) => pc(x.roe)), row('Break-even price', (x) => d(x.breakEven)), row('Price for target margin', (x) => d(x.targetPrice)), row('Result', (x) => resultLabel(x.status)), [], ['Financial feasibility is not lender approval or market feasibility.']];
+  return [['Metric', 'Base case', sc.a.label, sc.b.label], row('Sales price', (x) => d(x.price)), row('Gross sales revenue', (x) => d(x.gross)), row('Selling costs', (x) => d(x.sellingCosts)), row('Net sales revenue', (x) => d(x.net)), row('Total development cost', (x) => d(x.totalCost)), row('Incentive applied', (x) => d(x.incentive)), row('Project profit', (x) => d(x.profit)), row('Profit margin', (x) => pc(x.margin)), row('Return on cost', (x) => pc(x.roc)), row('Break-even price', (x) => d(x.breakEven)), row('Price for target margin', (x) => d(x.targetPrice)), row('Result', (x) => resultLabel(x.status)), [], ['Financial feasibility is not lender approval or market feasibility.']];
 });
 update();

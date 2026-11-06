@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793806206';
-import * as U from './ui.js?v=1793806206';
+import * as E from './engine.js?v=1793938071';
+import * as U from './ui.js?v=1793938071';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;
@@ -50,7 +50,7 @@ ${sec(1, 'Project Overview', `<table class="tbl"><tbody>
 ${sec(2, 'Development Budget', `<table class="tbl"><tbody>${E.CATEGORIES.filter((k) => b.byCat[k.key] > 0 || k.key !== 'U').map((k) => tr(`${k.key} · ${esc(k.name)}`, fmt$(b.byCat[k.key]))).join('')}${tr('Total Development Cost', fmt$(b.tdc), 'tot')}${tr('Cost per sq. ft.', fmt$(b.perSf))}${tr('Construction (hard) cost per sq. ft.', fmt$(b.hardPerSf))}</tbody></table>`)}
 ${sec(3, 'Pencil Test and Profitability', `<table class="tbl"><thead><tr><th>Metric</th><th class="n">Base case</th>${A ? `<th class="n">${esc(sc.a.label)}</th>` : ''}${B ? `<th class="n">${esc(sc.b.label)}</th>` : ''}</tr></thead><tbody>
   ${[['Sales price', (x) => fmt$(x.price)], ['Gross sales revenue', (x) => fmt$(x.gross)], ['Net sales revenue', (x) => fmt$(x.net)], ['Total project cost', (x) => fmt$(x.totalCost)], ['Incentive applied', (x) => fmt$(x.incentive)], ['Project profit', (x) => fmt$(x.profit)], ['Profit margin', (x) => fmtPct(x.margin)], ['Return on cost', (x) => fmtPct(x.roc)], ['Break-even price', (x) => fmt$(x.breakEven)]].map(([l, f], i) => `<tr${i === 5 ? ' class="sub"' : ''}><td>${l}</td><td class="n">${f(r)}</td>${A ? `<td class="n">${f(A)}</td>` : ''}${B ? `<td class="n">${f(B)}</td>` : ''}</tr>`).join('')}
-  </tbody></table><p class="note">Return on developer equity (simplified, not annualized, not IRR): ${r.roe === null ? 'Not yet calculated' : fmtPct(r.roe)}. Minimum target margin: ${E.num(p.sale.targetMarginPct)}%. Financial feasibility is not lender approval or market feasibility.</p>`)}
+  </tbody></table><p class="note">Minimum target margin: ${E.num(p.sale.targetMarginPct)}%. Financial feasibility is not lender approval or market feasibility.</p>`)}
 ${sec(4, 'Sources & Uses', `<div class="grid even" style="gap:12px"><table class="tbl"><thead><tr><th>Uses</th><th class="n">Amount</th></tr></thead><tbody>${E.CATEGORIES.map((k) => [k, b.items.filter((i) => i.cat === k.key && !i.atClosing).reduce((s, i) => s + (i.value || 0), 0)]).filter(([, v]) => v > 0).map(([k, v]) => tr(esc(k.name), fmt$(v))).join('')}${tr('Total uses', fmt$(c.uses), 'tot')}</tbody></table>
   <table class="tbl"><thead><tr><th>Sources</th><th class="n">Amount</th></tr></thead><tbody>${c.sources.map((x) => tr(`${esc(x.name)} <span class="note">(${x.status}${x.type === 'incentive' && !x.includeInScenario ? ', not included' : ''})</span>`, fmt$(x.amount))).join('')}${tr('Committed sources', fmt$(c.committed), 'tot')}</tbody></table></div>
   <p class="note">Selling costs (${fmt$(c.sellingCostsAtClosing)}) are paid from sale proceeds at closing and are not construction-period uses.</p>`)}

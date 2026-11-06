@@ -330,3 +330,4 @@ body.fac .kpi.hero .v{font-size:clamp(24px,min(3.2vw,11cqi),36px)}
 .casemath table.tbl td.n{font-size:18px;font-weight:800;color:var(--navy)}
 .casemath table.tbl td:last-child{color:var(--gray);font-size:14px}
 }
+.kpis.kpi4{grid-template-columns:1fr 1fr}
