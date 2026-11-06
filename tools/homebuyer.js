@@ -1,6 +1,6 @@
-import * as S from './store.js?v=1793938071';
-import * as E from './engine.js?v=1793938071';
-import * as U from './ui.js?v=1793938071';
+import * as S from './store.js?v=1793946295';
+import * as E from './engine.js?v=1793946295';
+import * as U from './ui.js?v=1793946295';
 
 const { main, project: p } = U.shell('homebuyer', 'Homebuyer Affordability & Subsidy Calculator');
 const { fmt$, fmtPct, esc, tip } = U;
@@ -66,7 +66,7 @@ ${U.learnTeach(`<p>A project only works if a real buyer can purchase the finishe
 </div>
 <div class="grid even">
   <div class="card results"><h3><span class="tag out">Results</span> With vs. without assistance</h3><div id="cmpA" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
-  <div class="card results"><h3><span class="tag out">Results</span> Mortgage scenario comparison</h3><div id="cmpM" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
+  <div class="card results" style="grid-column:1/-1"><h3><span class="tag out">Results</span> Mortgage scenario comparison</h3><div id="cmpM" class="tblwrap" tabindex="0" role="region" aria-label="Scrollable table"></div></div>
 </div>
 <div class="card results"><h3><span class="tag out">Results</span> Interest rates and purchasing power</h3><div id="rateChart"></div></div>
 ${U.learnTry(4, 'Joseph Place homebuyer', `<ol>
@@ -161,10 +161,14 @@ function update() {
   </tbody></table><p class="note">Down payment and closing cost help lower cash to close. Only principal reduction lowers the loan and the monthly payment.</p>`;
 
   const prods = Object.entries(E.MORTGAGE_PRODUCTS);
-  const res = prods.map(([k, d]) => [d, E.affordabilitySummary({ ...b, downPct: d.downPct, miAnnualPct: d.miAnnualPct, upfrontPct: d.upfrontPct, financeUpfront: d.financeUpfront }, { price })]);
-  U.$('#cmpM').innerHTML = `<table class="tbl"><thead><tr><th>Product (illustrative)</th><th class="n">Down</th><th class="n">Payment</th><th class="n">Back-end DTI</th><th class="n">Cash to close</th></tr></thead><tbody>
-    ${res.map(([d, r]) => `<tr><td>${esc(d.name)}<div class="note">${d.downPct}% down · MI ${d.miAnnualPct}%/yr · upfront ${d.upfrontPct}%${d.financeUpfront ? ' financed' : ''}</div></td><td class="n">${fmt$(r.down)}</td><td class="n">${fmt$(r.housing)}</td><td class="n">${r.backDti === null ? '·' : (r.meetsBack ? '✓ ' : '✕ ') + fmtPct(r.backDti)}</td><td class="n">${fmt$(r.cashToClose)}</td></tr>`).join('')}
-  </tbody></table><p class="note">Same buyer, price and rate. Product terms are classroom placeholders; eligibility is not assumed. VA and USDA loans have their own eligibility rules.</p>`;
+  const hasHelp = ['dpa', 'cca', 'principalReduction', 'otherAssist'].some((k) => E.num(b[k]) > 0);
+  const res = prods.map(([k, d]) => {
+    const bb = { ...b, downPct: d.downPct, miAnnualPct: d.miAnnualPct, upfrontPct: d.upfrontPct, financeUpfront: d.financeUpfront };
+    return [d, E.affordabilitySummary(bb, { price, withAssistance: hasHelp }), E.affordabilitySummary(bb, { price, withAssistance: false })];
+  });
+  U.$('#cmpM').innerHTML = `<table class="tbl mcmp"><thead><tr><th>Product (illustrative)</th><th class="n">Down</th><th class="n">Payment</th><th class="n">Back-end DTI</th><th class="n">Cash to close${hasHelp ? ' with assistance' : ''}</th></tr></thead><tbody>
+    ${res.map(([d, r, n]) => `<tr><td>${esc(d.name)}<div class="note">${d.downPct}% down · MI ${d.miAnnualPct}%/yr · upfront ${d.upfrontPct}%${d.financeUpfront ? ' financed' : ''}</div></td><td class="n" data-l="Down">${fmt$(r.down)}</td><td class="n" data-l="Payment">${fmt$(r.housing)}</td><td class="n" data-l="Back-end DTI">${r.backDti === null ? '·' : (r.meetsBack ? '✓ ' : '✕ ') + fmtPct(r.backDti)}</td><td class="n" data-l="Cash to close${hasHelp ? ' with assistance' : ''}"><b>${fmt$(r.cashToClose)}</b>${hasHelp ? `<div class="note">${fmt$(n.cashToClose)} without, ${fmt$(r.assistanceApplied)} applied</div>` : ''}</td></tr>`).join('')}
+  </tbody></table><p class="note">Same buyer, price and rate. ${hasHelp ? 'Cash to close with assistance uses the down payment, closing cost and other assistance entered above, applied only to eligible costs, whether or not it is included in the main result. ' : 'Enter down payment or closing cost assistance above to see cash to close with assistance for each product. '}Product terms are classroom placeholders; eligibility is not assumed. VA and USDA loans have their own eligibility rules.</p>`;
 
   if (E.num(b.income) > 0) {
     const base = E.num(b.ratePct);

@@ -1,5 +1,5 @@
-import * as E from './engine.js?v=1793938071';
-import * as U from './ui.js?v=1793938071';
+import * as E from './engine.js?v=1793946295';
+import * as U from './ui.js?v=1793946295';
 
 const { main, project: p } = U.shell('summary', 'EDA Development Financial Feasibility Summary');
 const { fmt$, fmtPct, esc } = U;

@@ -331,3 +331,5 @@ body.fac .kpi.hero .v{font-size:clamp(24px,min(3.2vw,11cqi),36px)}
 .casemath table.tbl td:last-child{color:var(--gray);font-size:14px}
 }
 .kpis.kpi4{grid-template-columns:1fr 1fr}
+
+@media (max-width:640px){.tbl.mcmp thead{display:none}.tbl.mcmp,.tbl.mcmp tbody,.tbl.mcmp tr,.tbl.mcmp td{display:block;width:auto}.tbl.mcmp tr{border-top:1px solid var(--line,#ddd);padding:8px 0}.tbl.mcmp td{border:0!important;padding:3px 0!important;text-align:left!important}.tbl.mcmp td:first-child{font-weight:700}.tbl.mcmp td:first-child .note{font-weight:400}.tbl.mcmp td[data-l]{display:flex;justify-content:space-between;gap:12px}.tbl.mcmp td[data-l]::before{content:attr(data-l);color:var(--gray,#555);font-weight:400}.tbl.mcmp td[data-l] .note{display:block}.tbl.mcmp td[data-l]>b+.note{margin-left:8px}.tbl.mcmp td[data-l]:last-child{flex-wrap:wrap}.tbl.mcmp td[data-l]:last-child .note{flex-basis:100%;text-align:right}}

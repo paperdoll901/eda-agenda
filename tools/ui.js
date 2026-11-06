@@ -3,8 +3,8 @@
  * Shared interface: page shell, project bar, participant / facilitator mode,
  * form binding, glossary tooltips, charts, learning blocks and downloads.
  */
-import * as S from './store.js?v=1793938071';
-import * as E from './engine.js?v=1793938071';
+import * as S from './store.js?v=1793946295';
+import * as E from './engine.js?v=1793946295';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
