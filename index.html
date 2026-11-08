@@ -339,22 +339,25 @@ html.docv-on,html.docv-on body{overflow:hidden}
 #sec-showcase .hfimg{background:#fff;color:#000;border-radius:0}#sec-showcase .hfimg svg{fill:#000}
 #sec-showcase .hspb .hk{color:#bdbdbd}#sec-showcase .hspb h3{color:#fff}#sec-showcase .hspb p{color:#d6d6d6}
 #sec-showcase a:focus-visible{outline:3px solid #fff;outline-offset:3px}
-/* teams */
-.sxt{border:1px solid #fff;margin-bottom:18px}
-.sxth{background:#fff;color:#000;padding:16px 18px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.sxtn{font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;letter-spacing:.2em;text-transform:uppercase}
-.sxth h4{margin:0;font-family:Montserrat,sans-serif;font-weight:900;font-size:26px;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em}
-.sxtg{margin:0;width:100%;font-size:14.5px;font-style:italic}
-.sxm{list-style:none;margin:0;padding:18px;display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+/* teams: yearbook */
+.sxbook{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.sxt{background:#fff;color:#000;padding:14px;box-shadow:0 0 0 1px #fff,0 12px 30px rgba(255,255,255,.06);position:relative}
+.sxt::before{content:"";position:absolute;inset:8px;border:3px double #000;pointer-events:none}
+.sxth{text-align:center;padding:22px 18px 6px;display:block}
+.sxtn{display:flex;align-items:center;gap:12px;justify-content:center;font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:13px;letter-spacing:.32em;text-transform:uppercase}
+.sxtn::before,.sxtn::after{content:"";flex:1;max-width:70px;height:1px;background:#000}
+.sxth h4{margin:8px 0 2px;font-family:Georgia,"Times New Roman",serif;font-weight:700;font-style:italic;font-size:30px;line-height:1.1;text-transform:none;letter-spacing:0}
+.sxm{list-style:none;margin:0;padding:16px 22px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px 16px}
 .sxm li{text-align:center}
-.sxp{position:relative;width:100%;aspect-ratio:1/1;background:#222;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px}
-.sxp span{font-family:Montserrat,sans-serif;font-weight:800;font-size:28px;color:#888}
+.sxp{position:relative;width:100%;aspect-ratio:4/5;background:#eee;border:1px solid #000;outline:5px solid #fff;outline-offset:-6px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;box-shadow:2px 2px 0 #000}
+.sxp span{font-family:Georgia,serif;font-weight:700;font-size:26px;color:#888}
 .sxp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.sxn{margin:0 0 4px;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#fff;line-height:1.25}
-.sxr{margin:0;font-size:13.5px;line-height:1.45;color:#bdbdbd}
-@media (max-width:1000px){.sxm{grid-template-columns:repeat(3,1fr)}}
+.sxn{margin:0;font-family:Georgia,"Times New Roman",serif;font-variant:small-caps;font-weight:700;font-size:15.5px;letter-spacing:.04em;color:#000;line-height:1.25}
+.sxf{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 22px 10px;padding-top:10px;border-top:1px solid #000;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:12.5px;color:#000}
+.sxpg{font-style:normal;font-weight:700;font-size:14px;letter-spacing:.1em}
+@media (max-width:900px){.sxbook{grid-template-columns:1fr}}
 @media (max-width:560px){.sxhero h2{font-size:44px}.sxhero{padding:16px 0 20px}.sxd{font-size:17px}
-.sxm{grid-template-columns:repeat(2,1fr);gap:14px;padding:14px}.sxth{padding:14px}.sxth h4{font-size:21px}
+.sxm{gap:14px 10px;padding:12px 14px 4px}.sxth{padding:20px 12px 4px}.sxth h4{font-size:24px}.sxn{font-size:13.5px}.sxf{margin:6px 14px 8px;font-size:11px}.sxt{padding:10px}.sxt::before{inset:5px}
 #sec-showcase .hbtn{width:100%}}
 
 #sec-showcase .sxhero{border-bottom:1px solid #fff;margin-bottom:24px;padding-bottom:26px}
@@ -478,7 +481,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <div class="shcta"><a class="hbtn pri" href="resources/EDA-Showcase-Team-Instructions.pdf" target="_blank" rel="noopener">Read the team instructions</a><a class="hbtn navy" href="resources/EDA-Showcase-Pitch-Template.pptx" download>Download pitch template (.pptx)</a></div>
 
 <div class="shnote"><b>Deck vs. package.</b> Your slides tell the story and show the key numbers in 10 minutes. Every supporting detail, from full budgets to comps, bids and letters, goes in the printed development package.</div>
-<section class="sxteams" aria-labelledby="sxtt"><h3 class="shh" id="sxtt">The Teams</h3><p class="shsub">Six teams. Thirty-six emerging developers. One Showcase.</p>
+<section class="sxteams" aria-labelledby="sxtt"><h3 class="shh" id="sxtt">The Teams</h3><p class="shsub">Six teams. Thirty-six emerging developers. One Showcase.</p><div class="sxbook">
 <article class="sxt"><div class="sxth"><span class="sxtn">Team I</span><h4>The Blueprint</h4></div><ul class="sxm">
 <li><div class="sxp"><span>PG</span><img src="headshots/porsha-goodman.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Porsha Goodman</p></li>
 <li><div class="sxp"><span>CG</span><img src="headshots/chasity-grice.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Chasity Grice</p></li>
@@ -486,7 +489,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>JG</span><img src="headshots/jason-gardner.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Jason Gardner</p></li>
 <li><div class="sxp"><span>SL</span><img src="headshots/stephanie-myers-lewis.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Dr. Stephanie Lewis</p></li>
 <li><div class="sxp"><span>RA</span><img src="headshots/ross-anderson.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Ross Anderson</p></li>
-</ul></article>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">01</span><span>Class of Fall 2026</span></div></article>
 <article class="sxt"><div class="sxth"><span class="sxtn">Team II</span><h4>Root &amp; Rise Development</h4></div><ul class="sxm">
 <li><div class="sxp"><span>CW</span><img src="headshots/crystal-windless.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Crystal Windless</p></li>
 <li><div class="sxp"><span>MS</span><img src="headshots/makita-surgeon.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Makita Surgeon</p></li>
@@ -494,7 +497,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>JC</span><img src="headshots/james-carter.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">James Carter</p></li>
 <li><div class="sxp"><span>CR</span><img src="headshots/cashona-rinehart.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Cashona Rinehart</p></li>
 <li><div class="sxp"><span>EB</span><img src="headshots/emari-brown.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Emari Brown</p></li>
-</ul></article>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">02</span><span>Class of Fall 2026</span></div></article>
 <article class="sxt"><div class="sxth"><span class="sxtn">Team III</span><h4>The Foundation Collective</h4></div><ul class="sxm">
 <li><div class="sxp"><span>AH</span><img src="headshots/andre-harris.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Andre Harris</p></li>
 <li><div class="sxp"><span>JH</span><img src="headshots/joey-hurt.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Joey Hurt</p></li>
@@ -502,7 +505,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>KG</span><img src="headshots/karlton-govan.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Karlton Govan</p></li>
 <li><div class="sxp"><span>AH</span><img src="headshots/adrian-henning.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Adrian Henning</p></li>
 <li><div class="sxp"><span>GD</span><img src="headshots/gabrielle-davis.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Gabrielle Davis</p></li>
-</ul></article>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">03</span><span>Class of Fall 2026</span></div></article>
 <article class="sxt"><div class="sxth"><span class="sxtn">Team IV</span><h4>Grind City Group</h4></div><ul class="sxm">
 <li><div class="sxp"><span>WR</span><img src="headshots/willie-richards.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Willy Richards</p></li>
 <li><div class="sxp"><span>TS</span><img src="headshots/terry-simon.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Terry Simon</p></li>
@@ -510,7 +513,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>JM</span><img src="headshots/jonathan-mosley.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Jonathan Mosley</p></li>
 <li><div class="sxp"><span>AH</span><img src="headshots/ameisha-herron-payne.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Ameisha Herron</p></li>
 <li><div class="sxp"><span>MP</span><img src="headshots/marcus-payne.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Marcus Payne</p></li>
-</ul></article>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">04</span><span>Class of Fall 2026</span></div></article>
 <article class="sxt"><div class="sxth"><span class="sxtn">Team V</span><h4>Greater Works Collective</h4></div><ul class="sxm">
 <li><div class="sxp"><span>RT</span><img src="headshots/rashod-traylor.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Rashod Traylor</p></li>
 <li><div class="sxp"><span>GL</span><img src="headshots/gregory-lawrence-jr.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Greg Lawrence Jr.</p></li>
@@ -518,7 +521,7 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>KD</span><img src="headshots/karla-davis.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Karla Owens Davis</p></li>
 <li><div class="sxp"><span>YH</span><img src="headshots/yolanda-harris.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Yolanda Harris</p></li>
 <li><div class="sxp"><span>JH</span><img src="headshots/jae-hubbard.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Jae Hubbard</p></li>
-</ul></article>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">05</span><span>Class of Fall 2026</span></div></article>
 <article class="sxt"><div class="sxth"><span class="sxtn">Team VI</span><h4>NNLB Development</h4></div><ul class="sxm">
 <li><div class="sxp"><span>GF</span><img src="headshots/george-frazier.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">George Frazier</p></li>
 <li><div class="sxp"><span>DR</span><img src="headshots/dana-rivers.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Dana Rivers</p></li>
@@ -526,8 +529,8 @@ html.docv-on,html.docv-on body{overflow:hidden}
 <li><div class="sxp"><span>BW</span><img src="headshots/barbara-wall.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Barbara Wall</p></li>
 <li><div class="sxp"><span>WB</span><img src="headshots/willie-burton.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Willie Burton</p></li>
 <li><div class="sxp"><span>GW</span><img src="headshots/gloria-walker.jpg" alt="" loading="lazy" onerror="this.remove()"></div><p class="sxn">Gloria Walker</p></li>
-</ul></article>
-</section>
+</ul><div class="sxf"><span>Emerging Developer Academy&trade;</span><span class="sxpg">06</span><span>Class of Fall 2026</span></div></article>
+</div></section>
 
 <h3 class="shh">Template rules every team follows</h3>
 <ol class="shrules"><li>Use the cover, the 12 content slides and the closing slide, in the same order with the same titles.</li><li>Replace every gray bracketed placeholder with your own content. Delete any placeholder you do not use.</li><li>One slide per section. Put extra charts or detail in an appendix after the closing slide; it will not be presented.</li><li>Brand it your way with your own colors, fonts and logo. Keep the layout, slide order, titles and content blocks. No text under 24 point.</li><li>Every number on a slide must match your development package exactly. Date and cite every market figure.</li><li>Label status honestly: Secured, In progress or Needed. Never present a commitment you do not have.</li></ol>
