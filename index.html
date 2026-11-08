@@ -382,6 +382,7 @@ function embed(u){var m;
  if((m=u.match(/^https:\/\/docs\.google\.com\/forms\/d\/e\/([^\/?#]+)/)))return 'https://docs.google.com/forms/d/e/'+m[1]+'/viewform?embedded=true';
  if((m=u.match(/^https:\/\/drive\.google\.com\/drive\/(?:u\/\d+\/)?folders\/([^\/?#]+)/)))return 'https://drive.google.com/embeddedfolderview?id='+m[1]+'#list';
  if(/^https:\/\/form\.jotform\.com\//.test(u))return u;
+ var lp=u.match(/\/(resources\/[\w.\-]+\.pdf)(?:[?#].*)?$/i);if(lp&&u.indexOf(location.origin)===0)return 'pdf.html?file='+encodeURIComponent(lp[1]).replace(/%2F/g,'/');
  if(/\.pdf(?:[?#].*)?$/i.test(u))return u;
  return null;}
 function label(a){var t=(a.getAttribute('aria-label')||'').trim(),sp,c;

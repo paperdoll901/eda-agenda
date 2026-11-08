@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="robots" content="noindex">
+<title>Document</title>
+<style>
+html,body{margin:0;background:#E9EAF2;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1D1D2C}
+#pages{max-width:900px;margin:0 auto;padding:10px 8px 70px}
+.pg{position:relative;background:#fff;margin:0 auto 10px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.pg canvas{display:block;width:100%;height:100%}
+.msg{text-align:center;padding:40px 16px;font-size:16px;color:#3a3c52}
+.msg a{color:#2E3192;font-weight:700}
+#count{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(31,33,112,.92);color:#fff;font-weight:700;font-size:14px;padding:7px 14px;border-radius:999px;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="pages"><p class="msg" id="msg">Loading document&hellip;</p></div>
+<div id="count" hidden></div>
+<script type="module">
+import * as pdfjsLib from './vendor/pdfjs/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.mjs';
+const params = new URLSearchParams(location.search);
+const file = params.get('file') || '';
+const box = document.getElementById('pages'), msg = document.getElementById('msg'), count = document.getElementById('count');
+// Only same-site files under resources/ are allowed
+if (!/^resources\/[\w.\-]+\.pdf$/i.test(file)) { msg.textContent = 'This document could not be opened.'; throw new Error('bad file'); }
+const fail = () => { msg.innerHTML = 'This document could not be shown here. <a href="' + file + '" target="_blank" rel="noopener">Open it in a new tab</a>.'; };
+try {
+  const pdf = await pdfjsLib.getDocument({ url: file }).promise;
+  msg.remove();
+  const first = await pdf.getPage(1);
+  const v0 = first.getViewport({ scale: 1 });
+  const ratio = v0.height / v0.width;
+  const slots = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const d = document.createElement('div'); d.className = 'pg'; d.dataset.n = i;
+    d.style.aspectRatio = (1 / ratio).toFixed(4);
+    d.setAttribute('role', 'img'); d.setAttribute('aria-label', 'Page ' + i + ' of ' + pdf.numPages);
+    box.appendChild(d); slots.push(d);
+  }
+  const done = new Set();
+  async function render(d) {
+    const n = +d.dataset.n; if (done.has(n)) return; done.add(n);
+    const page = await pdf.getPage(n);
+    const vp1 = page.getViewport({ scale: 1 });
+    d.style.aspectRatio = (vp1.width / vp1.height).toFixed(4);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    const scale = (d.clientWidth * dpr) / vp1.width;
+    const vp = page.getViewport({ scale });
+    const c = document.createElement('canvas'); c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+    d.appendChild(c);
+    await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) render(e.target); }), { rootMargin: '1200px 0px' });
+  slots.forEach((d) => io.observe(d));
+  const seen = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { count.textContent = 'Page ' + e.target.dataset.n + ' of ' + pdf.numPages; count.hidden = false; } });
+  }, { threshold: 0.5 });
+  slots.forEach((d) => seen.observe(d));
+} catch (e) { fail(); }
+</script>
+</body>
+</html>
