@@ -11,7 +11,9 @@ User-agent: TelegramBot
 Allow: /$
 Allow: /index.html
 Allow: /og-image.jpg
+Allow: /cda/
 Disallow: /
 
 User-agent: *
+Allow: /cda/
 Disallow: /
